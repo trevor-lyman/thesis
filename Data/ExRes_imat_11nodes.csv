@@ -1,0 +1,12 @@
+,mesostigs,zerconidae,prostig_astig,juv_oribatids,oribatids,collembola,predatory_nematodes,bactivorous_nematodes,fungivorous_nematodes,omnivorous_nematodes,basal_resource
+mesostigs,0,0,1,1,0,1,0,0,0,0,0
+zerconidae,0,0,0,0,0,0,1,1,1,1,0
+prostig_astig,0,0,0,0,0,0,0,0,0,0,1
+juv_oribatids,0,0,0,0,0,0,0,0,0,0,1
+oribatids,0,0,0,0,0,0,0,0,0,0,1
+collembola,0,0,0,0,0,0,0,0,0,0,1
+predatory_nematodes,0,0,0,0,0,0,0,1,1,1,0
+bactivorous_nematodes,0,0,0,0,0,0,0,0,0,0,1
+fungivorous_nematodes,0,0,0,0,0,0,0,0,0,0,1
+omnivorous_nematodes,0,0,0,0,0,0,0.5,0.5,0.5,0,1
+basal_resource,0,0,0,0,0,0,0,0,0,0,0
