@@ -186,6 +186,7 @@ biomass_data$temp_tx <- as.factor(biomass_data$temp_tx)
 biomass_data$block_effect <- as.factor(biomass_data$block_effect)
 biomass_data$tx <- as.factor(biomass_data$tx)
 
+write.csv(temp2, "Outputs/webs.csv")
 # Step 9:
 # create plot
 total.biom_plot <- 
