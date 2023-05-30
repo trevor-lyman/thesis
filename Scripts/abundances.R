@@ -112,9 +112,6 @@ write.csv(abundance_data, "Outputs/abundances.csv")
 
 # Step 9:
 abundance_figs <- abundance_data %>% filter(!destructive_time == "T0")
-abundance_figs$total_ab_standardized <- abundance_figs$total_ab_standardized*g_per_m2
-abundance_figs$total_micro_ab_standardized <- abundance_figs$total_micro_ab_standardized*g_per_m2
-abundance_figs$total_meso_ab_standardized <- abundance_figs$total_meso_ab_standardized*g_per_m2
 
 # Step 10:
 # create plot
