@@ -56,7 +56,8 @@ ExRes_imat = as.matrix(ExRes_imat)
 # Step 4: Food Web Figs
 # 8.1: Tidy Data
 temp3 <- merge(x = temp2, y = sample_metadata, by = "Sample_ID") %>%
-  filter(!destructive_time == "T0")
+  filter(!destructive_time == "T0") %>%
+  filter(!Sample_ID == "ExRes 5")
 temp3$moisture_tx <- as.factor(temp3$moisture_tx)
 temp3$temp_tx <- as.factor(temp3$temp_tx)
 
