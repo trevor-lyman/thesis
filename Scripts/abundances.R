@@ -111,14 +111,16 @@ abundance_data$tx <- as.factor(abundance_data$tx)
 write.csv(abundance_data, "Outputs/abundances.csv")
 
 # Step 9:
-abundance_figs <- abundance_data %>% filter(!destructive_time == "T0")
+abundance_figs <- abundance_data %>% filter(!destructive_time == "T0") %>%
+  filter(!Sample_ID == "ExRes 5") # remove outlier
 
 # Step 10:
 # create plot
 total.ab_plot <- 
   ggplot(abundance_figs, aes(x=interaction(temp_tx, moisture_tx), y=total_ab_standardized, fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
-  geom_jitter(position=position_jitter(width=.1, height=0)) +
+  geom_jitter(aes(pch = as.factor(destructive_time)), 
+              position=position_jitter(width=.1, height=0), size = 3) + 
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.background = element_blank(), 

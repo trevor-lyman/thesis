@@ -881,7 +881,7 @@ model_outputs_temp <- as.data.frame(cbind(Sample_ID, total_consumption, total_Cm
 
 # Step 6: Merge with Sample Metadata  
 model_outputs <- merge(x = sample_metadata, y = model_outputs_temp, 
-                       by = "Sample_ID")
+                       by = "Sample_ID") 
 total_consumption <- model_outputs %>% select(-total_Cmin, -total_Nmin)
 total_Cmin <- model_outputs %>% select(-total_consumption, -total_Nmin)
 total_Nmin <- model_outputs %>% select(-total_Cmin, -total_consumption)
@@ -894,7 +894,8 @@ write.csv(total_Nmin, "Outputs/total_Nmin.csv")
 
 # Step 7: Tidy Data
 model_outputs <- as.data.frame(model_outputs) %>%
-  mutate(tx = interaction(temp_tx, moisture_tx, destructive_time))
+  mutate(tx = interaction(temp_tx, moisture_tx, destructive_time)) %>%
+  filter(!Sample_ID == "ExRes 5")
 
 model_outputs$total_consumption <- as.numeric(model_outputs$total_consumption)
 model_outputs$total_Cmin <- as.numeric(model_outputs$total_Cmin)
@@ -918,7 +919,8 @@ consumption_plot <-
   ggplot(model_outputs, aes(x=interaction(temp_tx, moisture_tx), y=total_consumption, 
                             fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
-  geom_jitter(position=position_jitter(width=.1, height=0)) +
+  geom_jitter(aes(pch = as.factor(destructive_time)), 
+              position=position_jitter(width=.1, height=0), size = 3) +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.background = element_blank(), 
@@ -946,7 +948,8 @@ Cmin_plot <-
   ggplot(model_outputs, aes(x=interaction(temp_tx, moisture_tx), y=total_Cmin, 
                             fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
-  geom_jitter(position=position_jitter(width=.1, height=0)) +
+  geom_jitter(aes(pch = as.factor(destructive_time)), 
+              position=position_jitter(width=.1, height=0), size = 3) +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.background = element_blank(), 
@@ -975,7 +978,8 @@ Nmin_plot <-
   ggplot(model_outputs, aes(x=interaction(temp_tx, moisture_tx), y=total_Nmin, 
                             fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
-  geom_jitter(position=position_jitter(width=.1, height=0)) +
+  geom_jitter(aes(pch = as.factor(destructive_time)), 
+              position=position_jitter(width=.1, height=0), size = 3) +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.background = element_blank(), 

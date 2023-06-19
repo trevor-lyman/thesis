@@ -171,7 +171,8 @@ biomass_data <- temp3 %>%
            collembola_biomass ) %>%
   mutate(micro_biomass = n.predator_biomass + n.bacterivore_biomass +
            n.fungivore_biomass + n.omnivore_biomass) %>%
-  mutate(tx = interaction(moisture_tx, temp_tx, destructive_time))
+  mutate(tx = interaction(moisture_tx, temp_tx, destructive_time)) %>%
+  filter(!Sample_ID == "ExRes 5")
 
 biomass_data$tx <- droplevels(biomass_data$tx)
 key_biomasses <- levels(biomass_data$tx)
@@ -193,12 +194,13 @@ total.biom_plot <-
   ggplot(biomass_data, aes(x=interaction(temp_tx, moisture_tx), y=total_biomass, 
                            fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
-  geom_jitter(position=position_jitter(width=.1, height=0)) +
+  geom_jitter(aes(pch = as.factor(destructive_time)), 
+              position=position_jitter(width=.1, height=0), size = 3) +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.background = element_blank(), 
         axis.line = element_line(colour = "black")) +
-  scale_fill_brewer(palette = "Greys")
+  scale_fill_brewer(palette = "Greys") 
 
 # Step 10:
 # create aov
