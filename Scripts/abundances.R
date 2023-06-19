@@ -37,7 +37,8 @@ micro_prop_ab <- read.csv("Data/Kamath et al dataset.csv") %>%
 mesofauna_ab <- merge(x = mesofauna_ab_temp, y = extraction_moisture_data %>% 
                         filter(extraction_type == "Dry"), 
                       by = "Sample_ID")
-microfauna_ab <- merge(x = microfauna_ab_temp, y = extraction_moisture_data %>% 
+microfauna_ab <- merge(x = microfauna_ab_temp, 
+                       y = extraction_moisture_data %>% 
                          filter(extraction_type == "Wet"), 
                        by = "Sample_ID") 
 
@@ -59,7 +60,8 @@ bulk_soil_density <- 0.075 # g dwt per cm^3?
 # https://sis.agr.gc.ca/cansis/publications/manuals/1984-peat/ca1984_2e_report.pdf
 g_per_m2 <- cm3_in_m2*bulk_soil_density # cm3_in_m2 * bulk_soil_density 
 
-temp_dry <- merge(x = mesofauna_ab_temp, y = dry_extraction, by = "Sample_ID") %>%
+temp_dry <- merge(x = mesofauna_ab_temp, y = dry_extraction, 
+                  by = "Sample_ID") %>%
   mutate(total_meso_ab_standardized = g_per_m2*total_ab/dry_weight) %>%
   select(-total_ab)
 temp_dry$collembola <- g_per_m2*temp_dry$collembola/temp_dry$dry_weight
@@ -80,8 +82,8 @@ write.csv(meso_abundances, "Outputs/meso_abundances.csv")
 temp_wet <- microfauna_ab %>% 
   mutate(total_micro_ab_standardized = g_per_m2*mean_abundance/dry_weight)
 # note: do not have node level abundances for microfauna as proportional 
-# abundances from previous BRACE work (Kamath et al. 2022) was used to estimate 
-# node level abundances
+# abundances from previous BRACE work (Kamath et al. 2022) was used to 
+# estimate node level abundances
 
 micro_abundances <- merge(x = sample_metadata, y = temp_wet, 
                           by = "Sample_ID") %>%
@@ -117,7 +119,9 @@ abundance_figs <- abundance_data %>% filter(!destructive_time == "T0") %>%
 # Step 10:
 # create plot
 total.ab_plot <- 
-  ggplot(abundance_figs, aes(x=interaction(temp_tx, moisture_tx), y=total_ab_standardized, fill = as.factor(destructive_time))) + 
+  ggplot(abundance_figs, aes(x=interaction(temp_tx, moisture_tx), 
+                             y=total_ab_standardized, 
+                             fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
   geom_jitter(aes(pch = as.factor(destructive_time)), 
               position=position_jitter(width=.1, height=0), size = 3) + 

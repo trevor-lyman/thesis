@@ -877,7 +877,8 @@ Sample_ID <- c("ExRes 3", "ExRes 5", "ExRes 7", "ExRes 8",
                "ExRes 35", "ExRes 38", "ExRes 40", "ExRes 41", "ExRes 42"
 ) # subset T1 & T2 models
 
-model_outputs_temp <- as.data.frame(cbind(Sample_ID, total_consumption, total_Cmin, total_Nmin))
+model_outputs_temp <- as.data.frame(cbind(Sample_ID, total_consumption, 
+                                          total_Cmin, total_Nmin))
 
 # Step 6: Merge with Sample Metadata  
 model_outputs <- merge(x = sample_metadata, y = model_outputs_temp, 
@@ -916,7 +917,8 @@ levels(model_outputs$tx) <-
 # Step 8: Consumption
 # 8.1: Plot
 consumption_plot <- 
-  ggplot(model_outputs, aes(x=interaction(temp_tx, moisture_tx), y=total_consumption, 
+  ggplot(model_outputs, aes(x=interaction(temp_tx, moisture_tx), 
+                            y=total_consumption, 
                             fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
   geom_jitter(aes(pch = as.factor(destructive_time)), 

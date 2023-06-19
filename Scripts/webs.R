@@ -83,7 +83,8 @@ mean_biomasses_temp <- temp3 %>%
 # 8.3: Transpose Data
 mean_biomasses <- as.data.frame(t(mean_biomasses_temp)) %>%
   slice(-1) # transpose means
-colnames(mean_biomasses) <- mean_biomasses_temp$`interaction(moisture_tx, temp_tx, destructive_time)`
+colnames(mean_biomasses) <- 
+  mean_biomasses_temp$`interaction(moisture_tx, temp_tx, destructive_time)`
 # fix colnames
 
 # for some reason transposing these data coerces them as characters
@@ -98,147 +99,193 @@ mean_biomasses$High.20.T2 <- as.numeric(mean_biomasses$High.20.T2)
 
 # 8.4: Make foodwebs
 # Ambient.12.T1
-Ambient.12.T1_prop <- ExRes_prop_control %>% mutate(B = mean_biomasses$Ambient.12.T1)
-Ambient.12.T1_prop <- Ambient.12.T1_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
-                                             "DetritusRecycling", "isDetritus", "isPlant", 
-                                             "canIMM")]
+Ambient.12.T1_prop <- ExRes_prop_control %>% 
+  mutate(B = mean_biomasses$Ambient.12.T1)
+Ambient.12.T1_prop <- 
+  Ambient.12.T1_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                         "DetritusRecycling", "isDetritus", "isPlant", 
+                         "canIMM")]
 Ambient.12.T1 <- list(imat = ExRes_imat, prop = Ambient.12.T1_prop)
 # Check some basic properties of the community:
 colnames(Ambient.12.T1$imat) == rownames(Ambient.12.T1$imat) 
 # Rescale a and p to be [0,1] instead of [0,100]
 Ambient.12.T1$prop$a = Ambient.12.T1$prop$a/100
 Ambient.12.T1$prop$p = Ambient.12.T1$prop$p/100
-#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") # This will put the plot in the working directory
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
 Ambient.12.T1_model <- comana(Ambient.12.T1, mkplot=T, whattoplot = "web", 
                               BOX.SIZE = 0.05,
-                              BOX.PROP = 0.3, # Box proportion (height: width)
-                              arrowlog = F, # Keep it on the normal scale
-                              arrowsizerange = c(0.1, 30)) # What range of line sizes do you want: c(min, max)
+                              BOX.PROP = 0.3, 
+                              # Box proportion (height: width)
+                              arrowlog = F, 
+                              # Keep it on the normal scale
+                              arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
 
 # Ambient.20.T1
-Ambient.20.T1_prop <- ExRes_prop_warming %>% mutate(B = mean_biomasses$Ambient.20.T1)
-Ambient.20.T1_prop <- Ambient.20.T1_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
-                                             "DetritusRecycling", "isDetritus", "isPlant", 
-                                             "canIMM")]
+Ambient.20.T1_prop <- ExRes_prop_warming %>% 
+  mutate(B = mean_biomasses$Ambient.20.T1)
+Ambient.20.T1_prop <- 
+  Ambient.20.T1_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                         "DetritusRecycling", "isDetritus", "isPlant", 
+                         "canIMM")]
 Ambient.20.T1 <- list(imat = ExRes_imat, prop = Ambient.20.T1_prop)
 # Check some basic properties of the community:
 colnames(Ambient.20.T1$imat) == rownames(Ambient.20.T1$imat) 
 # Rescale a and p to be [0,1] instead of [0,100]
 Ambient.20.T1$prop$a = Ambient.20.T1$prop$a/100
 Ambient.20.T1$prop$p = Ambient.20.T1$prop$p/100
-#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") # This will put the plot in the working directory
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
 Ambient.20.T1_model <- comana(Ambient.20.T1, mkplot=T, whattoplot = "web", 
                               BOX.SIZE = 0.05,
-                              BOX.PROP = 0.3, # Box proportion (height: width)
-                              arrowlog = F, # Keep it on the normal scale
-                              arrowsizerange = c(0.1, 30)) # What range of line sizes do you want: c(min, max)
+                              BOX.PROP = 0.3, 
+                              # Box proportion (height: width)
+                              arrowlog = F, 
+                              # Keep it on the normal scale
+                              arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
 
 # High.12.T1
-High.12.T1_prop <- ExRes_prop_control %>% mutate(B = mean_biomasses$High.12.T1)
-High.12.T1_prop <- High.12.T1_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
-                                       "DetritusRecycling", "isDetritus", "isPlant", 
-                                       "canIMM")]
+High.12.T1_prop <- ExRes_prop_control %>% 
+  mutate(B = mean_biomasses$High.12.T1)
+High.12.T1_prop <- 
+  High.12.T1_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                      "DetritusRecycling", "isDetritus", "isPlant", 
+                      "canIMM")]
 High.12.T1 <- list(imat = ExRes_imat, prop = High.12.T1_prop)
 # Check some basic properties of the community:
 colnames(High.12.T1$imat) == rownames(High.12.T1$imat) 
 # Rescale a and p to be [0,1] instead of [0,100]
 High.12.T1$prop$a = High.12.T1$prop$a/100
 High.12.T1$prop$p = High.12.T1$prop$p/100
-#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") # This will put the plot in the working directory
+# pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
 High.12.T1_model <- comana(High.12.T1, mkplot=T, whattoplot = "web", 
                            BOX.SIZE = 0.05,
-                           BOX.PROP = 0.3, # Box proportion (height: width)
-                           arrowlog = F, # Keep it on the normal scale
-                           arrowsizerange = c(0.1, 30)) # What range of line sizes do you want: c(min, max)
+                           BOX.PROP = 0.3, 
+                           # Box proportion (height: width)
+                           arrowlog = F, 
+                           # Keep it on the normal scale
+                           arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
 
 # High.20.T1
-High.20.T1_prop <- ExRes_prop_warming %>% mutate(B = mean_biomasses$High.20.T1)
-High.20.T1_prop <- High.20.T1_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
-                                       "DetritusRecycling", "isDetritus", "isPlant", 
-                                       "canIMM")]
+High.20.T1_prop <- ExRes_prop_warming %>% 
+  mutate(B = mean_biomasses$High.20.T1)
+High.20.T1_prop <- 
+  High.20.T1_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                      "DetritusRecycling", "isDetritus", "isPlant", 
+                      "canIMM")]
 High.20.T1 <- list(imat = ExRes_imat, prop = High.20.T1_prop)
 # Check some basic properties of the community:
 colnames(High.20.T1$imat) == rownames(High.20.T1$imat) 
 # Rescale a and p to be [0,1] instead of [0,100]
 High.20.T1$prop$a = High.20.T1$prop$a/100
 High.20.T1$prop$p = High.20.T1$prop$p/100
-#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") # This will put the plot in the working directory
+# pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
 High.20.T1_model <- comana(High.20.T1, mkplot=T, whattoplot = "web", 
                            BOX.SIZE = 0.05,
-                           BOX.PROP = 0.3, # Box proportion (height: width)
-                           arrowlog = F, # Keep it on the normal scale
-                           arrowsizerange = c(0.1, 30)) # What range of line sizes do you want: c(min, max)
+                           BOX.PROP = 0.3, 
+                           # Box proportion (height: width)
+                           arrowlog = F, 
+                           # Keep it on the normal scale
+                           arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
 
 # Ambient.12.T2
-Ambient.12.T2_prop <- ExRes_prop_control %>% mutate(B = mean_biomasses$Ambient.12.T2)
-Ambient.12.T2_prop <- Ambient.12.T2_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
-                                             "DetritusRecycling", "isDetritus", "isPlant", 
-                                             "canIMM")]
+Ambient.12.T2_prop <- ExRes_prop_control %>% 
+  mutate(B = mean_biomasses$Ambient.12.T2)
+Ambient.12.T2_prop <- 
+  Ambient.12.T2_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                         "DetritusRecycling", "isDetritus", "isPlant", 
+                         "canIMM")]
 Ambient.12.T2 <- list(imat = ExRes_imat, prop = Ambient.12.T2_prop)
 # Check some basic properties of the community:
 colnames(Ambient.12.T2$imat) == rownames(Ambient.12.T2$imat) 
 # Rescale a and p to be [0,1] instead of [0,100]
 Ambient.12.T2$prop$a = Ambient.12.T2$prop$a/100
 Ambient.12.T2$prop$p = Ambient.12.T2$prop$p/100
-#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") # This will put the plot in the working directory
+# pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
 Ambient.12.T2_model <- comana(Ambient.12.T2, mkplot=T, whattoplot = "web", 
                               BOX.SIZE = 0.05,
-                              BOX.PROP = 0.3, # Box proportion (height: width)
-                              arrowlog = F, # Keep it on the normal scale
-                              arrowsizerange = c(0.1, 30)) # What range of line sizes do you want: c(min, max)
+                              BOX.PROP = 0.3, 
+                              # Box proportion (height: width)
+                              arrowlog = F, 
+                              # Keep it on the normal scale
+                              arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
 
 # Ambient.20.T2
-Ambient.20.T2_prop <- ExRes_prop_warming %>% mutate(B = mean_biomasses$Ambient.20.T2)
-Ambient.20.T2_prop <- Ambient.20.T2_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
-                                             "DetritusRecycling", "isDetritus", "isPlant", 
-                                             "canIMM")]
+Ambient.20.T2_prop <- ExRes_prop_warming %>% 
+  mutate(B = mean_biomasses$Ambient.20.T2)
+Ambient.20.T2_prop <- 
+  Ambient.20.T2_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                         "DetritusRecycling", "isDetritus", "isPlant", 
+                         "canIMM")]
 Ambient.20.T2 <- list(imat = ExRes_imat, prop = Ambient.20.T2_prop)
 # Check some basic properties of the community:
 colnames(Ambient.20.T2$imat) == rownames(Ambient.20.T2$imat) 
 # Rescale a and p to be [0,1] instead of [0,100]
 Ambient.20.T2$prop$a = Ambient.20.T2$prop$a/100
 Ambient.20.T2$prop$p = Ambient.20.T2$prop$p/100
-#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") # This will put the plot in the working directory
+# pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
 Ambient.20.T2_model <- comana(Ambient.20.T2, mkplot=T, whattoplot = "web", 
                               BOX.SIZE = 0.05,
-                              BOX.PROP = 0.3, # Box proportion (height: width)
-                              arrowlog = F, # Keep it on the normal scale
-                              arrowsizerange = c(0.1, 30)) # What range of line sizes do you want: c(min, max)
+                              BOX.PROP = 0.3, 
+                              # Box proportion (height: width)
+                              arrowlog = F, 
+                              # Keep it on the normal scale
+                              arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
 
 # High.12.T2
-High.12.T2_prop <- ExRes_prop_control %>% mutate(B = mean_biomasses$High.12.T2)
-High.12.T2_prop <- High.12.T2_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
-                                       "DetritusRecycling", "isDetritus", "isPlant", 
-                                       "canIMM")]
+High.12.T2_prop <- ExRes_prop_control %>% 
+  mutate(B = mean_biomasses$High.12.T2)
+High.12.T2_prop <- 
+  High.12.T2_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                      "DetritusRecycling", "isDetritus", "isPlant", 
+                      "canIMM")]
 High.12.T2 <- list(imat = ExRes_imat, prop = High.12.T2_prop)
 # Check some basic properties of the community:
 colnames(High.12.T2$imat) == rownames(High.12.T2$imat) 
 # Rescale a and p to be [0,1] instead of [0,100]
 High.12.T2$prop$a = High.12.T2$prop$a/100
 High.12.T2$prop$p = High.12.T2$prop$p/100
-#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") # This will put the plot in the working directory
+# pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
 High.12.T2_model <- comana(High.12.T2, mkplot=T, whattoplot = "web", 
                            BOX.SIZE = 0.05,
-                           BOX.PROP = 0.3, # Box proportion (height: width)
-                           arrowlog = F, # Keep it on the normal scale
-                           arrowsizerange = c(0.1, 30)) # What range of line sizes do you want: c(min, max)
+                           BOX.PROP = 0.3, 
+                           # Box proportion (height: width)
+                           arrowlog = F, 
+                           # Keep it on the normal scale
+                           arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
 
 # High.20.T2
-High.20.T2_prop <- ExRes_prop_warming %>% mutate(B = mean_biomasses$High.20.T2)
-High.20.T2_prop <- High.20.T2_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
-                                       "DetritusRecycling", "isDetritus", "isPlant", 
-                                       "canIMM")]
+High.20.T2_prop <- ExRes_prop_warming %>% 
+  mutate(B = mean_biomasses$High.20.T2)
+High.20.T2_prop <- 
+  High.20.T2_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                      "DetritusRecycling", "isDetritus", "isPlant", 
+                      "canIMM")]
 High.20.T2 <- list(imat = ExRes_imat, prop = High.20.T2_prop)
 # Check some basic properties of the community:
 colnames(High.20.T2$imat) == rownames(High.20.T2$imat) 
 # Rescale a and p to be [0,1] instead of [0,100]
 High.20.T2$prop$a = High.20.T2$prop$a/100
 High.20.T2$prop$p = High.20.T2$prop$p/100
-#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") # This will put the plot in the working directory
+# pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
 High.20.T2_model <- comana(High.20.T2, mkplot=T, whattoplot = "web", 
                            BOX.SIZE = 0.05,
-                           BOX.PROP = 0.3, # Box proportion (height: width)
-                           arrowlog = F, # Keep it on the normal scale
-                           arrowsizerange = c(0.1, 30)) # What range of line sizes do you want: c(min, max)
-
-# NEW -- APRIL 17
+                           BOX.PROP = 0.3, 
+                           # Box proportion (height: width)
+                           arrowlog = F, 
+                           # Keep it on the normal scale
+                           arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)

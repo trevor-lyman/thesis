@@ -34,9 +34,12 @@ micro_prop_ab <- read.csv("Data/Kamath et al dataset.csv") %>%
 # Calculate biomass
 mesofauna_biomasses <- data.frame("Sample_ID" = abundance_data$Sample_ID) %>%
   mutate("collembola_biomass" =
-           meso_abundances$collembola * # abundance per m2
-           meso_body_mass$body_mass[meso_body_mass$Node_ID=="collembola"] * # body mass (ug of C)
-           1e-6 # g of C/ug of C 
+           meso_abundances$collembola * 
+           # abundance per m2
+           meso_body_mass$body_mass[meso_body_mass$Node_ID=="collembola"] * 
+           # body mass (ug of C)
+           1e-6 
+         # g of C/ug of C 
          ) %>%  
   mutate("juv_oribatids_biomass" =
            meso_abundances$juv_oribatids *
@@ -76,12 +79,17 @@ mesofauna_biomasses <- data.frame("Sample_ID" = abundance_data$Sample_ID) %>%
 # Kamath et al. body mass data is in ug wwt
 microfauna_biomasses <- 
   data.frame("Sample_ID" = micro_abundances$Sample_ID) %>%
-  # standardized biomass = group proportional abundance * abundance per m2 * body mass (ug wwt) * ug to g * g wwt to g dwt * g dwt to g of C  
+  # standardized biomass = group proportional abundance * abundance per m2 * 
+  # body mass (ug wwt) * ug to g * g wwt to g dwt * g dwt to g of C  
   mutate(n.bacterivore_biomass =
-           micro_prop_ab$prop_ab[micro_prop_ab$Node_ID=="Bacterivore"] * # group proportional abundance
-           micro_abundances$total_micro_ab_standardized * # abundance per m2
-           micro_body_mass$body_mass[micro_body_mass$Node_ID=="Bacterivore"] * # body mass (ug wwt)
-           1e-6 * 0.25 * 0.5 #ug to g * g wwt to g dwt * g dwt to g of C
+           micro_prop_ab$prop_ab[micro_prop_ab$Node_ID=="Bacterivore"] * 
+           # group proportional abundance
+           micro_abundances$total_micro_ab_standardized * 
+           # abundance per m2
+           micro_body_mass$body_mass[micro_body_mass$Node_ID=="Bacterivore"] * 
+           # body mass (ug wwt)
+           1e-6 * 0.25 * 0.5 
+         #ug to g * g wwt to g dwt * g dwt to g of C
          ) %>%
   mutate(n.fungivore_biomass =
            micro_prop_ab$prop_ab[micro_prop_ab$Node_ID=="Fungivore"] *
@@ -134,7 +142,7 @@ temp2 <- temp %>%
   # remove original cols
   select(-prostigs_biomass, -astigmata_biomass)
 
-temp2 <- # re-organize order of nodes, in top-down order, corresponding to food web
+temp2 <- # re-organize order of nodes, in top-down order
   temp2[, c("Sample_ID", "mesostigs_biomass", "zerconidae_biomass",
             "prostig_astig_biomass", "juv_oribatids_biomass", 
             "oribatids_biomass", "collembola_biomass", 
@@ -191,7 +199,8 @@ write.csv(temp2, "Outputs/webs.csv")
 # Step 9:
 # create plot
 total.biom_plot <- 
-  ggplot(biomass_data, aes(x=interaction(temp_tx, moisture_tx), y=total_biomass, 
+  ggplot(biomass_data, aes(x=interaction(temp_tx, moisture_tx), 
+                           y=total_biomass, 
                            fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
   geom_jitter(aes(pch = as.factor(destructive_time)), 
