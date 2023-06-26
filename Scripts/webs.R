@@ -289,3 +289,12 @@ High.20.T2_model <- comana(High.20.T2, mkplot=T, whattoplot = "web",
                            # Keep it on the normal scale
                            arrowsizerange = c(0.1, 30)) 
 # What range of line sizes do you want: c(min, max)
+
+write.csv(Ambient.12.T1_model$fmat, "Outputs/Ambient.12.T1_fmat.csv")
+write.csv(Ambient.20.T1_model$fmat, "Outputs/Ambient.20.T1_fmat.csv")
+write.csv(High.12.T1_model$fmat, "Outputs/High.12.T1_fmat.csv")
+write.csv(High.20.T1_model$fmat, "Outputs/High.20.T1_fmat.csv")
+write.csv(Ambient.12.T2_model$fmat, "Outputs/Ambient.12.T2_fmat.csv")
+write.csv(Ambient.20.T2_model$fmat, "Outputs/Ambient.20.T2_fmat.csv")
+write.csv(High.12.T2_model$fmat, "Outputs/High.12.T2_fmat.csv")
+write.csv(High.20.T2_model$fmat, "Outputs/High.20.T2_fmat.csv")

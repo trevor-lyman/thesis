@@ -179,13 +179,11 @@ biomass_data <- temp3 %>%
            collembola_biomass ) %>%
   mutate(micro_biomass = n.predator_biomass + n.bacterivore_biomass +
            n.fungivore_biomass + n.omnivore_biomass) %>%
-  mutate(tx = interaction(moisture_tx, temp_tx, destructive_time)) %>%
+  mutate(tx = interaction(temp_tx, moisture_tx, destructive_time)) %>%
   filter(!Sample_ID == "ExRes 5")
 
 biomass_data$tx <- droplevels(biomass_data$tx)
-key_biomasses <- levels(biomass_data$tx)
-levels(biomass_data$tx) <- 
-  c("a", "b", "c", "d", "e", "f", "g", "h")
+
 ## a = T1/Ambient/12C, b = T2/Ambient/12C, c = T1/High/12C,
 ## d = T2/High/12C, e = T1/Ambient/20C, f = T2/Ambient/20C, 
 ## g = T1/High/20C, h = T2/High/20C
@@ -223,10 +221,20 @@ total.biom_summary <- biomass_data %>%
   group_by(tx) %>%
   summarize(mean = mean(total_biomass), 
             se = sd(total_biomass)/
-              sqrt(length(total_biomass))) %>%
-  mutate(key = key_biomasses)
+              sqrt(length(total_biomass)))
 
 # Step 12:
 # call everything
 total.biom_plot; total.biom_summary; summary(total.biom_aov)
 
+# check assumptions
+model_bm <- lm(total_biomass ~ 
+                 (moisture_tx * temp_tx * destructive_time) 
+               + block_effect, data=biomass_data)
+
+ggqqplot(residuals(model_bm))
+shapiro_test(residuals(model_bm))
+
+plot(model_bm, 1)
+biomass_data %>% levene_test(total_biomass ~ 
+                                 (moisture_tx * temp_tx * destructive_time))

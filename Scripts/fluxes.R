@@ -41,6 +41,8 @@ prop <- prop %>%
   mutate(p_12C = ExRes_prop_control$p) %>%
   mutate(p_20C = ExRes_prop_warming$p)
 
+write.csv(prop, "Outputs/model_prop_table.csv")
+
 # Step 4: Calculate Flux
 # 4.1: Set up data frame with cols for each model
 ExRes_biomasses <- as.data.frame(model_biomasses)
@@ -909,8 +911,7 @@ model_outputs$block_effect <- as.factor(model_outputs$block_effect)
 
 model_outputs$tx <- droplevels(model_outputs$tx)
 key_flux <- levels(model_outputs$tx)
-levels(model_outputs$tx) <- 
-  c("a", "b", "c", "d", "e", "f", "g", "h")
+
 ## a = 12 Ambient T1, b = 20 Ambient T1, c = 12 High T1, d = 20 High T1,
 ## e = 12 Ambient T2, f = 20 Ambient T2, g = 12 High T2, h = 20 High T2
 
@@ -1003,3 +1004,36 @@ Nmin_aov <-
 
 Nmin_plot; Nmin_summary; summary(Nmin_aov)
 
+# check assumptions
+model_fx <- lm(total_consumption ~ 
+                 (moisture_tx * temp_tx * destructive_time) 
+               + block_effect, data=model_outputs)
+
+ggqqplot(residuals(model_fx))
+shapiro_test(residuals(model_fx))
+
+plot(model_fx, 1)
+model_outputs %>% levene_test(total_consumption ~ 
+                               (moisture_tx * temp_tx * destructive_time))
+
+model_Cmin <- lm(total_Cmin ~ 
+                 (moisture_tx * temp_tx * destructive_time) 
+               + block_effect, data=model_outputs)
+
+ggqqplot(residuals(model_Cmin))
+shapiro_test(residuals(model_Cmin))
+
+plot(model_Cmin, 1)
+model_outputs %>% levene_test(total_Cmin ~ 
+                                (moisture_tx * temp_tx * destructive_time))
+
+model_Nmin <- lm(total_Nmin ~ 
+                   (moisture_tx * temp_tx * destructive_time) 
+                 + block_effect, data=model_outputs)
+
+ggqqplot(residuals(model_Nmin))
+shapiro_test(residuals(model_Nmin))
+
+plot(model_Nmin, 1)
+model_outputs %>% levene_test(total_Nmin ~ 
+                                (moisture_tx * temp_tx * destructive_time))

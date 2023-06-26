@@ -12,6 +12,8 @@ library(corrplot)
 library(tidyr)
 library(data.table)
 library(reshape2)
+library(ggpubr)
+library(rstatix)
 
 # Step 2: Read Data
 sample_metadata <- read.csv("Data/sample metadata v2.csv")
@@ -148,3 +150,15 @@ total.ab_summary <- abundance_figs %>%
 # Step 13:
 # call everything
 total.ab_plot; total.ab_summary; summary(total.ab_aov)
+
+# check assumptions
+model_ab <- lm(total_ab_standardized ~ 
+                 (moisture_tx * temp_tx * destructive_time) 
+               + block_effect, data=abundance_figs)
+
+ggqqplot(residuals(model_ab))
+shapiro_test(residuals(model_ab))
+
+plot(model_ab, 1)
+abundance_figs %>% levene_test(total_ab_standardized ~ 
+                                 (moisture_tx * temp_tx * destructive_time))
