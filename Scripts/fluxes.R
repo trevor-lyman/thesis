@@ -866,6 +866,10 @@ total_consumption <- unlist(total_consumption)
 total_Cmin <- unlist(total_Cmin)
 total_Nmin <- unlist(total_Nmin)
 
+library(tibble)
+L1 <- tibble::lst(node_Cmin_temp)
+L2 <- lapply(L1, as.data.table)
+
 Sample_ID <- c("ExRes 3", "ExRes 5", "ExRes 7", "ExRes 8",
                "ExRes 11", "ExRes 13", "ExRes 16", 
                "ExRes 17", "ExRes 18", "ExRes 19", 
@@ -885,9 +889,9 @@ model_outputs_temp <- as.data.frame(cbind(Sample_ID, total_consumption,
 # Step 6: Merge with Sample Metadata  
 model_outputs <- merge(x = sample_metadata, y = model_outputs_temp, 
                        by = "Sample_ID") 
-total_consumption <- model_outputs %>% select(-total_Cmin, -total_Nmin)
-total_Cmin <- model_outputs %>% select(-total_consumption, -total_Nmin)
-total_Nmin <- model_outputs %>% select(-total_Cmin, -total_consumption)
+total_consumption <- model_outputs %>% dplyr::select(-total_Cmin, -total_Nmin)
+total_Cmin <- model_outputs %>% dplyr::select(-total_consumption, -total_Nmin)
+total_Nmin <- model_outputs %>% dplyr::select(-total_Cmin, -total_consumption)
 
 # 6.1: Export .csv Files
 write.csv(model_outputs, "Outputs/model_outputs.csv")

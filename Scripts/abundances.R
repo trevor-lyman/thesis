@@ -76,8 +76,7 @@ temp_dry$mesostigs <- g_per_m2*temp_dry$mesostigs/temp_dry$dry_weight
 temp_dry$others <- g_per_m2*temp_dry$others/temp_dry$dry_weight
 
 meso_abundances <- merge(x = sample_metadata, y = temp_dry, 
-                         by = "Sample_ID") %>%
-  filter(!destructive_time == "T0")
+                         by = "Sample_ID") 
   
 write.csv(meso_abundances, "Outputs/meso_abundances.csv")
 
@@ -88,8 +87,7 @@ temp_wet <- microfauna_ab %>%
 # estimate node level abundances
 
 micro_abundances <- merge(x = sample_metadata, y = temp_wet, 
-                          by = "Sample_ID") %>%
-  filter(!destructive_time == "T0")
+                          by = "Sample_ID") 
 
 write.csv(micro_abundances, "Outputs/micro_abundances.csv")
 
@@ -102,7 +100,6 @@ temp0 <- merge(x = temp_wet, y = temp_dry, by = "Sample_ID") %>%
 
 # Step 7: 
 abundance_data <- merge(x = sample_metadata, y = temp0, by = "Sample_ID") %>%
-  filter(!destructive_time == "T0") %>%
   mutate(tx = interaction(temp_tx, moisture_tx, destructive_time))
 
 abundance_data$destructive_time <- as.factor(abundance_data$destructive_time)
@@ -146,6 +143,56 @@ total.ab_summary <- abundance_figs %>%
   summarize(mean = mean(total_ab_standardized), 
             se = sd(total_ab_standardized)/
               sqrt(length(total_ab_standardized))) 
+
+# create plot
+meso.ab_plot <- 
+  ggplot(abundance_figs, aes(x=tx, y=total_meso_ab_standardized)) + 
+  geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
+  geom_jitter(position=position_jitter(width=.1, height=0)) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"))
+
+# create aov
+meso.ab_aov <- 
+  aov(total_meso_ab_standardized ~ (moisture_tx * temp_tx * destructive_time) 
+      + block_effect, data=abundance_figs)
+
+# summary table
+meso.ab_summary <- abundance_data %>%
+  group_by(tx) %>%
+  summarize(mean = mean(total_meso_ab_standardized), 
+            se = sd(total_meso_ab_standardized)/
+              sqrt(length(total_meso_ab_standardized)))
+
+# call everything
+meso.ab_plot; meso.ab_summary; summary(meso.ab_aov)
+
+# create plot
+micro.ab_plot <- 
+  ggplot(abundance_figs, aes(x=tx, y=total_micro_ab_standardized)) + 
+  geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
+  geom_jitter(position=position_jitter(width=.1, height=0)) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"))
+
+# create aov
+micro.ab_aov <- 
+  aov(total_micro_ab_standardized ~ (moisture_tx * temp_tx * destructive_time) 
+      + block_effect, data=abundance_figs)
+
+# summary table
+micro.ab_summary <- abundance_data %>%
+  group_by(tx) %>%
+  summarize(mean = mean(total_micro_ab_standardized), 
+            se = sd(total_micro_ab_standardized)/
+              sqrt(length(total_micro_ab_standardized))) 
+
+# call everything
+micro.ab_plot; micro.ab_summary; summary(micro.ab_aov)
 
 # Step 13:
 # call everything

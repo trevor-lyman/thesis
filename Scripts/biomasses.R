@@ -14,7 +14,7 @@ library(data.table)
 library(reshape2)
 
 # Step 2: Read Data
-abundance_data <- read.csv("Outputs/abundances.csv")
+abundance_data <- read.csv("Outputs/abundances.csv") 
 sample_metadata <- read.csv("Data/sample metadata v2.csv")
 meso_abundances <- 
   read.csv("Outputs/meso_abundances.csv") 
@@ -23,9 +23,9 @@ meso_body_mass <-
   read.csv("Data/Barreto et al complete dataset .csv") 
 # Carlos' body mass data, in ug of C
 micro_body_mass <- read.csv("Data/Kamath et al dataset.csv") %>% 
-  select(-prop_ab) # body mass from Dev's thesis, in ug wwt
+  dplyr::select(-prop_ab) # body mass from Dev's thesis, in ug wwt
 micro_prop_ab <- read.csv("Data/Kamath et al dataset.csv") %>% 
-  select(-body_mass) # proportional abundances from Dev's thesis
+  dplyr::select(-body_mass) # proportional abundances from Dev's thesis
 
 # Step 3:
 # Barreto et al. body mass data is in ug of C
@@ -140,7 +140,7 @@ temp2 <- temp %>%
   # combine prostig and astig nodes
   mutate(prostig_astig_biomass = prostigs_biomass + astigmata_biomass) %>%
   # remove original cols
-  select(-prostigs_biomass, -astigmata_biomass)
+  dplyr::select(-prostigs_biomass, -astigmata_biomass)
 
 temp2 <- # re-organize order of nodes, in top-down order
   temp2[, c("Sample_ID", "mesostigs_biomass", "zerconidae_biomass",
@@ -158,6 +158,7 @@ colnames(model_biomasses) <- temp2$Sample_ID
 # fix colnames 
 
 write.csv(model_biomasses, "Outputs/model_biomasses.csv")
+write.csv(temp2, "Outputs/biom_wide.csv")
 
 # Step 8:
 temp3 <- merge(x = sample_metadata, y = temp2, by = "Sample_ID") %>%
@@ -238,3 +239,5 @@ shapiro_test(residuals(model_bm))
 plot(model_bm, 1)
 biomass_data %>% levene_test(total_biomass ~ 
                                  (moisture_tx * temp_tx * destructive_time))
+
+write.csv(biomass_data, "Outputs/biomass_long.csv")

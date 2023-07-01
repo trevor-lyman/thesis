@@ -86,25 +86,23 @@ resp.data.temp2 <- resp.data.temp %>%
 
 resp.data.temp2$Lin_Flux_gofCO2perm2peryr[resp.data.temp2$Lin_Flux_gofCO2perm2peryr<0] <- 0
 
-resp.data.temp3 <- resp.data.temp2 %>%
-  group_by(Sample_ID) %>%
-  summarize(mean_flux = mean(Lin_Flux_gofCO2perm2peryr),
-            se_flux = sd(Lin_Flux_gofCO2perm2peryr)/
-              sqrt(length(Lin_Flux_gofCO2perm2peryr)))
+resp.data.temp2$filter <- interaction(resp.data.temp2$Sample_ID, resp.data.temp2$Sampling_Time)
 
-resp.data <- merge(x = sample_metadata, y = resp.data.temp2, by = "Sample_ID") %>%
-  filter(!destructive_time == "T0") %>%
-  select(!c(Exp_FluxCV, Exp_Flux_gofCO2perm2peryr))
+boxplot(resp.data.temp2$Lin_Flux_gofCO2perm2peryr)
+max(resp.data.temp2$Lin_Flux_gofCO2perm2peryr)
+resp.data.temp3 <- resp.data.temp2%>%filter(!filter == "ExRes 29.W1")
+# outlier 1: W1, ExRes 29
+boxplot(resp.data.temp3$Lin_Flux_gofCO2perm2peryr)
+max(resp.data.temp3$Lin_Flux_gofCO2perm2peryr)
+resp.data.temp4 <- resp.data.temp3%>%filter(!filter == "ExRes 13.W1")
+# outlier 2: W1, ExRes 13
+boxplot(resp.data.temp4$Lin_Flux_gofCO2perm2peryr)
 
-resp.data_means <- merge(x = sample_metadata, y = resp.data.temp3, by = "Sample_ID") %>%
-  filter(!destructive_time == "T0")
-
-resp.data_means$moisture_tx <- as.factor(resp.data_means$moisture_tx)
-resp.data_means$temp_tx <- as.factor(resp.data_means$temp_tx)
-resp.data_means$destructive_time <- as.factor(resp.data_means$destructive_time)
+resp.data <- merge(x = sample_metadata, y = resp.data.temp4, by = "Sample_ID") %>%
+  dplyr::select(!c(Exp_FluxCV, Exp_Flux_gofCO2perm2peryr))
 
 resp.data2 <- resp.data %>%
-  select(-Lin_FluxCV) %>%
+  select(-c(Lin_FluxCV, filter)) %>%
   pivot_wider(names_from = Sampling_Time, values_from = Lin_Flux_gofCO2perm2peryr) %>%
   group_by(Sample_ID)
 
@@ -112,12 +110,27 @@ resp.data2 <- resp.data2[, c("Sample_ID", "destructive_time",
                              "temp_tx", "moisture_tx", "block_effect",
                              "W0", "W1", "W2", "W3", "W4", "W5", "W6")]
 
-write.csv(resp.data2, "Outputs/respiration_output.csv")
-write.csv(resp.data_means, "Outputs/mean_respiration_output.csv")
+cum_resp <- (rowSums(resp.data2[,6:10], na.rm = T))
+#W0 to W3
 
-resp_plot <- ggplot(resp.data_means, 
+resp.data2$cum_resp <- cum_resp
+
+write.csv(resp.data2, "Outputs/respiration_output.csv")
+
+resp.data <- resp.data2 %>% filter(!destructive_time == "T0")
+
+resp.data$destructive_time <- 
+  as.factor(resp.data$destructive_time)
+resp.data$block_effect <- 
+  as.factor(resp.data$block_effect)
+resp.data$temp_tx <- 
+  as.factor(resp.data$temp_tx)
+resp.data$moisture_tx <- 
+  as.factor(resp.data$moisture_tx)
+
+resp_plot <- ggplot(resp.data, 
        aes(x=interaction(temp_tx, moisture_tx), 
-           y=mean_flux, fill = as.factor(destructive_time))) + 
+           y=cum_resp, fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
   geom_jitter(aes(pch = as.factor(destructive_time)), 
               position=position_jitter(width=.1, height=0), size = 3) +
@@ -128,28 +141,28 @@ resp_plot <- ggplot(resp.data_means,
   scale_fill_brewer(palette = "Greys")
 
 # create summary table
-resp_summary <- resp.data_means %>%
+resp_summary <- resp.data %>%
   group_by(interaction(destructive_time, temp_tx, moisture_tx)) %>%
   summarise(
-    mean = mean(mean_flux), 
-    se = sd(mean_flux)/sqrt(length(mean_flux)))
+    mean = mean(cum_resp), 
+    se = sd(cum_resp)/sqrt(length(cum_resp)))
 
 # create aov
 resp_aov <- 
-  aov(mean_flux ~ (moisture_tx * temp_tx * destructive_time) + block_effect, 
-      data = resp.data_means)
+  aov(cum_resp ~ (moisture_tx * temp_tx * destructive_time) + block_effect, 
+      data = resp.data)
 
 # call everything
 resp_plot; resp_summary; summary(resp_aov)
 
 # check assumptions
-model_resp <- lm(mean_flux ~ 
+model_resp <- lm(cum_resp ~ 
                      (moisture_tx * temp_tx * destructive_time) 
-                   + block_effect, data=resp.data_means)
+                   + block_effect, data=resp.data)
 
 ggqqplot(residuals(model_resp))
 shapiro_test(residuals(model_resp))
 
 plot(model_resp, 1)
-resp.data_means %>% levene_test(mean_flux ~ 
-                                         (moisture_tx * temp_tx * destructive_time))
+as.data.frame(resp.data) %>% 
+  levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time))
