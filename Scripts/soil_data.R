@@ -35,7 +35,8 @@ aggregated_pH_data$tx <- droplevels(aggregated_pH_data$tx)
 key_pH <- levels(aggregated_pH_data$tx)
 
 # create plot
-pH_plot <- ggplot(aggregated_pH_data, aes(x=interaction(temp_tx, moisture_tx), 
+pH_plot <- ggplot(aggregated_pH_data, aes(x=interaction(destructive_time, 
+                                                        temp_tx, moisture_tx), 
                                           y=pH, 
                                           fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
@@ -85,7 +86,7 @@ key_soil_moisture <- levels(aggregated_soil_moisture_data$tx)
 # create plot
 soil_moisture_plot <- 
   ggplot(aggregated_soil_moisture_data, 
-         aes(x=interaction(temp_tx, moisture_tx), 
+         aes(x=interaction(destructive_time, temp_tx, moisture_tx), 
              y=pct_moisture, fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
   geom_jitter(aes(pch = as.factor(destructive_time)), 
@@ -133,7 +134,7 @@ key_CN <- levels(aggregated_CNS_data$tx)
 # create plot
 CN_plot <- 
   ggplot(aggregated_CNS_data, 
-         aes(x=interaction(temp_tx, moisture_tx), 
+         aes(x=interaction(destructive_time, temp_tx, moisture_tx), 
              y=C_N_ratio, fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
   geom_jitter(aes(pch = as.factor(destructive_time)), 
@@ -203,3 +204,4 @@ shapiro_test(residuals(model_CN))
 plot(model_CN, 1)
 aggregated_CNS_data %>% levene_test(C_N_ratio ~ 
                                       (moisture_tx * temp_tx * destructive_time))
+

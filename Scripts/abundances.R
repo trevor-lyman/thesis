@@ -118,7 +118,8 @@ abundance_figs <- abundance_data %>% filter(!destructive_time == "T0") %>%
 # Step 10:
 # create plot
 total.ab_plot <- 
-  ggplot(abundance_figs, aes(x=interaction(temp_tx, moisture_tx), 
+  ggplot(abundance_figs, aes(x=interaction(destructive_time, 
+                                           temp_tx, moisture_tx), 
                              y=total_ab_standardized, 
                              fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
@@ -144,15 +145,22 @@ total.ab_summary <- abundance_figs %>%
             se = sd(total_ab_standardized)/
               sqrt(length(total_ab_standardized))) 
 
+# call everything
+total.ab_plot; total.ab_summary; summary(total.ab_aov)
+
 # create plot
 meso.ab_plot <- 
-  ggplot(abundance_figs, aes(x=tx, y=total_meso_ab_standardized)) + 
+  ggplot(abundance_figs, aes(x=interaction(destructive_time, 
+                                             temp_tx, moisture_tx), 
+                             y=total_meso_ab_standardized,
+                             fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
   geom_jitter(position=position_jitter(width=.1, height=0)) +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.background = element_blank(), 
-        axis.line = element_line(colour = "black"))
+        axis.line = element_line(colour = "black")) +
+  scale_fill_brewer(palette = "Greys")
 
 # create aov
 meso.ab_aov <- 
@@ -171,13 +179,17 @@ meso.ab_plot; meso.ab_summary; summary(meso.ab_aov)
 
 # create plot
 micro.ab_plot <- 
-  ggplot(abundance_figs, aes(x=tx, y=total_micro_ab_standardized)) + 
+  ggplot(abundance_figs, aes(x=interaction(destructive_time, 
+                                           temp_tx, moisture_tx), 
+                             y=total_micro_ab_standardized,
+                             fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
   geom_jitter(position=position_jitter(width=.1, height=0)) +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.background = element_blank(), 
-        axis.line = element_line(colour = "black"))
+        axis.line = element_line(colour = "black")) +
+  scale_fill_brewer(palette = "Greys")
 
 # create aov
 micro.ab_aov <- 
@@ -195,9 +207,6 @@ micro.ab_summary <- abundance_data %>%
 micro.ab_plot; micro.ab_summary; summary(micro.ab_aov)
 
 # Step 13:
-# call everything
-total.ab_plot; total.ab_summary; summary(total.ab_aov)
-
 # check assumptions
 model_ab <- lm(total_ab_standardized ~ 
                  (moisture_tx * temp_tx * destructive_time) 

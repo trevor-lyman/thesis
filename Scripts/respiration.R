@@ -129,7 +129,7 @@ resp.data$moisture_tx <-
   as.factor(resp.data$moisture_tx)
 
 resp_plot <- ggplot(resp.data, 
-       aes(x=interaction(temp_tx, moisture_tx), 
+       aes(x=interaction(destructive_time, temp_tx, moisture_tx), 
            y=cum_resp, fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
   geom_jitter(aes(pch = as.factor(destructive_time)), 

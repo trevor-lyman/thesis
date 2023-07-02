@@ -38,7 +38,7 @@ key_enzymes <- levels(aggregated_enzyme_data$tx)
 # create plot
 phenox_plot <- 
   ggplot(aggregated_enzyme_data, 
-         aes(x=interaction(temp_tx, moisture_tx), 
+         aes(x=interaction(destructive_time, temp_tx, moisture_tx), 
              y=Phenox, fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
   geom_jitter(aes(pch = as.factor(destructive_time)), 
@@ -68,7 +68,7 @@ phenox_plot; phenox_summary; summary(phenox_aov)
 # create plot
 perox_plot <- 
   ggplot(aggregated_enzyme_data, 
-         aes(x=interaction(temp_tx, moisture_tx), 
+         aes(x=interaction(destructive_time, temp_tx, moisture_tx), 
              y=Perox, fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
   geom_jitter(aes(pch = as.factor(destructive_time)), 

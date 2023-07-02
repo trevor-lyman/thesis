@@ -198,7 +198,8 @@ write.csv(temp2, "Outputs/webs.csv")
 # Step 9:
 # create plot
 total.biom_plot <- 
-  ggplot(biomass_data, aes(x=interaction(temp_tx, moisture_tx), 
+  ggplot(biomass_data, aes(x=interaction(destructive_time, 
+                                         temp_tx, moisture_tx), 
                            y=total_biomass, 
                            fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice

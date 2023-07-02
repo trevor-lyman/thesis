@@ -922,7 +922,8 @@ key_flux <- levels(model_outputs$tx)
 # Step 8: Consumption
 # 8.1: Plot
 consumption_plot <- 
-  ggplot(model_outputs, aes(x=interaction(temp_tx, moisture_tx), 
+  ggplot(model_outputs, aes(x=interaction(destructive_time, 
+                                          temp_tx, moisture_tx), 
                             y=total_consumption, 
                             fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
@@ -952,7 +953,8 @@ consumption_plot; consumption_summary; summary(consumption_aov)
 # Step 9: Cmin
 # 9.1: Plot
 Cmin_plot <- 
-  ggplot(model_outputs, aes(x=interaction(temp_tx, moisture_tx), y=total_Cmin, 
+  ggplot(model_outputs, aes(x=interaction(destructive_time, 
+                                          temp_tx, moisture_tx), y=total_Cmin, 
                             fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
   geom_jitter(aes(pch = as.factor(destructive_time)), 
@@ -982,7 +984,8 @@ Cmin_plot; Cmin_summary; summary(Cmin_aov)
 # Step 10: Nmin
 # 10.1: Plot
 Nmin_plot <- 
-  ggplot(model_outputs, aes(x=interaction(temp_tx, moisture_tx), y=total_Nmin, 
+  ggplot(model_outputs, aes(x=interaction(destructive_time, 
+                                          temp_tx, moisture_tx), y=total_Nmin, 
                             fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
   geom_jitter(aes(pch = as.factor(destructive_time)), 
