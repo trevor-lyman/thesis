@@ -1,0 +1,16 @@
+,mesostigs,zerconidae,prostig_astig,juv_oribatids,oribatids,collembola,predatory_nematodes,bactivorous_nematodes,fungivorous_nematodes,omnivorous_nematodes,protists,bacteria,fungi,labile,recalcitrant
+mesostigs,0,0,1,1,0,1,0,0,0,0,0,0,0,0,0
+zerconidae,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0
+prostig_astig,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+juv_oribatids,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+oribatids,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+collembola,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+predatory_nematodes,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0
+bactivorous_nematodes,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0
+fungivorous_nematodes,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+omnivorous_nematodes,0,0,0,0,0,0,0.5,0.5,0.5,0,1,1,1,0,0
+protists,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
+bacteria,0,0,0,0,0,0,0,0,0,0,0,0,0,0.3,0.7
+fungi,0,0,0,0,0,0,0,0,0,0,0,0,0,0.7,0.3
+labile,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+recalcitrant,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

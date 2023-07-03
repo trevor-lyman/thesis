@@ -35,6 +35,9 @@ aggregated_enzyme_data$moisture_tx <-
 aggregated_enzyme_data$tx <- droplevels(aggregated_enzyme_data$tx)
 key_enzymes <- levels(aggregated_enzyme_data$tx)
 
+perox_data <- aggregated_enzyme_data %>% dplyr::select(-Phenox) %>%
+  filter(!Sample_ID == "ExRes 33")
+
 # create plot
 phenox_plot <- 
   ggplot(aggregated_enzyme_data, 
@@ -67,7 +70,7 @@ phenox_plot; phenox_summary; summary(phenox_aov)
 
 # create plot
 perox_plot <- 
-  ggplot(aggregated_enzyme_data, 
+  ggplot(perox_data, 
          aes(x=interaction(destructive_time, temp_tx, moisture_tx), 
              y=Perox, fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
@@ -99,6 +102,9 @@ perox_plot; perox_summary; summary(perox_aov)
 write.csv(aggregated_enzyme_data, "Outputs/enzyme_outputs.csv")
 
 # check assumptions
+library(ggpubr)
+library(rstatix)
+
 model_phenox <- lm(Phenox ~ 
                  (moisture_tx * temp_tx * destructive_time) 
                + block_effect, data=aggregated_enzyme_data)
@@ -110,13 +116,13 @@ plot(model_phenox, 1)
 aggregated_enzyme_data %>% levene_test(Phenox ~ 
                                      (moisture_tx * temp_tx * destructive_time))
 
-model_perox <- lm(Perox ~ 
+model_perox <- lm((Perox) ~ 
                      (moisture_tx * temp_tx * destructive_time) 
-                   + block_effect, data=aggregated_enzyme_data)
+                   + block_effect, data=perox_data)
 
 ggqqplot(residuals(model_perox))
 shapiro_test(residuals(model_perox))
 
 plot(model_perox, 1)
-aggregated_enzyme_data %>% levene_test(Perox ~ 
+aggregated_enzyme_data %>% levene_test((Perox) ~ 
                                          (moisture_tx * temp_tx * destructive_time))

@@ -1,0 +1,16 @@
+,ID,d,a,p,CN,DetritusRecycling,isDetritus,isPlant,canIMM
+1,mesostigs,1.84,60,35,8,0,0,0,0
+2,zerconidae,1.84,90,35,8,0,0,0,0
+5,prostig_astig,1.84,50,35,8,0,0,0,0
+7,juv_oribatids,1.2,50,35,8,0,0,0,0
+8,oribatids,1.2,50,35,8,0,0,0,0
+9,collembola,1.84,50,35,8,0,0,0,0
+10,predatory_nematodes,1.6,50,37,10,0,0,0,0
+11,bactivorous_nematodes,4.36,60,37,10,0,0,0,0
+12,fungivorous_nematodes,1.92,38,37,10,0,0,0,0
+13,omnivorous_nematodes,2.68,60,37,10,0,0,0,0
+14,protists,6,95,40,7,0,0,0,0
+15,bacteria,6,100,30,4,0,0,0,1
+16,fungi,1.2,100,30,10,0,0,0,1
+17,labile,0,100,100,57.25,0,1,0,0
+18,recalcitrant,0,100,100,18.81,1,1,0,0

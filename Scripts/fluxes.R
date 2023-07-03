@@ -16,16 +16,16 @@ library(reshape2)
 # Step 2: Read Data
 sample_metadata <- read.csv("Data/sample metadata v2.csv")
 model_biomasses <- read.csv("Outputs/model_biomasses.csv")
-ExRes_imat <- as.data.frame(read.csv("Data/ExRes_imat_11nodes.csv"))
+ExRes_imat <- as.data.frame(read.csv("Data/ExRes_imat_v2.csv"))
 # rows denote consumers, cols denote resources
 # 1 denotes the presence of a trophic interaction, 0 denotes the absence 
 ExRes_prop_control <- 
-  as.data.frame(read.csv("Data/ExRes_control_params_11nodes.csv")) 
+  as.data.frame(read.csv("Data/ExRes_control_params_v2.csv")) 
 # control model parameters 
 # includes death rate, assimilation efficiency, production efficiency, C:N 
 # for each node at 12 deg C (ambient temperature tx)
 ExRes_prop_warming <- 
-  as.data.frame(read.csv("Data/ExRes_warming_params_11nodes.csv")) 
+  as.data.frame(read.csv("Data/ExRes_warming_params_v2.csv")) 
 # warming model parameters
 # includes death rate, assimilation efficiency, production efficiency, C:N 
 # for each node at 12 deg C (ambient temperature tx)

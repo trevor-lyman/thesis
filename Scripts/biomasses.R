@@ -125,14 +125,16 @@ recal_biomass <- 135707
 fungi_biomass <- 81.21
 bacteria_biomass <- 10.94
 protists_biomass <- 2.59
-basal_resource <- labile_biomass + recal_biomass + fungi_biomass + 
-  bacteria_biomass + protists_biomass
 
 # Step 5: 
 # Aggregate data
 temp <- merge(x = mesofauna_biomasses, y = microfauna_biomasses, 
               by = "Sample_ID") %>%
-  mutate(basal_resource = basal_resource) 
+  mutate(labile_biomass = labile_biomass) %>%
+  mutate(recal_biomass = recal_biomass) %>%
+  mutate(fungi_biomass = fungi_biomass) %>%
+  mutate(bacteria_biomass = bacteria_biomass) %>%
+  mutate(protists_biomass = protists_biomass)
 
 # Step 6: 
 # Tidy data
@@ -148,7 +150,8 @@ temp2 <- # re-organize order of nodes, in top-down order
             "oribatids_biomass", "collembola_biomass", 
             "n.predator_biomass", "n.bacterivore_biomass",
             "n.fungivore_biomass", "n.omnivore_biomass", 
-            "basal_resource")]
+            "protists_biomass", "bacteria_biomass", "fungi_biomass", 
+            "labile_biomass", "recal_biomass")]
 
 # Step 7: 
 # for use in model:

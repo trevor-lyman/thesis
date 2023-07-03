@@ -218,3 +218,7 @@ shapiro_test(residuals(model_ab))
 plot(model_ab, 1)
 abundance_figs %>% levene_test(total_ab_standardized ~ 
                                  (moisture_tx * temp_tx * destructive_time))
+
+test <- extraction_moisture_data %>%
+  group_by(extraction_type) %>%
+  summarize(mean = mean(wet_weight))

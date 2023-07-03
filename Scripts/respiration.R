@@ -110,7 +110,7 @@ resp.data2 <- resp.data2[, c("Sample_ID", "destructive_time",
                              "temp_tx", "moisture_tx", "block_effect",
                              "W0", "W1", "W2", "W3", "W4", "W5", "W6")]
 
-cum_resp <- (rowSums(resp.data2[,6:10], na.rm = T))
+cum_resp <- log(rowSums(resp.data2[,6:10], na.rm = T)/4)
 #W0 to W3
 
 resp.data2$cum_resp <- cum_resp
@@ -156,10 +156,12 @@ resp_aov <-
 resp_plot; resp_summary; summary(resp_aov)
 
 # check assumptions
-model_resp <- lm(cum_resp ~ 
+model_resp <- lm((cum_resp) ~ 
                      (moisture_tx * temp_tx * destructive_time) 
                    + block_effect, data=resp.data)
 
+library(ggpubr)
+library(rstatix)
 ggqqplot(residuals(model_resp))
 shapiro_test(residuals(model_resp))
 
