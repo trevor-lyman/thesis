@@ -20,6 +20,7 @@ library(rstatix)
 library(ade4)
 library(vegan)
 library(MASS)
+library(car)
 
 # Step 2: Read Data
 
@@ -30,7 +31,7 @@ abundances$moisture_tx <- as.factor(abundances$moisture_tx)
 abundances$temp_tx <- as.factor(abundances$temp_tx)
 abundances$block_effect <- as.factor(abundances$block_effect)
 
-ab.man <- manova(cbind(total_micro_ab_standardized, 
+ab.man <- Manova(cbind(total_micro_ab_standardized, 
                        total_meso_ab_standardized, total_ab_standardized) ~ 
                    (destructive_time*moisture_tx*temp_tx) + 
                    block_effect, 
@@ -39,3 +40,9 @@ summary.aov(ab.man)
 
 # one-way example: http://www.sthda.com/english/wiki/manova-test-in-r-multivariate-analysis-of-variance
 # two-way example: https://www.youtube.com/watch?v=_m3QQK53QmI&ab_channel=WakjiraTesfahun
+
+test <- cbind(abundances$total_micro_ab_standardized, 
+            abundances$total_meso_ab_standardized)
+
+output <- lm(test~(destructive_time*moisture_tx*temp_tx), data = abundances)
+Manova(output, type="III")

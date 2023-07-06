@@ -168,3 +168,4 @@ shapiro_test(residuals(model_resp))
 plot(model_resp, 1)
 as.data.frame(resp.data) %>% 
   levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time))
+

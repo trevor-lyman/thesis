@@ -23,12 +23,17 @@ biom_data <- read.csv("Outputs/biom_wide.csv")  %>%
            prostig_astig_biomass + juv_oribatids_biomass + oribatids_biomass +
            collembola_biomass + n.predator_biomass + n.bacterivore_biomass +
            n.fungivore_biomass + n.omnivore_biomass) %>%
-  select(c(Sample_ID, total_biomass))
+  mutate(meso_biomass = mesostigs_biomass + zerconidae_biomass + 
+           prostig_astig_biomass + juv_oribatids_biomass + oribatids_biomass +
+           collembola_biomass ) %>%
+  mutate(micro_biomass = n.predator_biomass + n.bacterivore_biomass +
+           n.fungivore_biomass + n.omnivore_biomass) %>%
+  select(c(Sample_ID, total_biomass, meso_biomass, micro_biomass))
 flux_data <- read.csv("Outputs/T0_models.csv")
 
 aggregated_resp_data <- resp_data %>% filter(destructive_time == "T0") 
  
-cum_resp <- rowSums(aggregated_resp_data[,7:13], na.rm = T)
+cum_resp <- log(rowSums(aggregated_resp_data[,7:13], na.rm = T))
 
 aggregated_resp_data <- aggregated_resp_data %>% 
   mutate(cum_resp = cum_resp)
@@ -63,7 +68,6 @@ resp_summary <- aggregated_resp_data %>%
   )
 
 resp_plot; resp_summary
-
 
 aggregated_soil_data <- merge(x = sample_metadata, y = soil_data,
                            by = "Sample_ID") %>%
@@ -173,7 +177,7 @@ phenox_plot <-
 
 # create summary table
 phenox_summary <- aggregated_enzyme_data %>%
-  group_by(tx) %>%
+  group_by(interaction(destructive_time, temp_tx, moisture_tx)) %>%
   summarise(mean = mean(Phenox), 
             se = sd(Phenox)/sqrt(length(Phenox))
   )
@@ -196,7 +200,7 @@ perox_plot <-
 
 # create summary table
 perox_summary <- aggregated_enzyme_data %>%
-  group_by(tx) %>%
+  group_by(interaction(destructive_time, temp_tx, moisture_tx)) %>%
   summarise(
     mean = mean(Perox), 
     se = sd(Perox)/sqrt(length(Perox))
@@ -237,6 +241,50 @@ ab_summary <- aggregated_ab_data %>%
 
 ab_plot; ab_summary
 
+meso_ab_plot <- 
+  ggplot(aggregated_ab_data, 
+         aes(x=interaction(temp_tx, moisture_tx), 
+             y=total_meso_ab_standardized, fill = as.factor(destructive_time))) + 
+  geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
+  geom_jitter(aes(pch = as.factor(destructive_time)), 
+              position=position_jitter(width=.1, height=0), size = 3) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) +
+  scale_fill_brewer(palette = "Greys")
+
+# create summary table
+meso_ab_summary <- aggregated_ab_data %>%
+  group_by(interaction(destructive_time, temp_tx, moisture_tx)) %>%
+  summarise(mean = mean(total_meso_ab_standardized), 
+            se = sd(total_meso_ab_standardized)/sqrt(length(total_meso_ab_standardized))
+  )
+
+meso_ab_plot; meso_ab_summary
+
+micro_ab_plot <- 
+  ggplot(aggregated_ab_data, 
+         aes(x=interaction(temp_tx, moisture_tx), 
+             y=total_micro_ab_standardized, fill = as.factor(destructive_time))) + 
+  geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
+  geom_jitter(aes(pch = as.factor(destructive_time)), 
+              position=position_jitter(width=.1, height=0), size = 3) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) +
+  scale_fill_brewer(palette = "Greys")
+
+# create summary table
+micro_ab_summary <- aggregated_ab_data %>%
+  group_by(interaction(destructive_time, temp_tx, moisture_tx)) %>%
+  summarise(mean = mean(total_micro_ab_standardized), 
+            se = sd(total_micro_ab_standardized)/sqrt(length(total_micro_ab_standardized))
+  )
+
+micro_ab_plot; micro_ab_summary
+
 aggregated_biom_data <- merge(x = sample_metadata, y = biom_data, 
                               by = "Sample_ID") %>%
   filter(destructive_time == "T0")
@@ -271,6 +319,50 @@ biom_summary <- aggregated_biom_data %>%
   )
 
 biom_plot; biom_summary
+
+meso_biom_plot <- 
+  ggplot(aggregated_biom_data, 
+         aes(x=interaction(temp_tx, moisture_tx), 
+             y=meso_biomass, fill = as.factor(destructive_time))) + 
+  geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
+  geom_jitter(aes(pch = as.factor(destructive_time)), 
+              position=position_jitter(width=.1, height=0), size = 3) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) +
+  scale_fill_brewer(palette = "Greys")
+
+# create summary table
+meso_biom_summary <- aggregated_biom_data %>%
+  group_by(interaction(destructive_time, temp_tx, moisture_tx)) %>%
+  summarise(mean = mean(meso_biomass), 
+            se = sd(meso_biomass)/sqrt(length(meso_biomass))
+  )
+
+meso_biom_plot; meso_biom_summary
+
+micro_biom_plot <- 
+  ggplot(aggregated_biom_data, 
+         aes(x=interaction(temp_tx, moisture_tx), 
+             y=micro_biomass, fill = as.factor(destructive_time))) + 
+  geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
+  geom_jitter(aes(pch = as.factor(destructive_time)), 
+              position=position_jitter(width=.1, height=0), size = 3) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) +
+  scale_fill_brewer(palette = "Greys")
+
+# create summary table
+micro_biom_summary <- aggregated_biom_data %>%
+  group_by(interaction(destructive_time, temp_tx, moisture_tx)) %>%
+  summarise(mean = mean(micro_biomass), 
+            se = sd(micro_biomass)/sqrt(length(micro_biomass))
+  )
+
+micro_biom_plot; micro_biom_summary
 
 flux_data$destructive_time <- 
   as.factor(flux_data$destructive_time)

@@ -122,9 +122,15 @@ microfauna_biomasses <-
 # Set basal resources, microbial community
 labile_biomass <- 135707
 recal_biomass <- 135707
-fungi_biomass <- 81.21
-bacteria_biomass <- 10.94
-protists_biomass <- 2.59
+
+set.seed(1)
+fungi_biomass <- rnorm(45, mean = 81.21, sd = 0.10*81.21)
+
+set.seed(1)
+bacteria_biomass <- rnorm(45, mean = 10.94, sd = 0.10*10.94)
+
+set.seed(1)
+protists_biomass <- rnorm(45, mean = 2.59, sd = 0.10*2.59)
 
 # Step 5: 
 # Aggregate data
@@ -160,8 +166,8 @@ model_biomasses <- as.data.frame(t(temp2[, -(seq(from=0, to=1, by=1))]))
 colnames(model_biomasses) <- temp2$Sample_ID
 # fix colnames 
 
-write.csv(model_biomasses, "Outputs/model_biomasses.csv")
-write.csv(temp2, "Outputs/biom_wide.csv")
+write.csv(model_biomasses, "Outputs/model_biomasses_v2.csv")
+write.csv(temp2, "Outputs/biom_wide_v2.csv")
 
 # Step 8:
 temp3 <- merge(x = sample_metadata, y = temp2, by = "Sample_ID") %>%
@@ -197,7 +203,7 @@ biomass_data$temp_tx <- as.factor(biomass_data$temp_tx)
 biomass_data$block_effect <- as.factor(biomass_data$block_effect)
 biomass_data$tx <- as.factor(biomass_data$tx)
 
-write.csv(temp2, "Outputs/webs.csv")
+write.csv(temp2, "Outputs/webs_v2.csv")
 # Step 9:
 # create plot
 total.biom_plot <- 
@@ -232,10 +238,42 @@ total.biom_summary <- biomass_data %>%
 # call everything
 total.biom_plot; total.biom_summary; summary(total.biom_aov)
 
-library(ggpubr)
-library(rstatix)
+# create plot
+micro.biom_plot <- 
+  ggplot(biomass_data, aes(x=interaction(destructive_time, 
+                                         temp_tx, moisture_tx), 
+                           y=micro_biomass, 
+                           fill = as.factor(destructive_time))) + 
+  geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
+  geom_jitter(aes(pch = as.factor(destructive_time)), 
+              position=position_jitter(width=.1, height=0), size = 3) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) +
+  scale_fill_brewer(palette = "Greys") 
+
+# Step 10:
+# create aov
+micro.biom_aov <- 
+  aov(micro_biomass ~ (moisture_tx * temp_tx * destructive_time) 
+      + block_effect, data=biomass_data)
+
+# Step 11:
+# summary table
+micro.biom_summary <- biomass_data %>%
+  group_by(tx) %>%
+  summarize(mean = mean(micro_biomass), 
+            se = sd(micro_biomass)/
+              sqrt(length(micro_biomass)))
+
+# Step 12:
+# call everything
+micro.biom_plot; micro.biom_summary; summary(micro.biom_aov)
 
 # check assumptions
+library(ggpubr)
+library(rstatix)
 model_bm <- lm(total_biomass ~ 
                  (moisture_tx * temp_tx * destructive_time) 
                + block_effect, data=biomass_data)
@@ -247,4 +285,4 @@ plot(model_bm, 1)
 biomass_data %>% levene_test(total_biomass ~ 
                                  (moisture_tx * temp_tx * destructive_time))
 
-write.csv(biomass_data, "Outputs/biomass_long.csv")
+write.csv(biomass_data, "Outputs/biomass_long_v2.csv")

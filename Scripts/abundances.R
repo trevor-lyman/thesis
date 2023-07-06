@@ -31,9 +31,9 @@ microfauna_ab_temp <-
   read.csv("Data/microfauna abundances.csv") %>% # raw abundance data
   mutate(mean_abundance = (ab_1 + ab_2)/2) # average of 2 passes
 micro_body_mass <- read.csv("Data/Kamath et al dataset.csv") %>% 
-  select(-prop_ab) # body mass from Dev's thesis, in ug wwt
+  dplyr::select(-prop_ab) # body mass from Dev's thesis, in ug wwt
 micro_prop_ab <- read.csv("Data/Kamath et al dataset.csv") %>% 
-  select(-body_mass) # proportional abundances from Dev's thesis
+  dplyr::select(-body_mass) # proportional abundances from Dev's thesis
 
 # Step 3:
 mesofauna_ab <- merge(x = mesofauna_ab_temp, y = extraction_moisture_data %>% 
@@ -65,7 +65,7 @@ g_per_m2 <- cm3_in_m2*bulk_soil_density # cm3_in_m2 * bulk_soil_density
 temp_dry <- merge(x = mesofauna_ab_temp, y = dry_extraction, 
                   by = "Sample_ID") %>%
   mutate(total_meso_ab_standardized = g_per_m2*total_ab/dry_weight) %>%
-  select(-total_ab)
+  dplyr::select(-total_ab)
 temp_dry$collembola <- g_per_m2*temp_dry$collembola/temp_dry$dry_weight
 temp_dry$juv_oribatids <- g_per_m2*temp_dry$juv_oribatids/temp_dry$dry_weight
 temp_dry$oribatids <- g_per_m2*temp_dry$oribatids/temp_dry$dry_weight
@@ -219,6 +219,48 @@ plot(model_ab, 1)
 abundance_figs %>% levene_test(total_ab_standardized ~ 
                                  (moisture_tx * temp_tx * destructive_time))
 
+model_micro <- lm(total_micro_ab_standardized ~ 
+                 (moisture_tx * temp_tx * destructive_time) 
+               + block_effect, data=abundance_figs)
+
+ggqqplot(residuals(model_micro))
+shapiro_test(residuals(model_micro))
+
+plot(model_micro, 1)
+abundance_figs %>% levene_test(total_micro_ab_standardized ~ 
+                                 (moisture_tx * temp_tx * destructive_time))
+
+model_meso <- lm(total_meso_ab_standardized ~ 
+                    (moisture_tx * temp_tx * destructive_time) 
+                  + block_effect, data=abundance_figs)
+
+ggqqplot(residuals(model_meso))
+shapiro_test(residuals(model_meso))
+
+plot(model_meso, 1)
+abundance_figs %>% levene_test(total_meso_ab_standardized ~ 
+                                 (moisture_tx * temp_tx * destructive_time))
+
+
 test <- extraction_moisture_data %>%
   group_by(extraction_type) %>%
   summarize(mean = mean(wet_weight))
+
+ab_NMDS <- meso_abundances
+ab_NMDS$microfauna <- micro_abundances$total_micro_ab_standardized
+ab_NMDS <- ab_NMDS %>% dplyr::select(-c(moisture_tx,
+                                        temp_tx, block_effect, 
+                                        extraction_type, dry_weight, others, 
+                                        total_meso_ab_standardized))
+ab_NMDS_T1 <- ab_NMDS %>%
+  filter(destructive_time == "T1") %>%
+  filter(!Sample_ID == "ExRes 5") %>%
+  dplyr::select(-destructive_time)
+
+write.csv(ab_NMDS_T1, "Outputs/ab_NMDS_T1.csv")
+
+ab_NMDS_T2 <- ab_NMDS %>%
+  filter(destructive_time == "T2") %>%
+  dplyr::select(-destructive_time)
+
+write.csv(ab_NMDS_T2, "Outputs/ab_NMDS_T2.csv")
