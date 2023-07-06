@@ -271,6 +271,39 @@ micro.biom_summary <- biomass_data %>%
 # call everything
 micro.biom_plot; micro.biom_summary; summary(micro.biom_aov)
 
+# create plot
+meso.biom_plot <- 
+  ggplot(biomass_data, aes(x=interaction(destructive_time, 
+                                         temp_tx, moisture_tx), 
+                           y=meso_biomass, 
+                           fill = as.factor(destructive_time))) + 
+  geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
+  geom_jitter(aes(pch = as.factor(destructive_time)), 
+              position=position_jitter(width=.1, height=0), size = 3) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) +
+  scale_fill_brewer(palette = "Greys") 
+
+# Step 10:
+# create aov
+meso.biom_aov <- 
+  aov(meso_biomass ~ (moisture_tx * temp_tx * destructive_time) 
+      + block_effect, data=biomass_data)
+
+# Step 11:
+# summary table
+meso.biom_summary <- biomass_data %>%
+  group_by(tx) %>%
+  summarize(mean = mean(meso_biomass), 
+            se = sd(meso_biomass)/
+              sqrt(length(meso_biomass)))
+
+# Step 12:
+# call everything
+meso.biom_plot; meso.biom_summary; summary(meso.biom_aov)
+
 # check assumptions
 library(ggpubr)
 library(rstatix)
