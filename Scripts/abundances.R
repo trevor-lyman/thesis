@@ -264,3 +264,60 @@ ab_NMDS_T2 <- ab_NMDS %>%
   dplyr::select(-destructive_time)
 
 write.csv(ab_NMDS_T2, "Outputs/ab_NMDS_T2.csv")
+
+abundance_data1 <- abundance_data %>% filter(!Sample_ID == "ExRes 5")
+
+new_T1 <- abundance_data1 %>% filter(!destructive_time == "T2") 
+new_T2 <- abundance_data1 %>% filter(!destructive_time == "T1")
+
+new_aov_T1 <- aov(total_ab_standardized~tx, data = new_T1)
+summary(new_aov_T1)
+TukeyHSD(new_aov_T1)
+
+new_aov_T2 <- aov(total_ab_standardized~tx, data = new_T2)
+summary(new_aov_T2)
+TukeyHSD(new_aov_T2)
+
+new_plot_T1 <- 
+  ggplot(new_T1, aes(x=tx, 
+                             y=total_ab_standardized)) + 
+  geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
+  geom_jitter(position=position_jitter(width=.1, height=0)) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) +
+  scale_fill_brewer(palette = "Greys")
+new_plot_T1
+
+new_plot_T2 <- 
+  ggplot(new_T2, aes(x=tx, 
+                             y=total_ab_standardized)) + 
+  geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
+  geom_jitter(position=position_jitter(width=.1, height=0)) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) +
+  scale_fill_brewer(palette = "Greys")
+new_plot_T2
+
+new_aov_T1_micro <- aov(total_micro_ab_standardized~tx, data = new_T1)
+summary(new_aov_T1_micro)
+TukeyHSD(new_aov_T1_micro)
+
+new_aov_T1_meso <- aov(total_meso_ab_standardized~tx, data = new_T1)
+summary(new_aov_T1_meso)
+TukeyHSD(new_aov_T1_meso)
+
+new_aov_T2_micro <- aov(total_micro_ab_standardized~tx, data = new_T2)
+summary(new_aov_T2_micro)
+TukeyHSD(new_aov_T2_micro)
+
+new_aov_T2_meso <- aov(total_meso_ab_standardized~tx, data = new_T2)
+summary(new_aov_T2_meso)
+TukeyHSD(new_aov_T2_meso)
+
+cor.test(abundance_data$total_micro_ab_standardized, abundance_data$total_meso_ab_standardized, method = c("pearson"))
+cor.test(abundance_data$total_ab_standardized, abundance_data$total_meso_ab_standardized, method = c("pearson"))
+cor.test(abundance_data$total_ab_standardized, abundance_data$total_micro_ab_standardized, method = c("pearson"))

@@ -170,10 +170,9 @@ write.csv(model_biomasses, "Outputs/model_biomasses_v2.csv")
 write.csv(temp2, "Outputs/biom_wide_v2.csv")
 
 # Step 8:
-temp3 <- merge(x = sample_metadata, y = temp2, by = "Sample_ID") %>%
-  filter(!destructive_time == "T0")
+temp3 <- merge(x = sample_metadata, y = temp2, by = "Sample_ID") 
 
-biomass_data <- temp3 %>%
+biomass_data2 <- temp3 %>%
   mutate(total_biomass = mesostigs_biomass + zerconidae_biomass + 
            prostig_astig_biomass + juv_oribatids_biomass + oribatids_biomass +
            collembola_biomass + n.predator_biomass + n.bacterivore_biomass +
@@ -191,6 +190,9 @@ biomass_data <- temp3 %>%
            n.fungivore_biomass + n.omnivore_biomass) %>%
   mutate(tx = interaction(temp_tx, moisture_tx, destructive_time)) %>%
   filter(!Sample_ID == "ExRes 5")
+
+biomass_data <- biomass_data2 %>%
+  filter(!destructive_time == "T0") 
 
 biomass_data$tx <- droplevels(biomass_data$tx)
 
@@ -319,3 +321,59 @@ biomass_data %>% levene_test(total_biomass ~
                                  (moisture_tx * temp_tx * destructive_time))
 
 write.csv(biomass_data, "Outputs/biomass_long_v2.csv")
+
+new_T1 <- biomass_data2 %>% filter(!destructive_time == "T2") 
+new_T2 <- biomass_data2 %>% filter(!destructive_time == "T1")
+
+new_aov_T1 <- aov(total_biomass~tx, data = new_T1)
+summary(new_aov_T1)
+TukeyHSD(new_aov_T1)
+
+new_aov_T2 <- aov(total_biomass~tx, data = new_T2)
+summary(new_aov_T2)
+TukeyHSD(new_aov_T2)
+
+new_plot_T1 <- 
+  ggplot(new_T1, aes(x=tx, 
+                     y=total_biomass)) + 
+  geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
+  geom_jitter(position=position_jitter(width=.1, height=0)) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) +
+  scale_fill_brewer(palette = "Greys")
+new_plot_T1
+
+new_plot_T2 <- 
+  ggplot(new_T2, aes(x=tx, 
+                     y=total_biomass)) + 
+  geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
+  geom_jitter(position=position_jitter(width=.1, height=0)) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) +
+  scale_fill_brewer(palette = "Greys")
+new_plot_T2
+
+new_aov_T1_micro <- aov(micro_biomass~tx, data = new_T1)
+summary(new_aov_T1_micro)
+TukeyHSD(new_aov_T1_micro)
+
+new_aov_T1_meso <- aov(meso_biomass~tx, data = new_T1)
+summary(new_aov_T1_meso)
+TukeyHSD(new_aov_T1_meso)
+
+new_aov_T2_micro <- aov(micro_biomass~tx, data = new_T2)
+summary(new_aov_T2_micro)
+TukeyHSD(new_aov_T2_micro)
+
+new_aov_T2_meso <- aov(meso_biomass~tx, data = new_T2)
+summary(new_aov_T2_meso)
+TukeyHSD(new_aov_T2_meso)
+
+cor.test(biomass_data2$micro_biomass, biomass_data2$meso_biomass, method = c("pearson"))
+cor.test(biomass_data2$total_biomass, biomass_data2$meso_biomass, method = c("pearson"))
+cor.test(biomass_data2$total_biomass, biomass_data2$micro_biomass, method = c("pearson"))
+
