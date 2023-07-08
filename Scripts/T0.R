@@ -28,15 +28,13 @@ biom_data <- read.csv("Outputs/biom_wide.csv")  %>%
            collembola_biomass ) %>%
   mutate(micro_biomass = n.predator_biomass + n.bacterivore_biomass +
            n.fungivore_biomass + n.omnivore_biomass) %>%
-  select(c(Sample_ID, total_biomass, meso_biomass, micro_biomass))
+  dplyr::select(c(Sample_ID, total_biomass, meso_biomass, micro_biomass))
 flux_data <- read.csv("Outputs/T0_models.csv")
 
 aggregated_resp_data <- resp_data %>% filter(destructive_time == "T0") 
  
-cum_resp <- log(rowSums(aggregated_resp_data[,7:13], na.rm = T))
-
-aggregated_resp_data <- aggregated_resp_data %>% 
-  mutate(cum_resp = cum_resp)
+aggregated_resp_data$cum_resp <- rowSums(log(aggregated_resp_data[,7:13]),  na.rm = T)
+aggregated_resp_data$cum_resp2 <- rowSums(aggregated_resp_data[,7:13], na.rm = T)
 
 aggregated_resp_data$destructive_time <- 
   as.factor(aggregated_resp_data$destructive_time)
@@ -68,6 +66,15 @@ resp_summary <- aggregated_resp_data %>%
   )
 
 resp_plot; resp_summary
+
+# create summary table
+resp_summary2 <- aggregated_resp_data %>%
+  group_by(interaction(destructive_time, temp_tx, moisture_tx)) %>%
+  summarise(mean = mean(cum_resp2), 
+            se = sd(cum_resp2)/sqrt(length(cum_resp2))
+  )
+
+resp_summary2
 
 aggregated_soil_data <- merge(x = sample_metadata, y = soil_data,
                            by = "Sample_ID") %>%
@@ -438,3 +445,4 @@ Nmin_summary <- flux_data %>%
   )
 
 Nmin_plot; Nmin_summary
+
