@@ -74,7 +74,7 @@ molar_weight_CO2 <- 44.01 # g/mol
 s_per_year <- 3.1536E7
 
 resp.data.temp2 <- resp.data.temp %>%
-  select(-c(X.Msgs, Obs., Port., X.Raw, IV.Date)) %>%
+  dplyr::select(-c(X.Msgs, Obs., Port., X.Raw, IV.Date)) %>%
   mutate(Lin_Flux_gofCO2perm2pers = Lin_Flux * mol_per_umol * molar_weight_CO2) %>%
   mutate(Lin_Flux_gofCO2perm2peryr = Lin_Flux * mol_per_umol * molar_weight_CO2 * s_per_year) %>%
   mutate(Exp_Flux_gofCO2perm2pers = Exp_Flux * mol_per_umol * molar_weight_CO2) %>%
@@ -82,7 +82,7 @@ resp.data.temp2 <- resp.data.temp %>%
   filter(!Label == "Dummy") %>%
   filter(!Label == "ExRes 5") %>%
   mutate("Sample_ID" = Label) %>%
-  select(-c(Label, Lin_Flux, Exp_Flux, Lin_Flux_gofCO2perm2pers, Exp_Flux_gofCO2perm2pers))
+  dplyr::select(-c(Label, Lin_Flux, Exp_Flux, Lin_Flux_gofCO2perm2pers, Exp_Flux_gofCO2perm2pers))
 
 resp.data.temp2$Lin_Flux_gofCO2perm2peryr[resp.data.temp2$Lin_Flux_gofCO2perm2peryr<0] <- 0
 
@@ -102,7 +102,7 @@ resp.data <- merge(x = sample_metadata, y = resp.data.temp4, by = "Sample_ID") %
   dplyr::select(!c(Exp_FluxCV, Exp_Flux_gofCO2perm2peryr))
 
 resp.data2 <- resp.data %>%
-  select(-c(Lin_FluxCV, filter)) %>%
+  dplyr::select(-c(Lin_FluxCV, filter)) %>%
   pivot_wider(names_from = Sampling_Time, values_from = Lin_Flux_gofCO2perm2peryr) %>%
   group_by(Sample_ID)
 
@@ -110,10 +110,8 @@ resp.data2 <- resp.data2[, c("Sample_ID", "destructive_time",
                              "temp_tx", "moisture_tx", "block_effect",
                              "W0", "W1", "W2", "W3", "W4", "W5", "W6")]
 
-cum_resp <- log(rowSums(resp.data2[,6:10], na.rm = T)/4)
+resp.data2$cum_resp <- log(rowSums(resp.data2[,6:10], na.rm = T)/4)
 #W0 to W3
-
-resp.data2$cum_resp <- cum_resp
 
 write.csv(resp.data2, "Outputs/respiration_output.csv")
 
