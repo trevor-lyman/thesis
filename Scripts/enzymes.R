@@ -17,12 +17,14 @@ sample_metadata <- read.csv("Data/sample metadata v2.csv")
 enzyme_data <- na.omit(read.csv("Data/enzyme data.csv"))
 
 # tidy data
-aggregated_enzyme_data <- merge(x = sample_metadata, y = enzyme_data,
+aggregated_enzyme_data2 <- merge(x = sample_metadata, y = enzyme_data,
                                 by = "Sample_ID") %>%
-  filter(!destructive_time == "T0") %>%
   filter(!Sample_ID == "ExRes 5")
-aggregated_enzyme_data <- aggregated_enzyme_data %>%
-  mutate(tx = interaction(temp_tx, moisture_tx, destructive_time))
+aggregated_enzyme_data2 <- aggregated_enzyme_data2 %>%
+  mutate(tx = interaction(temp_tx, moisture_tx, destructive_time)) 
+aggregated_enzyme_data2$Perox[27] <- NA
+aggregated_enzyme_data <- aggregated_enzyme_data2 %>% 
+  filter(!destructive_time == "T0") 
 aggregated_enzyme_data$tx <- as.factor(aggregated_enzyme_data$tx)
 aggregated_enzyme_data$destructive_time <- 
   as.factor(aggregated_enzyme_data$destructive_time)
@@ -83,7 +85,7 @@ perox_plot <-
   scale_fill_brewer(palette = "Greys")
 
 # create summary table
-perox_summary <- aggregated_enzyme_data %>%
+perox_summary <- na.omit(aggregated_enzyme_data) %>%
   group_by(tx) %>%
   summarise(
     mean = mean(Perox), 
@@ -126,3 +128,24 @@ shapiro_test(residuals(model_perox))
 plot(model_perox, 1)
 aggregated_enzyme_data %>% levene_test((Perox) ~ 
                                          (moisture_tx * temp_tx * destructive_time))
+
+
+new_T1 <- aggregated_enzyme_data %>% filter(!destructive_time == "T2")
+new_T2 <- aggregated_enzyme_data %>% filter(!destructive_time == "T1")
+
+
+new_Phenox_T1 <- aov(Phenox~tx, data = new_T1)
+summary(new_Phenox_T1)
+TukeyHSD(new_Phenox_T1)
+
+new_Phenox_T2 <- aov(Phenox~tx, data = new_T2)
+summary(new_Phenox_T2)
+TukeyHSD(new_Phenox_T2)
+
+new_Perox_T1 <- aov(Perox~tx, data = new_T1)
+summary(new_Perox_T1)
+TukeyHSD(new_Perox_T1)
+
+new_Perox_T2 <- aov(Perox~tx, data = new_T2)
+summary(new_Perox_T2)
+TukeyHSD(new_Perox_T2)

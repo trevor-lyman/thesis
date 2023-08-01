@@ -16,7 +16,7 @@ library(reshape2)
 # Step 2: Read Data
 sample_metadata <- read.csv("Data/sample metadata v2.csv")
 model_biomasses <- read.csv("Outputs/model_biomasses_v2.csv")
-ExRes_imat <- as.data.frame(read.csv("Data/ExRes_imat_v2.csv"))
+ExRes_imat <- as.data.frame(read.csv("Data/ExRes_imat_v3.csv"))
 # rows denote consumers, cols denote resources
 # 1 denotes the presence of a trophic interaction, 0 denotes the absence 
 ExRes_prop_control <- 
@@ -814,6 +814,105 @@ ExRes_42_model <- comana(ExRes_42, mkplot=F, whattoplot = "web",
                          arrowsizerange = c(0.1, 30)) 
 # What range of line sizes do you want: c(min, max)
 
+# ExRes 22
+ExRes_22_prop <- ExRes_prop_control %>% 
+  mutate("B" = model_biomasses$ExRes.22)
+ExRes_22_prop <- ExRes_22_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", "isPlant", 
+                                   "canIMM")]
+ExRes_22 <- list(imat = ExRes_imat, prop = ExRes_22_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_22$prop$a = ExRes_22$prop$a/100
+ExRes_22$prop$p = ExRes_22$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_22_model <- comana(ExRes_22, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 23
+ExRes_23_prop <- ExRes_prop_control %>% 
+  mutate("B" = model_biomasses$ExRes.23)
+ExRes_23_prop <- ExRes_23_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", "isPlant", 
+                                   "canIMM")]
+ExRes_23 <- list(imat = ExRes_imat, prop = ExRes_23_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_23$prop$a = ExRes_23$prop$a/100
+ExRes_23$prop$p = ExRes_23$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_23_model <- comana(ExRes_23, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 39
+ExRes_39_prop <- ExRes_prop_control %>% 
+  mutate("B" = model_biomasses$ExRes.39)
+ExRes_39_prop <- ExRes_39_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", "isPlant", 
+                                   "canIMM")]
+ExRes_39 <- list(imat = ExRes_imat, prop = ExRes_39_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_39$prop$a = ExRes_39$prop$a/100
+ExRes_39$prop$p = ExRes_39$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_39_model <- comana(ExRes_39, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 44
+ExRes_44_prop <- ExRes_prop_control %>% 
+  mutate("B" = model_biomasses$ExRes.44)
+ExRes_44_prop <- ExRes_44_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", "isPlant", 
+                                   "canIMM")]
+ExRes_44 <- list(imat = ExRes_imat, prop = ExRes_44_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_44$prop$a = ExRes_44$prop$a/100
+ExRes_44$prop$p = ExRes_44$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_44_model <- comana(ExRes_44, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 45
+ExRes_45_prop <- ExRes_prop_control %>% 
+  mutate("B" = model_biomasses$ExRes.45)
+ExRes_45_prop <- ExRes_45_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", "isPlant", 
+                                   "canIMM")]
+ExRes_45 <- list(imat = ExRes_imat, prop = ExRes_45_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_45$prop$a = ExRes_45$prop$a/100
+ExRes_45$prop$p = ExRes_45$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_45_model <- comana(ExRes_45, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+
 # Step 5: Aggregate Data
 # 5.1: Set up df and initialize vectors for loop outputs
 names <- c("ExRes_3_model", "ExRes_5_model", "ExRes_7_model", "ExRes_8_model",
@@ -854,7 +953,7 @@ for (i in names){ # loop to get consumption data, indexed from list as df[1]
   Nmin <- as.data.frame(Nmin_temp)
   total_Nmin_temp <- sum(Nmin)
   node_consumption_temp[[i]] = consumption
-  node_Cmin_temp[[i]] = Cmin
+  node_Cmin_temp[[i]] = as.data.frame(Cmin)
   node_Nmin_temp[[i]] = Nmin
   total_consumption[i] = as.data.frame(total_consumption_temp)
   total_Cmin[i] = as.data.frame(total_Cmin_temp)
@@ -865,10 +964,6 @@ for (i in names){ # loop to get consumption data, indexed from list as df[1]
 total_consumption <- unlist(total_consumption)
 total_Cmin <- unlist(total_Cmin)
 total_Nmin <- unlist(total_Nmin)
-
-library(tibble)
-L1 <- tibble::lst(node_Cmin_temp)
-L2 <- lapply(L1, as.data.table)
 
 Sample_ID <- c("ExRes 3", "ExRes 5", "ExRes 7", "ExRes 8",
                "ExRes 11", "ExRes 13", "ExRes 16", 
@@ -937,11 +1032,11 @@ consumption_plot <-
 
 # 8.2: Summary Table
 consumption_summary <- model_outputs %>%
-  group_by(tx) %>%
+  group_by(interaction(destructive_time, 
+                      temp_tx, moisture_tx)) %>%
   summarize(mean = mean(total_consumption),
             se = sd(total_consumption)/
-              sqrt(length(total_consumption))) %>%
-  mutate(key = key_flux)
+              sqrt(length(total_consumption))) 
 
 # 8.3: AOV
 consumption_aov <- 
@@ -971,8 +1066,7 @@ Cmin_summary <- model_outputs %>%
   group_by(tx) %>%
   summarize(mean = mean(total_Cmin),
             se = sd(total_Cmin)/
-              sqrt(length(total_Cmin))) %>%
-  mutate(key = key_flux)
+              sqrt(length(total_Cmin))) 
 
 # 9.3: AOV
 Cmin_aov <- 
@@ -998,11 +1092,11 @@ Nmin_plot <-
 
 # 10.2: Summary Table
 Nmin_summary <- model_outputs %>%
-  group_by(tx) %>%
-  summarize(mean = mean(total_Nmin),
+  group_by(interaction(destructive_time, 
+                       temp_tx, moisture_tx)) %>%
+  dplyr::summarize(mean = mean(total_Nmin),
             se = sd(total_Nmin)/
-              sqrt(length(total_Nmin))) %>%
-  mutate(key = key_flux)
+              sqrt(length(total_Nmin))) 
 
 # 10.3: AOV
 Nmin_aov <- 
@@ -1044,3 +1138,172 @@ shapiro_test(residuals(model_Nmin))
 plot(model_Nmin, 1)
 model_outputs %>% levene_test(total_Nmin ~ 
                                 (moisture_tx * temp_tx * destructive_time))
+
+### new
+
+library(plyr)
+
+cbind.fill <- function(...) {                                                                                                                                                       
+  transposed <- lapply(list(...),t)                                                                                                                                                 
+  transposed_dataframe <- lapply(transposed, as.data.frame)                                                                                                                         
+  return (data.frame(t(rbind.fill(transposed_dataframe))))                                                                                                                          
+} 
+
+node_consumption_temp <- 
+  cbind.fill(ExRes_1_model$consumption, ExRes_2_model$consumption, 
+             ExRes_3_model$consumption, ExRes_4_model$consumption, 
+             ExRes_5_model$consumption, ExRes_6_model$consumption,
+             ExRes_7_model$consumption, ExRes_8_model$consumption, 
+             ExRes_9_model$consumption, ExRes_10_model$consumption, 
+             ExRes_11_model$consumption, ExRes_12_model$consumption,
+             ExRes_13_model$consumption, ExRes_14_model$consumption, 
+             ExRes_15_model$consumption, ExRes_16_model$consumption, 
+             ExRes_17_model$consumption, ExRes_18_model$consumption,
+             ExRes_19_model$consumption, ExRes_20_model$consumption, 
+             ExRes_21_model$consumption, ExRes_22_model$consumption, 
+             ExRes_23_model$consumption, ExRes_24_model$consumption, 
+             ExRes_25_model$consumption, ExRes_26_model$consumption, 
+             ExRes_27_model$consumption, ExRes_28_model$consumption, 
+             ExRes_29_model$consumption, ExRes_30_model$consumption,
+             ExRes_31_model$consumption, ExRes_32_model$consumption, 
+             ExRes_33_model$consumption, ExRes_34_model$consumption, 
+             ExRes_35_model$consumption, ExRes_36_model$consumption,
+             ExRes_37_model$consumption, ExRes_38_model$consumption, 
+             ExRes_39_model$consumption, ExRes_40_model$consumption, 
+             ExRes_41_model$consumption, ExRes_42_model$consumption,
+             ExRes_43_model$consumption, ExRes_44_model$consumption, 
+             ExRes_45_model$consumption)
+node_consumption_temp[is.na(node_consumption_temp)] <- 0
+
+colnames(node_consumption_temp) <- 
+  c("ExRes 1", "ExRes 2", "ExRes 3", "ExRes 4", "ExRes 5", "ExRes 6", 
+    "ExRes 7", "ExRes 8", "ExRes 9", "ExRes 10", "ExRes 11", "ExRes 12",
+    "ExRes 13", "ExRes 14", "ExRes 15", "ExRes 16", "ExRes 17", "ExRes 18",
+    "ExRes 19", "ExRes 20", "ExRes 21", "ExRes 22", "ExRes 23", "ExRes 24",
+    "ExRes 25", "ExRes 26", "ExRes 27", "ExRes 28", "ExRes 29", "ExRes 30",
+    "ExRes 31", "ExRes 32", "ExRes 33", "ExRes 34", "ExRes 35", "ExRes 36",
+    "ExRes 37", "ExRes 38", "ExRes 39", "ExRes 40", "ExRes 41", "ExRes 42",
+    "ExRes 43", "ExRes 44", "ExRes 45")
+
+node_consumption <- as.data.frame(t(node_consumption_temp)) %>%
+  tibble::rownames_to_column("Sample_ID") %>%
+  mutate(bact.ch = zerconidae + prostig_astig + collembola + 
+           predatory_nematodes + bactivorous_nematodes + 
+           omnivorous_nematodes) %>%
+  mutate(fung.ch = mesostigs + juv_oribatids + oribatids + 
+           collembola + predatory_nematodes + fungivorous_nematodes + 
+           omnivorous_nematodes)
+
+aggregated_node_consumption <- merge(x = sample_metadata, y = node_consumption,
+                              by = "Sample_ID") %>%
+  filter(!Sample_ID == "ExRes 5") %>%
+  filter(!destructive_time == "T0")
+
+fung_consumption_aov <- 
+  aov(fung.ch ~ (moisture_tx * temp_tx * destructive_time) 
+      + block_effect, data=aggregated_node_consumption)
+summary(fung_consumption_aov)
+
+bact_consumption_aov <- 
+  aov(bact.ch ~ (moisture_tx * temp_tx * destructive_time) 
+      + block_effect, data=aggregated_node_consumption)
+summary(bact_consumption_aov)
+
+node_Cmin_temp <- 
+  cbind.fill(ExRes_1_model$Cmin, ExRes_2_model$Cmin, ExRes_3_model$Cmin,
+             ExRes_4_model$Cmin, ExRes_5_model$Cmin, ExRes_6_model$Cmin,
+             ExRes_7_model$Cmin, ExRes_8_model$Cmin, ExRes_9_model$Cmin,
+             ExRes_10_model$Cmin, ExRes_11_model$Cmin, ExRes_12_model$Cmin,
+             ExRes_13_model$Cmin, ExRes_14_model$Cmin, ExRes_15_model$Cmin,
+             ExRes_16_model$Cmin, ExRes_17_model$Cmin, ExRes_18_model$Cmin, 
+             ExRes_19_model$Cmin, ExRes_20_model$Cmin, ExRes_21_model$Cmin, 
+             ExRes_22_model$Cmin, ExRes_23_model$Cmin, ExRes_24_model$Cmin, 
+             ExRes_25_model$Cmin, ExRes_26_model$Cmin, ExRes_27_model$Cmin,
+             ExRes_28_model$Cmin, ExRes_29_model$Cmin, ExRes_30_model$Cmin,
+             ExRes_31_model$Cmin, ExRes_32_model$Cmin, ExRes_33_model$Cmin, 
+             ExRes_34_model$Cmin, ExRes_35_model$Cmin, ExRes_36_model$Cmin,
+             ExRes_37_model$Cmin, ExRes_38_model$Cmin, ExRes_39_model$Cmin,
+             ExRes_40_model$Cmin, ExRes_41_model$Cmin, ExRes_42_model$Cmin,
+             ExRes_43_model$Cmin, ExRes_44_model$Cmin, ExRes_45_model$Cmin)
+node_Cmin_temp[is.na(node_Cmin_temp)] <- 0
+
+colnames(node_Cmin_temp) <- 
+  c("ExRes 1", "ExRes 2", "ExRes 3", "ExRes 4", "ExRes 5", "ExRes 6", 
+    "ExRes 7", "ExRes 8", "ExRes 9", "ExRes 10", "ExRes 11", "ExRes 12",
+    "ExRes 13", "ExRes 14", "ExRes 15", "ExRes 16", "ExRes 17", "ExRes 18",
+    "ExRes 19", "ExRes 20", "ExRes 21", "ExRes 22", "ExRes 23", "ExRes 24",
+    "ExRes 25", "ExRes 26", "ExRes 27", "ExRes 28", "ExRes 29", "ExRes 30",
+    "ExRes 31", "ExRes 32", "ExRes 33", "ExRes 34", "ExRes 35", "ExRes 36",
+    "ExRes 37", "ExRes 38", "ExRes 39", "ExRes 40", "ExRes 41", "ExRes 42",
+    "ExRes 43", "ExRes 44", "ExRes 45")
+
+node_Cmin <- as.data.frame(t(node_Cmin_temp)) %>%
+  tibble::rownames_to_column("Sample_ID") %>%
+  mutate(bact.ch = zerconidae + prostig_astig + collembola + 
+           predatory_nematodes + bactivorous_nematodes + 
+           omnivorous_nematodes) %>%
+  mutate(fung.ch = mesostigs + juv_oribatids + oribatids + 
+           collembola + predatory_nematodes + fungivorous_nematodes + 
+           omnivorous_nematodes)
+
+aggregated_node_Cmin <- merge(x = sample_metadata, y = node_Cmin,
+                              by = "Sample_ID") %>%
+  filter(!Sample_ID == "ExRes 5") %>%
+  filter(!destructive_time == "T0")
+
+fung_Cmin_aov <- 
+  aov(fung.ch ~ (moisture_tx * temp_tx * destructive_time) 
+      + block_effect, data=aggregated_node_Cmin)
+summary(fung_Cmin_aov)
+
+bact_Cmin_aov <- 
+  aov(bact.ch ~ (moisture_tx * temp_tx * destructive_time) 
+      + block_effect, data=aggregated_node_Cmin)
+summary(bact_Cmin_aov)
+
+node_Nmin_temp <- 
+  cbind.fill(ExRes_1_model$Nmin, ExRes_2_model$Nmin, ExRes_3_model$Nmin,
+             ExRes_4_model$Nmin, ExRes_5_model$Nmin, ExRes_6_model$Nmin,
+             ExRes_7_model$Nmin, ExRes_8_model$Nmin, ExRes_9_model$Nmin,
+             ExRes_10_model$Nmin, ExRes_11_model$Nmin, ExRes_12_model$Nmin,
+             ExRes_13_model$Nmin, ExRes_14_model$Nmin, ExRes_15_model$Nmin,
+             ExRes_16_model$Nmin, ExRes_17_model$Nmin, ExRes_18_model$Nmin, 
+             ExRes_19_model$Nmin, ExRes_20_model$Nmin, ExRes_21_model$Nmin, 
+             ExRes_22_model$Nmin, ExRes_23_model$Nmin, ExRes_24_model$Nmin, 
+             ExRes_25_model$Nmin, ExRes_26_model$Nmin, ExRes_27_model$Nmin,
+             ExRes_28_model$Nmin, ExRes_29_model$Nmin, ExRes_30_model$Nmin,
+             ExRes_31_model$Nmin, ExRes_32_model$Nmin, ExRes_33_model$Nmin, 
+             ExRes_34_model$Nmin, ExRes_35_model$Nmin, ExRes_36_model$Nmin,
+             ExRes_37_model$Nmin, ExRes_38_model$Nmin, ExRes_39_model$Nmin,
+             ExRes_40_model$Nmin, ExRes_41_model$Nmin, ExRes_42_model$Nmin,
+             ExRes_43_model$Nmin, ExRes_44_model$Nmin, ExRes_45_model$Nmin)
+node_Nmin_temp[is.na(node_Nmin_temp)] <- 0
+
+colnames(node_Nmin_temp) <- 
+  c("ExRes 1", "ExRes 2", "ExRes 3", "ExRes 4", "ExRes 5", "ExRes 6", 
+    "ExRes 7", "ExRes 8", "ExRes 9", "ExRes 10", "ExRes 11", "ExRes 12",
+    "ExRes 13", "ExRes 14", "ExRes 15", "ExRes 16", "ExRes 17", "ExRes 18",
+    "ExRes 19", "ExRes 20", "ExRes 21", "ExRes 22", "ExRes 23", "ExRes 24",
+    "ExRes 25", "ExRes 26", "ExRes 27", "ExRes 28", "ExRes 29", "ExRes 30",
+    "ExRes 31", "ExRes 32", "ExRes 33", "ExRes 34", "ExRes 35", "ExRes 36",
+    "ExRes 37", "ExRes 38", "ExRes 39", "ExRes 40", "ExRes 41", "ExRes 42",
+    "ExRes 43", "ExRes 44", "ExRes 45")
+
+node_Nmin <- as.data.frame(t(node_Nmin_temp)) %>%
+  tibble::rownames_to_column("Sample_ID") %>%
+  mutate(bact.ch = zerconidae + prostig_astig + collembola + 
+           predatory_nematodes + bactivorous_nematodes + 
+           omnivorous_nematodes) %>%
+  mutate(fung.ch = mesostigs + juv_oribatids + oribatids + 
+           collembola + predatory_nematodes + fungivorous_nematodes + 
+           omnivorous_nematodes)
+
+aggregated_node_Nmin <- merge(x = sample_metadata, y = node_Nmin,
+                              by = "Sample_ID") %>%
+  filter(!Sample_ID == "ExRes 5") %>%
+  filter(!destructive_time == "T0")
+
+meso_Nmin_aov <- 
+  aov(mesostigs ~ (moisture_tx * temp_tx * destructive_time) 
+      + block_effect, data=aggregated_node_Nmin)
+summary(meso_Nmin_aov)

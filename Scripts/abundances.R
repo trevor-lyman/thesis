@@ -169,8 +169,8 @@ meso.ab_aov <-
 
 # summary table
 meso.ab_summary <- abundance_data %>%
-  group_by(tx) %>%
-  summarize(mean = mean(total_meso_ab_standardized), 
+  dplyr::group_by(interaction(destructive_time, moisture_tx, temp_tx)) %>%
+  dplyr::summarize(mean = mean(total_meso_ab_standardized), 
             se = sd(total_meso_ab_standardized)/
               sqrt(length(total_meso_ab_standardized)))
 
@@ -198,8 +198,8 @@ micro.ab_aov <-
 
 # summary table
 micro.ab_summary <- abundance_data %>%
-  group_by(tx) %>%
-  summarize(mean = mean(total_micro_ab_standardized), 
+  dplyr::group_by(interaction(destructive_time, moisture_tx, temp_tx)) %>%
+  dplyr::summarize(mean = mean(total_micro_ab_standardized), 
             se = sd(total_micro_ab_standardized)/
               sqrt(length(total_micro_ab_standardized))) 
 

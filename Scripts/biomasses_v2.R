@@ -206,6 +206,46 @@ biomass_data$block_effect <- as.factor(biomass_data$block_effect)
 biomass_data$tx <- as.factor(biomass_data$tx)
 
 write.csv(temp2, "Outputs/webs_v2.csv")
+
+
+test <- merge(x = sample_metadata, y = temp2, by = "Sample_ID")
+
+need <- test %>%
+  group_by(interaction(destructive_time, moisture_tx, temp_tx)) %>%
+  summarize(mean_meso = mean(mesostigs_biomass), 
+            se_meso = sd(mesostigs_biomass)/sqrt(length(mesostigs_biomass)),
+            mean_zerc = mean(zerconidae_biomass), 
+            se_zerc = sd(zerconidae_biomass)/sqrt(length(zerconidae_biomass)),
+            mean_miteNP = mean(prostig_astig_biomass), 
+            se_miteNP = sd(prostig_astig_biomass)/sqrt(length(prostig_astig_biomass)),
+            mean_juvorib = mean(juv_oribatids_biomass), 
+            se_juvorib = sd(juv_oribatids_biomass)/sqrt(length(juv_oribatids_biomass)),
+            mean_orib = mean(oribatids_biomass), 
+            se_orib = sd(oribatids_biomass)/sqrt(length(oribatids_biomass)),
+            mean_coll = mean(collembola_biomass), 
+            se_coll = sd(collembola_biomass)/sqrt(length(collembola_biomass)),
+            mean_prednem = mean(n.predator_biomass), 
+            se_prednem = sd(n.predator_biomass)/sqrt(length(n.predator_biomass)),
+            mean_bactnem = mean(n.bacterivore_biomass), 
+            se_bactnem = sd(n.bacterivore_biomass)/sqrt(length(n.bacterivore_biomass)),
+            mean_fungnem = mean(n.fungivore_biomass), 
+            se_fungnem = sd(n.fungivore_biomass)/sqrt(length(n.fungivore_biomass)),
+            mean_omninem = mean(n.omnivore_biomass), 
+            se_omninem = sd(n.omnivore_biomass)/sqrt(length(n.omnivore_biomass)),
+            mean_protists = mean(protists_biomass), 
+            se_protists = sd(protists_biomass)/sqrt(length(protists_biomass)),
+            mean_bact = mean(bacteria_biomass), 
+            se_bact = sd(bacteria_biomass)/sqrt(length(bacteria_biomass)),
+            mean_fung = mean(fungi_biomass), 
+            se_fung = sd(fungi_biomass)/sqrt(length(fungi_biomass)),
+            mean_labile = mean(labile_biomass), 
+            se_labile = sd(labile_biomass)/sqrt(length(labile_biomass)),
+            mean_recal = mean(recal_biomass), 
+            se_recal = sd(recal_biomass)/sqrt(length(recal_biomass)),
+            )
+
+write.csv(need, "Outputs/mean_node_biomasses.csv")
+
 # Step 9:
 # create plot
 total.biom_plot <- 
@@ -231,8 +271,8 @@ total.biom_aov <-
 # Step 11:
 # summary table
 total.biom_summary <- biomass_data %>%
-  group_by(tx) %>%
-  summarize(mean = mean(total_biomass), 
+  dplyr::group_by(interaction(destructive_time, moisture_tx, temp_tx)) %>%
+  dplyr::summarize(mean = mean(total_biomass), 
             se = sd(total_biomass)/
               sqrt(length(total_biomass)))
 
@@ -264,8 +304,8 @@ micro.biom_aov <-
 # Step 11:
 # summary table
 micro.biom_summary <- biomass_data %>%
-  group_by(tx) %>%
-  summarize(mean = mean(micro_biomass), 
+  dplyr::group_by(interaction(destructive_time, moisture_tx, temp_tx)) %>%
+  dplyr::summarize(mean = mean(micro_biomass), 
             se = sd(micro_biomass)/
               sqrt(length(micro_biomass)))
 
@@ -297,8 +337,8 @@ meso.biom_aov <-
 # Step 11:
 # summary table
 meso.biom_summary <- biomass_data %>%
-  group_by(tx) %>%
-  summarize(mean = mean(meso_biomass), 
+  dplyr::group_by(interaction(destructive_time, moisture_tx, temp_tx)) %>%
+  dplyr::summarize(mean = mean(meso_biomass), 
             se = sd(meso_biomass)/
               sqrt(length(meso_biomass)))
 
