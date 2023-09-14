@@ -46,3 +46,22 @@ test <- cbind(abundances$total_micro_ab_standardized,
 
 output <- lm(test~(destructive_time*moisture_tx*temp_tx), data = abundances)
 Manova(output, type="III")
+
+abundances2 <- vegdist(abundances$total_ab_standardized, method="bray")
+
+# default test by terms
+
+abundances_T1 <- abundances %>% filter(destructive_time == "T1") %>%
+  filter(!Sample_ID == "ExRes 5")
+
+abundances_T2 <- abundances %>% filter(destructive_time == "T2") 
+
+abundances.divT1 <- adonis2(abundances_T1$total_ab_standardized ~ 
+                            (moisture_tx*temp_tx) + block_effect, data = abundances_T1, permutations = 999, method="bray")
+
+abundances.divT1
+
+abundances.divT2 <- adonis2(abundances_T2$total_ab_standardized ~ 
+                              (moisture_tx*temp_tx), data = abundances_T2, permutations = 999, method="bray")
+
+abundances.divT2

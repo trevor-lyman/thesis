@@ -1,6 +1,6 @@
 # Trevor Pettit
-# May 26, 2023
-# fluxes.R
+# Sept 14, 2023
+# fluxes_revised_v2.R
 
 # The purpose of this script is to...
 
@@ -1038,12 +1038,55 @@ consumption_summary <- model_outputs %>%
             se = sd(total_consumption)/
               sqrt(length(total_consumption))) 
 
+# LM
+model_outputs$block_effect <- factor(model_outputs$block_effect, ordered = F)
+model_outputs$block_effect <- relevel(model_outputs$block_effect, "low")
+
+consumption_lm <- lm(total_consumption ~ (moisture_tx * temp_tx * destructive_time) 
+                     + block_effect, data=model_outputs)
+
+consumption_lm2_temp <- lm(total_consumption ~
+                            moisture_tx * temp_tx * destructive_time + 
+                            moisture_tx * temp_tx +
+                            moisture_tx * destructive_time + 
+                            temp_tx * destructive_time +
+                            moisture_tx +
+                            temp_tx +
+                            destructive_time +
+                            block_effect,
+                        data = model_outputs)
+
+consumption_lm2 <- lm(total_consumption ~
+                        
+                        
+                        
+                        temp_tx * destructive_time +
+                        moisture_tx +
+                        temp_tx +
+                        destructive_time +
+                        block_effect,
+                   data = model_outputs)
+
+summary(consumption_lm2)
+
 # 8.3: AOV
 consumption_aov <- 
-  aov(total_consumption ~ (moisture_tx * temp_tx * destructive_time) 
-      + block_effect, data=model_outputs)
+  Anova(consumption_lm, type = 'III')
 
-consumption_plot; consumption_summary; summary(consumption_aov)
+consumption_aov2 <- 
+  Anova(consumption_lm2, type = 'III')
+
+consumption_aov2
+
+# test assumptions
+ggqqplot(residuals(consumption_lm2))
+shapiro_test(residuals(consumption_lm2))
+
+plot(consumption_lm2, 1)
+model_outputs %>% levene_test(total_consumption ~ 
+                                 (moisture_tx * temp_tx * destructive_time))
+
+consumption_plot; consumption_summary; summary(consumption_lm); consumption_aov
 
 # Step 9: Cmin
 # 9.1: Plot
@@ -1068,12 +1111,52 @@ Cmin_summary <- model_outputs %>%
             se = sd(total_Cmin)/
               sqrt(length(total_Cmin))) 
 
+# LM
+Cmin_lm <- lm(total_Cmin ~ (moisture_tx * temp_tx * destructive_time) 
+              + block_effect, data=model_outputs)
+
+Cmin_lm2_temp <- lm(total_Cmin ~
+                      moisture_tx * temp_tx * destructive_time + 
+                      moisture_tx * temp_tx +
+                      moisture_tx * destructive_time + 
+                      temp_tx * destructive_time +
+                      moisture_tx +
+                      temp_tx +
+                      destructive_time +
+                      block_effect,
+                 data = model_outputs)
+
+Cmin_lm2 <- lm(total_Cmin ~
+                
+                
+                
+                temp_tx * destructive_time +
+                moisture_tx +
+                temp_tx +
+                destructive_time +
+                block_effect,
+            data = model_outputs)
+
+summary(Cmin_lm2)
+
 # 9.3: AOV
 Cmin_aov <- 
-  aov(total_Cmin ~ (moisture_tx * temp_tx * destructive_time) 
-      + block_effect, data=model_outputs)
+  Anova(Cmin_lm, type = 'III')
 
-Cmin_plot; Cmin_summary; summary(Cmin_aov)
+Cmin_aov2 <- 
+  Anova(Cmin_lm2, type = 'III')
+
+Cmin_aov2
+
+# test assumptions
+ggqqplot(residuals(Cmin_lm2))
+shapiro_test(residuals(Cmin_lm2))
+
+plot(Cmin_lm2, 1)
+model_outputs %>% levene_test(total_Cmin ~ 
+                                 (moisture_tx * temp_tx * destructive_time))
+
+Cmin_plot; Cmin_summary; summary(Cmin_lm); Cmin_aov
 
 # Step 10: Nmin
 # 10.1: Plot
@@ -1098,212 +1181,49 @@ Nmin_summary <- model_outputs %>%
             se = sd(total_Nmin)/
               sqrt(length(total_Nmin))) 
 
+# LM
+Nmin_lm <- lm(total_Nmin ~ (moisture_tx * temp_tx * destructive_time) 
+              + block_effect, data=model_outputs)
+
+Nmin_lm2_temp <- lm(total_Nmin ~
+                      moisture_tx * temp_tx * destructive_time + 
+                      moisture_tx * temp_tx +
+                      moisture_tx * destructive_time + 
+                      temp_tx * destructive_time +
+                      moisture_tx +
+                      temp_tx +
+                      destructive_time +
+                      block_effect,
+                 data = model_outputs)
+
+Nmin_lm2 <- lm(total_Nmin ~
+                
+                
+                
+                temp_tx * destructive_time +
+                moisture_tx +
+                temp_tx +
+                destructive_time +
+                block_effect,
+            data = model_outputs)
+
+summary(Nmin_lm2)
+
 # 10.3: AOV
 Nmin_aov <- 
-  aov(total_Nmin ~ (moisture_tx * temp_tx * destructive_time) 
-      + block_effect, data=model_outputs)
+  Anova(Nmin_lm, type = 'III')
 
-Nmin_plot; Nmin_summary; summary(Nmin_aov)
+Nmin_aov2 <- 
+  Anova(Nmin_lm2, type = 'III')
 
-# check assumptions
-model_fx <- lm(total_consumption ~ 
-                 (moisture_tx * temp_tx * destructive_time) 
-               + block_effect, data=model_outputs)
+Nmin_aov2
 
-ggqqplot(residuals(model_fx))
-shapiro_test(residuals(model_fx))
+# test assumptions
+ggqqplot(residuals(Nmin_lm2))
+shapiro_test(residuals(Nmin_lm2))
 
-plot(model_fx, 1)
-model_outputs %>% levene_test(total_consumption ~ 
-                               (moisture_tx * temp_tx * destructive_time))
-
-model_Cmin <- lm(total_Cmin ~ 
-                 (moisture_tx * temp_tx * destructive_time) 
-               + block_effect, data=model_outputs)
-
-ggqqplot(residuals(model_Cmin))
-shapiro_test(residuals(model_Cmin))
-
-plot(model_Cmin, 1)
-model_outputs %>% levene_test(total_Cmin ~ 
-                                (moisture_tx * temp_tx * destructive_time))
-
-model_Nmin <- lm(total_Nmin ~ 
-                   (moisture_tx * temp_tx * destructive_time) 
-                 + block_effect, data=model_outputs)
-
-ggqqplot(residuals(model_Nmin))
-shapiro_test(residuals(model_Nmin))
-
-plot(model_Nmin, 1)
+plot(Nmin_lm2, 1)
 model_outputs %>% levene_test(total_Nmin ~ 
-                                (moisture_tx * temp_tx * destructive_time))
+                                 (moisture_tx * temp_tx * destructive_time))
 
-### new
-
-library(plyr)
-
-cbind.fill <- function(...) {                                                                                                                                                       
-  transposed <- lapply(list(...),t)                                                                                                                                                 
-  transposed_dataframe <- lapply(transposed, as.data.frame)                                                                                                                         
-  return (data.frame(t(rbind.fill(transposed_dataframe))))                                                                                                                          
-} 
-
-node_consumption_temp <- 
-  cbind.fill(ExRes_1_model$consumption, ExRes_2_model$consumption, 
-             ExRes_3_model$consumption, ExRes_4_model$consumption, 
-             ExRes_5_model$consumption, ExRes_6_model$consumption,
-             ExRes_7_model$consumption, ExRes_8_model$consumption, 
-             ExRes_9_model$consumption, ExRes_10_model$consumption, 
-             ExRes_11_model$consumption, ExRes_12_model$consumption,
-             ExRes_13_model$consumption, ExRes_14_model$consumption, 
-             ExRes_15_model$consumption, ExRes_16_model$consumption, 
-             ExRes_17_model$consumption, ExRes_18_model$consumption,
-             ExRes_19_model$consumption, ExRes_20_model$consumption, 
-             ExRes_21_model$consumption, ExRes_22_model$consumption, 
-             ExRes_23_model$consumption, ExRes_24_model$consumption, 
-             ExRes_25_model$consumption, ExRes_26_model$consumption, 
-             ExRes_27_model$consumption, ExRes_28_model$consumption, 
-             ExRes_29_model$consumption, ExRes_30_model$consumption,
-             ExRes_31_model$consumption, ExRes_32_model$consumption, 
-             ExRes_33_model$consumption, ExRes_34_model$consumption, 
-             ExRes_35_model$consumption, ExRes_36_model$consumption,
-             ExRes_37_model$consumption, ExRes_38_model$consumption, 
-             ExRes_39_model$consumption, ExRes_40_model$consumption, 
-             ExRes_41_model$consumption, ExRes_42_model$consumption,
-             ExRes_43_model$consumption, ExRes_44_model$consumption, 
-             ExRes_45_model$consumption)
-node_consumption_temp[is.na(node_consumption_temp)] <- 0
-
-colnames(node_consumption_temp) <- 
-  c("ExRes 1", "ExRes 2", "ExRes 3", "ExRes 4", "ExRes 5", "ExRes 6", 
-    "ExRes 7", "ExRes 8", "ExRes 9", "ExRes 10", "ExRes 11", "ExRes 12",
-    "ExRes 13", "ExRes 14", "ExRes 15", "ExRes 16", "ExRes 17", "ExRes 18",
-    "ExRes 19", "ExRes 20", "ExRes 21", "ExRes 22", "ExRes 23", "ExRes 24",
-    "ExRes 25", "ExRes 26", "ExRes 27", "ExRes 28", "ExRes 29", "ExRes 30",
-    "ExRes 31", "ExRes 32", "ExRes 33", "ExRes 34", "ExRes 35", "ExRes 36",
-    "ExRes 37", "ExRes 38", "ExRes 39", "ExRes 40", "ExRes 41", "ExRes 42",
-    "ExRes 43", "ExRes 44", "ExRes 45")
-
-node_consumption <- as.data.frame(t(node_consumption_temp)) %>%
-  tibble::rownames_to_column("Sample_ID") %>%
-  mutate(bact.ch = zerconidae + prostig_astig + collembola + 
-           predatory_nematodes + bactivorous_nematodes + 
-           omnivorous_nematodes) %>%
-  mutate(fung.ch = mesostigs + juv_oribatids + oribatids + 
-           collembola + predatory_nematodes + fungivorous_nematodes + 
-           omnivorous_nematodes)
-
-aggregated_node_consumption <- merge(x = sample_metadata, y = node_consumption,
-                              by = "Sample_ID") %>%
-  filter(!Sample_ID == "ExRes 5") %>%
-  filter(!destructive_time == "T0")
-
-fung_consumption_aov <- 
-  aov(fung.ch ~ (moisture_tx * temp_tx * destructive_time) 
-      + block_effect, data=aggregated_node_consumption)
-summary(fung_consumption_aov)
-
-bact_consumption_aov <- 
-  aov(bact.ch ~ (moisture_tx * temp_tx * destructive_time) 
-      + block_effect, data=aggregated_node_consumption)
-summary(bact_consumption_aov)
-
-node_Cmin_temp <- 
-  cbind.fill(ExRes_1_model$Cmin, ExRes_2_model$Cmin, ExRes_3_model$Cmin,
-             ExRes_4_model$Cmin, ExRes_5_model$Cmin, ExRes_6_model$Cmin,
-             ExRes_7_model$Cmin, ExRes_8_model$Cmin, ExRes_9_model$Cmin,
-             ExRes_10_model$Cmin, ExRes_11_model$Cmin, ExRes_12_model$Cmin,
-             ExRes_13_model$Cmin, ExRes_14_model$Cmin, ExRes_15_model$Cmin,
-             ExRes_16_model$Cmin, ExRes_17_model$Cmin, ExRes_18_model$Cmin, 
-             ExRes_19_model$Cmin, ExRes_20_model$Cmin, ExRes_21_model$Cmin, 
-             ExRes_22_model$Cmin, ExRes_23_model$Cmin, ExRes_24_model$Cmin, 
-             ExRes_25_model$Cmin, ExRes_26_model$Cmin, ExRes_27_model$Cmin,
-             ExRes_28_model$Cmin, ExRes_29_model$Cmin, ExRes_30_model$Cmin,
-             ExRes_31_model$Cmin, ExRes_32_model$Cmin, ExRes_33_model$Cmin, 
-             ExRes_34_model$Cmin, ExRes_35_model$Cmin, ExRes_36_model$Cmin,
-             ExRes_37_model$Cmin, ExRes_38_model$Cmin, ExRes_39_model$Cmin,
-             ExRes_40_model$Cmin, ExRes_41_model$Cmin, ExRes_42_model$Cmin,
-             ExRes_43_model$Cmin, ExRes_44_model$Cmin, ExRes_45_model$Cmin)
-node_Cmin_temp[is.na(node_Cmin_temp)] <- 0
-
-colnames(node_Cmin_temp) <- 
-  c("ExRes 1", "ExRes 2", "ExRes 3", "ExRes 4", "ExRes 5", "ExRes 6", 
-    "ExRes 7", "ExRes 8", "ExRes 9", "ExRes 10", "ExRes 11", "ExRes 12",
-    "ExRes 13", "ExRes 14", "ExRes 15", "ExRes 16", "ExRes 17", "ExRes 18",
-    "ExRes 19", "ExRes 20", "ExRes 21", "ExRes 22", "ExRes 23", "ExRes 24",
-    "ExRes 25", "ExRes 26", "ExRes 27", "ExRes 28", "ExRes 29", "ExRes 30",
-    "ExRes 31", "ExRes 32", "ExRes 33", "ExRes 34", "ExRes 35", "ExRes 36",
-    "ExRes 37", "ExRes 38", "ExRes 39", "ExRes 40", "ExRes 41", "ExRes 42",
-    "ExRes 43", "ExRes 44", "ExRes 45")
-
-node_Cmin <- as.data.frame(t(node_Cmin_temp)) %>%
-  tibble::rownames_to_column("Sample_ID") %>%
-  mutate(bact.ch = zerconidae + prostig_astig + collembola + 
-           predatory_nematodes + bactivorous_nematodes + 
-           omnivorous_nematodes) %>%
-  mutate(fung.ch = mesostigs + juv_oribatids + oribatids + 
-           collembola + predatory_nematodes + fungivorous_nematodes + 
-           omnivorous_nematodes)
-
-aggregated_node_Cmin <- merge(x = sample_metadata, y = node_Cmin,
-                              by = "Sample_ID") %>%
-  filter(!Sample_ID == "ExRes 5") %>%
-  filter(!destructive_time == "T0")
-
-fung_Cmin_aov <- 
-  aov(fung.ch ~ (moisture_tx * temp_tx * destructive_time) 
-      + block_effect, data=aggregated_node_Cmin)
-summary(fung_Cmin_aov)
-
-bact_Cmin_aov <- 
-  aov(bact.ch ~ (moisture_tx * temp_tx * destructive_time) 
-      + block_effect, data=aggregated_node_Cmin)
-summary(bact_Cmin_aov)
-
-node_Nmin_temp <- 
-  cbind.fill(ExRes_1_model$Nmin, ExRes_2_model$Nmin, ExRes_3_model$Nmin,
-             ExRes_4_model$Nmin, ExRes_5_model$Nmin, ExRes_6_model$Nmin,
-             ExRes_7_model$Nmin, ExRes_8_model$Nmin, ExRes_9_model$Nmin,
-             ExRes_10_model$Nmin, ExRes_11_model$Nmin, ExRes_12_model$Nmin,
-             ExRes_13_model$Nmin, ExRes_14_model$Nmin, ExRes_15_model$Nmin,
-             ExRes_16_model$Nmin, ExRes_17_model$Nmin, ExRes_18_model$Nmin, 
-             ExRes_19_model$Nmin, ExRes_20_model$Nmin, ExRes_21_model$Nmin, 
-             ExRes_22_model$Nmin, ExRes_23_model$Nmin, ExRes_24_model$Nmin, 
-             ExRes_25_model$Nmin, ExRes_26_model$Nmin, ExRes_27_model$Nmin,
-             ExRes_28_model$Nmin, ExRes_29_model$Nmin, ExRes_30_model$Nmin,
-             ExRes_31_model$Nmin, ExRes_32_model$Nmin, ExRes_33_model$Nmin, 
-             ExRes_34_model$Nmin, ExRes_35_model$Nmin, ExRes_36_model$Nmin,
-             ExRes_37_model$Nmin, ExRes_38_model$Nmin, ExRes_39_model$Nmin,
-             ExRes_40_model$Nmin, ExRes_41_model$Nmin, ExRes_42_model$Nmin,
-             ExRes_43_model$Nmin, ExRes_44_model$Nmin, ExRes_45_model$Nmin)
-node_Nmin_temp[is.na(node_Nmin_temp)] <- 0
-
-colnames(node_Nmin_temp) <- 
-  c("ExRes 1", "ExRes 2", "ExRes 3", "ExRes 4", "ExRes 5", "ExRes 6", 
-    "ExRes 7", "ExRes 8", "ExRes 9", "ExRes 10", "ExRes 11", "ExRes 12",
-    "ExRes 13", "ExRes 14", "ExRes 15", "ExRes 16", "ExRes 17", "ExRes 18",
-    "ExRes 19", "ExRes 20", "ExRes 21", "ExRes 22", "ExRes 23", "ExRes 24",
-    "ExRes 25", "ExRes 26", "ExRes 27", "ExRes 28", "ExRes 29", "ExRes 30",
-    "ExRes 31", "ExRes 32", "ExRes 33", "ExRes 34", "ExRes 35", "ExRes 36",
-    "ExRes 37", "ExRes 38", "ExRes 39", "ExRes 40", "ExRes 41", "ExRes 42",
-    "ExRes 43", "ExRes 44", "ExRes 45")
-
-node_Nmin <- as.data.frame(t(node_Nmin_temp)) %>%
-  tibble::rownames_to_column("Sample_ID") %>%
-  mutate(bact.ch = zerconidae + prostig_astig + collembola + 
-           predatory_nematodes + bactivorous_nematodes + 
-           omnivorous_nematodes) %>%
-  mutate(fung.ch = mesostigs + juv_oribatids + oribatids + 
-           collembola + predatory_nematodes + fungivorous_nematodes + 
-           omnivorous_nematodes)
-
-aggregated_node_Nmin <- merge(x = sample_metadata, y = node_Nmin,
-                              by = "Sample_ID") %>%
-  filter(!Sample_ID == "ExRes 5") %>%
-  filter(!destructive_time == "T0")
-
-meso_Nmin_aov <- 
-  aov(mesostigs ~ (moisture_tx * temp_tx * destructive_time) 
-      + block_effect, data=aggregated_node_Nmin)
-summary(meso_Nmin_aov)
+Nmin_plot; Nmin_summary; summary(Nmin_lm); Nmin_aov

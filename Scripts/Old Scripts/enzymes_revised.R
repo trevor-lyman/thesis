@@ -62,13 +62,17 @@ phenox_summary <- aggregated_enzyme_data %>%
   ) %>%
   mutate(key = key_enzymes)
 
+# create LM
+aggregated_enzyme_data$block_effect <- factor(aggregated_enzyme_data$block_effect, ordered = F)
+
+phenox_lm <- lm(Phenox ~ (moisture_tx * temp_tx * destructive_time) + block_effect, 
+                data = aggregated_enzyme_data)
 # create aov
 phenox_aov <- 
-  aov(Phenox ~ (moisture_tx * temp_tx * destructive_time) + block_effect, 
-      data = aggregated_enzyme_data)
+  Anova(phenox_lm, type = 'III')
 
 # call everything
-phenox_plot; phenox_summary; summary(phenox_aov)
+phenox_plot; phenox_summary; summary(phenox_lm); phenox_aov
 
 # create plot
 perox_plot <- 
@@ -93,59 +97,17 @@ perox_summary <- na.omit(aggregated_enzyme_data) %>%
   ) %>%
   mutate(key = key_enzymes)
 
+# create LM
+aggregated_enzyme_data$block_effect <- factor(aggregated_enzyme_data$block_effect, ordered = F)
+
+perox_lm <- lm(Perox ~ (moisture_tx * temp_tx * destructive_time) + block_effect, 
+               data = aggregated_enzyme_data)
+
 # create aov
 perox_aov <- 
-  aov(Perox ~ (moisture_tx * temp_tx * destructive_time) + block_effect, 
-      data = aggregated_enzyme_data)
+  Anova(perox_lm, type = 'III')
 
 # call everything
-perox_plot; perox_summary; summary(perox_aov)
+perox_plot; perox_summary; summary(perox_lm); perox_aov
 
 write.csv(aggregated_enzyme_data, "Outputs/enzyme_outputs.csv")
-
-# check assumptions
-library(ggpubr)
-library(rstatix)
-
-model_phenox <- lm(Phenox ~ 
-                 (moisture_tx * temp_tx * destructive_time) 
-               + block_effect, data=aggregated_enzyme_data)
-
-ggqqplot(residuals(model_phenox))
-shapiro_test(residuals(model_phenox))
-
-plot(model_phenox, 1)
-aggregated_enzyme_data %>% levene_test(Phenox ~ 
-                                     (moisture_tx * temp_tx * destructive_time))
-
-model_perox <- lm((Perox) ~ 
-                     (moisture_tx * temp_tx * destructive_time) 
-                   + block_effect, data=perox_data)
-
-ggqqplot(residuals(model_perox))
-shapiro_test(residuals(model_perox))
-
-plot(model_perox, 1)
-aggregated_enzyme_data %>% levene_test((Perox) ~ 
-                                         (moisture_tx * temp_tx * destructive_time))
-
-
-new_T1 <- aggregated_enzyme_data %>% filter(!destructive_time == "T2")
-new_T2 <- aggregated_enzyme_data %>% filter(!destructive_time == "T1")
-
-
-new_Phenox_T1 <- aov(Phenox~tx, data = new_T1)
-summary(new_Phenox_T1)
-TukeyHSD(new_Phenox_T1)
-
-new_Phenox_T2 <- aov(Phenox~tx, data = new_T2)
-summary(new_Phenox_T2)
-TukeyHSD(new_Phenox_T2)
-
-new_Perox_T1 <- aov(Perox~tx, data = new_T1)
-summary(new_Perox_T1)
-TukeyHSD(new_Perox_T1)
-
-new_Perox_T2 <- aov(Perox~tx, data = new_T2)
-summary(new_Perox_T2)
-TukeyHSD(new_Perox_T2)
