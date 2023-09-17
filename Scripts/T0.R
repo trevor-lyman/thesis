@@ -78,7 +78,8 @@ resp_summary2
 
 aggregated_soil_data <- merge(x = sample_metadata, y = soil_data,
                            by = "Sample_ID") %>%
-  filter(destructive_time == "T0") 
+  filter(destructive_time == "T0") %>%
+  mutate(pct_moisture = log(pct_moisture))
 
 aggregated_soil_data$destructive_time <- 
   as.factor(aggregated_soil_data$destructive_time)
@@ -127,8 +128,8 @@ pH_plot <-
 # create summary table
 pH_summary <- aggregated_soil_data %>%
   group_by(interaction(destructive_time, temp_tx, moisture_tx)) %>%
-  summarise(mean = mean(pH), 
-            se = sd(pH)/sqrt(length(pH))
+  summarise(mean = mean(log(pH)), 
+            se = sd(log(pH))/sqrt(length(pH))
   )
 
 pH_summary; pH_plot
