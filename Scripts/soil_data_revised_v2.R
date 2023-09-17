@@ -7,11 +7,14 @@
 # Step 1: Load packages
 library(dplyr)
 library(ggplot2)
+library(ggpubr)
 library(soilfoodwebs)
 library(corrplot)
 library(tidyr)
 library(data.table)
 library(reshape2)
+library(car)
+library(rstatix)
 
 sample_metadata <- read.csv("Data/sample metadata v2.csv")
 pH_data <- read.csv("Data/pH data.csv")
@@ -292,3 +295,7 @@ soil_data <- merge(x = soil_data_temp, y = CNS_data,
   select(Sample_ID, pH, pct_moisture, C_N_ratio)
 
 write.csv(soil_data, "Outputs/soil_outputs.csv")
+
+temp <- lm(C_N_ratio~moisture_tx*temp_tx*destructive_time+block_effect, data = aggregated_CNS_data)
+tukey <- aov(temp)
+TukeyHSD(tukey)

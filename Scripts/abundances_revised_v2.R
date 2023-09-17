@@ -7,12 +7,13 @@
 # Step 1: Load packages
 library(dplyr)
 library(ggplot2)
+library(ggpubr)
 library(soilfoodwebs)
 library(corrplot)
 library(tidyr)
 library(data.table)
 library(reshape2)
-library(ggpubr)
+library(car)
 library(rstatix)
 
 # Step 2: Read Data
@@ -325,8 +326,12 @@ ggqqplot(residuals(micro.ab_lm2))
 shapiro_test(residuals(micro.ab_lm2))
 
 plot(micro.ab_lm2, 1)
-abundance_data %>% levene_test(total_micro_ab_standardized ~ 
+abundance_figs %>% levene_test(total_micro_ab_standardized ~ 
                                       (moisture_tx * temp_tx * destructive_time))
 
 # call everything
 micro.ab_plot; micro.ab_summary; summary(micro.ab_lm); micro.ab_aov
+
+temp <- lm(total_ab_standardized~moisture_tx*temp_tx*destructive_time+block_effect, data = abundance_figs)
+tukey <- aov(temp)
+TukeyHSD(tukey)

@@ -7,11 +7,14 @@
 # Step 1: Load packages
 library(dplyr)
 library(ggplot2)
+library(ggpubr)
 library(soilfoodwebs)
 library(corrplot)
 library(tidyr)
 library(data.table)
 library(reshape2)
+library(car)
+library(rstatix)
 
 sample_metadata <- read.csv("Data/sample metadata v2.csv")
 pH_data <- read.csv("Data/pH data.csv")
@@ -103,3 +106,8 @@ aggregated_pH_data %>% levene_test((pH) ~
 
 # call everything
 pH_plot; pH_summary; summary(pH_lm); pH_aov
+
+temp <- lm(pH~moisture_tx*temp_tx*destructive_time+block_effect, data = aggregated_pH_data)
+tukey <- aov(temp)
+TukeyHSD(tukey)
+

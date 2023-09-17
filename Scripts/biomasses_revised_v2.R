@@ -7,11 +7,14 @@
 # Step 1: Load packages
 library(dplyr)
 library(ggplot2)
+library(ggpubr)
 library(soilfoodwebs)
 library(corrplot)
 library(tidyr)
 library(data.table)
 library(reshape2)
+library(car)
+library(rstatix)
 
 # Step 2: Read Data
 abundance_data <- read.csv("Outputs/abundances.csv") 
@@ -469,3 +472,7 @@ biomass_data %>% levene_test(meso_biomass ~
 
 # call everything
 meso.biom_plot; meso.biom_summary; summary(meso.biom_lm); meso.biom_aov
+
+temp <- lm(total_biomass~moisture_tx*temp_tx*destructive_time+block_effect, data = biomass_data)
+tukey <- aov(temp)
+TukeyHSD(tukey)

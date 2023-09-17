@@ -7,11 +7,14 @@
 # Step 1: Load packages
 library(dplyr)
 library(ggplot2)
+library(ggpubr)
 library(soilfoodwebs)
 library(corrplot)
 library(tidyr)
 library(data.table)
 library(reshape2)
+library(car)
+library(rstatix)
 
 # Step 2: Read Data
 sample_metadata <- read.csv("Data/sample metadata v2.csv")
@@ -32,6 +35,8 @@ micro_body_mass <- read.csv("Data/Kamath et al dataset.csv") %>%
   dplyr::select(-prop_ab) # body mass from Dev's thesis, in ug wwt
 micro_prop_ab <- read.csv("Data/Kamath et al dataset.csv") %>% 
   dplyr::select(-body_mass) # proportional abundances from Dev's thesis
+
+sample_metadata$block_effect <- ordered(sample_metadata$block_effect, levels = c("low", "high"))
 
 # Step 3:
 mesofauna_ab <- merge(x = mesofauna_ab_temp, y = extraction_moisture_data %>% 

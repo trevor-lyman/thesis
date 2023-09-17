@@ -7,11 +7,14 @@
 # Step 1: Load packages
 library(dplyr)
 library(ggplot2)
+library(ggpubr)
 library(soilfoodwebs)
 library(corrplot)
 library(tidyr)
 library(data.table)
 library(reshape2)
+library(car)
+library(rstatix)
 
 # Step 2: Read Data
 sample_metadata <- read.csv("Data/sample metadata v2.csv")

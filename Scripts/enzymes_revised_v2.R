@@ -7,14 +7,19 @@
 # Step 1: Load packages
 library(dplyr)
 library(ggplot2)
+library(ggpubr)
 library(soilfoodwebs)
 library(corrplot)
 library(tidyr)
 library(data.table)
 library(reshape2)
+library(car)
+library(rstatix)
 
 sample_metadata <- read.csv("Data/sample metadata v2.csv")
 enzyme_data <- na.omit(read.csv("Data/enzyme data.csv"))
+
+sample_metadata$block_effect <- ordered(sample_metadata$block_effect, levels = c("low", "high"))
 
 # tidy data
 aggregated_enzyme_data2 <- merge(x = sample_metadata, y = enzyme_data,
@@ -186,3 +191,11 @@ aggregated_enzyme_data %>% levene_test(Perox ~
 perox_plot; perox_summary; summary(perox_lm); perox_aov
 
 write.csv(aggregated_enzyme_data, "Outputs/enzyme_outputs.csv")
+
+temp1 <- lm(Phenox~moisture_tx*temp_tx*destructive_time+block_effect, data = aggregated_enzyme_data)
+tukey1 <- aov(temp1)
+TukeyHSD(tukey1)
+
+temp2 <- lm(Perox~moisture_tx*temp_tx*destructive_time+block_effect, data = aggregated_enzyme_data)
+tukey2 <- aov(temp2)
+TukeyHSD(tukey2)

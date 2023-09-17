@@ -7,13 +7,18 @@
 # Step 1: Load packages
 library(dplyr)
 library(ggplot2)
+library(ggpubr)
 library(soilfoodwebs)
 library(corrplot)
 library(tidyr)
 library(data.table)
 library(reshape2)
+library(car)
+library(rstatix)
 
 sample_metadata <- read.csv("Data/sample metadata v2.csv")
+
+sample_metadata$block_effect <- ordered(sample_metadata$block_effect, levels = c("low", "high"))
 
 # Data folder
 file.path <- "~/Library/CloudStorage/OneDrive-Personal/Desktop/Lindo Lab/ExRes/Data/Respiration/"
@@ -205,6 +210,9 @@ plot(resp_lm2, 1)
 as.data.frame(resp.data) %>% 
   levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time))
 
-
 # call everything
 resp_plot; resp_summary; summary(resp_lm); resp_aov
+
+temp <- lm(cum_resp~moisture_tx*temp_tx*destructive_time+block_effect, data = resp.data)
+tukey <- aov(temp)
+TukeyHSD(tukey)
