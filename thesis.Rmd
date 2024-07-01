@@ -1,0 +1,478 @@
+---
+title: "thesis"
+author: "Trevor Pettit"
+date: "2024-06-30"
+output: 
+  html_document:
+    code_folding: hide
+    theme: default
+    highlight: tango
+    toc: true
+    toc_float: true
+---
+# 1.0 Project Overview
+
+# 2.0 Set Up
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+```{r Libraries}
+library(ggplot2)
+library(dplyr)
+library(ggpubr) # ggqqplot()
+library(rstatix) # shapiro_test()
+library(car) # Anova()
+library(vegan)
+library(soilfoodwebs)
+```
+
+```{r Import Data}
+sample_metadata <- read.csv("Data/sample metadata v2.csv")
+head(sample_metadata)
+
+extraction_moisture_data <- 
+  read.csv("Data/extraction moisture data.csv") 
+head(extraction_moisture_data)
+
+mesofauna_ab_temp <- 
+  read.csv("Data/mesofauna abundances.csv") 
+head(mesofauna_ab_temp)
+
+# raw abundance data
+meso_body_mass <- 
+  read.csv("Data/Barreto et al complete dataset .csv") 
+head(meso_body_mass)
+
+# Carlos' body mass data, in ug of C
+extraction_moisture_data <- 
+  read.csv("Data/extraction moisture data.csv") 
+head(extraction_moisture_data)
+
+microfauna_ab_temp <- 
+  read.csv("Data/microfauna abundances.csv") %>% # raw abundance data
+  mutate(mean_abundance = (ab_1 + ab_2)/2) # average of 2 passes
+head(microfauna_ab_temp)
+
+micro_body_mass <- read.csv("Data/Kamath et al dataset.csv") %>% 
+  dplyr::select(-prop_ab) # body mass from Dev's thesis, in ug wwt
+head(micro_body_mass)
+
+micro_prop_ab <- read.csv("Data/Kamath et al dataset.csv") %>% 
+  dplyr::select(-body_mass) # proportional abundances from Dev's thesis
+head(micro_prop_ab)
+```
+
+```{r Conversion Factors}
+cm3_in_m2 <- 100*100*10 # 15 cm deep, less top 5 cm of OM
+bulk_soil_density <- 0.075 # g dwt per cm^3?
+# https://sis.agr.gc.ca/cansis/publications/manuals/1984-peat/ca1984_2e_report.pdf
+g_per_m2 <- cm3_in_m2*bulk_soil_density # cm3_in_m2 * bulk_soil_density 
+```
+
+# 3.0 Abundance Analysis
+```{r Tidy Mesofauna Abundance Data}
+mesofauna_ab <- merge(x = mesofauna_ab_temp, y = extraction_moisture_data %>% 
+                        filter(extraction_type == "Dry"), 
+                      by = "Sample_ID")
+head(mesofauna_ab)
+
+dry_extraction <- extraction_moisture_data %>% 
+  filter(extraction_type == "Dry") %>%
+  dplyr::select(Sample_ID, extraction_type, dry_weight)
+head(dry_extraction)
+
+temp_dry <- merge(x = mesofauna_ab_temp, y = dry_extraction, 
+                  by = "Sample_ID") %>%
+  mutate(total_meso_ab_standardized = g_per_m2*total_ab/dry_weight) %>%
+  dplyr::select(-total_ab)
+
+temp_dry$collembola <- g_per_m2*temp_dry$collembola/temp_dry$dry_weight
+temp_dry$juv_oribatids <- g_per_m2*temp_dry$juv_oribatids/temp_dry$dry_weight
+temp_dry$oribatids <- g_per_m2*temp_dry$oribatids/temp_dry$dry_weight
+temp_dry$prostigs <- g_per_m2*temp_dry$prostigs/temp_dry$dry_weight
+temp_dry$astigmata <- g_per_m2*temp_dry$astigmata/temp_dry$dry_weight
+temp_dry$zerconidae <- g_per_m2*temp_dry$zerconidae/temp_dry$dry_weight
+temp_dry$mesostigs <- g_per_m2*temp_dry$mesostigs/temp_dry$dry_weight
+temp_dry$others <- g_per_m2*temp_dry$others/temp_dry$dry_weight
+
+head(temp_dry)
+
+meso_abundances <- merge(x = sample_metadata, y = temp_dry, 
+                         by = "Sample_ID") 
+head(meso_abundances)
+```
+
+```{r Tidy Microfauna Abundance Data}
+microfauna_ab <- merge(x = microfauna_ab_temp, 
+                       y = extraction_moisture_data %>% 
+                         filter(extraction_type == "Wet"), 
+                       by = "Sample_ID") 
+head(microfauna_ab)
+
+wet_extraction <- extraction_moisture_data %>% 
+  filter(extraction_type == "Wet") %>%
+  dplyr::select(Sample_ID, extraction_type, dry_weight)
+head(wet_extraction)
+
+temp_wet <- microfauna_ab %>% 
+  mutate(total_micro_ab_standardized = g_per_m2*mean_abundance/dry_weight)
+# note: do not have node level abundances for microfauna as proportional 
+# abundances from previous BRACE work (Kamath et al. 2022) was used to 
+# estimate node level abundances
+head(temp_wet)
+
+micro_abundances <- merge(x = sample_metadata, y = temp_wet, 
+                          by = "Sample_ID") 
+head(micro_abundances)
+```
+
+```{r Tidy Total Abundance Data}
+temp0 <- merge(x = temp_wet, y = temp_dry, by = "Sample_ID") %>%
+  dplyr::select(Sample_ID, total_micro_ab_standardized, 
+                total_meso_ab_standardized) %>%
+  mutate(total_ab_standardized = 
+           total_micro_ab_standardized + total_meso_ab_standardized)
+head(temp0)
+
+abundance_data_full <- merge(x = sample_metadata, y = temp0, 
+                             by = "Sample_ID") %>%
+  mutate(tx = interaction(temp_tx, moisture_tx, destructive_time))
+
+abundance_data_full$destructive_time <- 
+  as.factor(abundance_data_full$destructive_time)
+abundance_data_full$moisture_tx <- as.factor(abundance_data_full$moisture_tx)
+abundance_data_full$temp_tx <- as.factor(abundance_data_full$temp_tx)
+abundance_data_full$block_effect <- 
+  as.factor(abundance_data_full$block_effect)
+abundance_data_full$tx <- as.factor(abundance_data_full$tx)
+
+head(abundance_data_full); str(abundance_data_full)
+
+abundance_data <- abundance_data_full %>% 
+  filter(!destructive_time == "T0") %>%
+  filter(!Sample_ID == "ExRes 5") # remove outlier
+
+abundance_data$block_effect <- factor(abundance_data$block_effect, ordered = F)
+abundance_data$block_effect <- relevel(abundance_data$block_effect, "low")
+
+abundance_data <- abundance_data %>%
+  mutate(tx_letters = interaction(destructive_time, temp_tx, moisture_tx)) %>%
+  mutate(tx = interaction(destructive_time, temp_tx, moisture_tx)) 
+abundance_data$tx_letters <- as.factor(abundance_data$tx_letters)
+abundance_data$tx_letters <- droplevels(abundance_data$tx_letters)
+abundance_data$tx <- as.factor(abundance_data$tx)
+abundance_data$tx <- droplevels(abundance_data$tx)
+levels(abundance_data$tx_letters) <- c("a", "b", "c", "d", "e", "f", "g", "h")
+
+head(abundance_data); str(abundance_data)
+```
+
+```{r Summary Tables}
+total.ab_summary <- abundance_data %>%
+  group_by(tx) %>%
+  summarize(mean = mean(total_ab_standardized), 
+            se = sd(total_ab_standardized)/
+              sqrt(length(total_ab_standardized))) 
+
+meso.ab_summary <- abundance_data %>%
+  dplyr::group_by(interaction(destructive_time, moisture_tx, temp_tx)) %>%
+  dplyr::summarize(mean = mean(total_meso_ab_standardized), 
+            se = sd(total_meso_ab_standardized)/
+              sqrt(length(total_meso_ab_standardized)))
+
+micro.ab_summary <- abundance_data %>%
+  dplyr::group_by(interaction(destructive_time, moisture_tx, temp_tx)) %>%
+  dplyr::summarize(mean = mean(total_micro_ab_standardized), 
+            se = sd(total_micro_ab_standardized)/
+              sqrt(length(total_micro_ab_standardized)))
+
+total.ab_summary; meso.ab_summary; micro.ab_summary
+```
+
+```{r Total Abundance ANOVA Assumptions}
+total.ab_lm <- lm(total_ab_standardized ~ 
+                    (moisture_tx * temp_tx * destructive_time) + 
+                    block_effect, data = abundance_data)
+
+total.ab_lm2_temp <- lm(total_ab_standardized ~
+                          moisture_tx * temp_tx * destructive_time + 
+                          moisture_tx * temp_tx +
+                          moisture_tx * destructive_time + 
+                          temp_tx * destructive_time +
+                          moisture_tx +
+                          temp_tx +
+                          destructive_time +
+                          block_effect,
+                     data = abundance_data)
+
+total.ab_lm2 <- lm(total_ab_standardized ~
+                    moisture_tx +
+                    temp_tx +
+                    destructive_time +
+                    block_effect,
+                data = abundance_data)
+
+summary(total.ab_lm2_temp); summary(total.ab_lm2)
+
+ggqqplot(residuals(total.ab_lm2)); shapiro_test(residuals(total.ab_lm2))
+plot(total.ab_lm2, 1); abundance_data %>% 
+  levene_test(total_ab_standardized ~ 
+                (moisture_tx * temp_tx * destructive_time))
+```
+
+```{r Mesofauna Abundance ANOVA Assumptions}
+meso.ab_lm <- lm(total_meso_ab_standardized ~ 
+                   (moisture_tx * temp_tx * destructive_time) + 
+                   block_effect, data = abundance_data)
+
+meso.ab_lm2_temp <- lm(total_meso_ab_standardized ~
+                        moisture_tx * temp_tx * destructive_time + 
+                        moisture_tx * temp_tx +
+                        moisture_tx * destructive_time + 
+                        temp_tx * destructive_time +
+                        moisture_tx +
+                        temp_tx +
+                        destructive_time +
+                        block_effect,
+                    data = abundance_data)
+
+meso.ab_lm2 <- lm(total_meso_ab_standardized ~
+                    temp_tx * destructive_time +
+                    moisture_tx +
+                    temp_tx +
+                    destructive_time +
+                    block_effect,
+               data = abundance_data)
+
+summary(meso.ab_lm2_temp); summary(meso.ab_lm2)
+
+ggqqplot(residuals(meso.ab_lm2)); shapiro_test(residuals(meso.ab_lm2)) # not normal
+plot(meso.ab_lm2, 1); abundance_data %>% 
+  levene_test(total_meso_ab_standardized ~ 
+                (moisture_tx * temp_tx * destructive_time))
+
+abundance_data <- abundance_data %>%
+  mutate(ln_total_meso_ab_standardized = log(total_meso_ab_standardized))
+
+meso.ab_lm3 <- lm(ln_total_meso_ab_standardized ~
+                    temp_tx * destructive_time +
+                    moisture_tx +
+                    temp_tx +
+                    destructive_time +
+                    block_effect,
+               data = abundance_data)
+summary(meso.ab_lm3)
+
+ggqqplot(residuals(meso.ab_lm3)); shapiro_test(residuals(meso.ab_lm3)) #  normal
+```
+
+```{r Microfauna Abundance ANOVA Assumptions}
+micro.ab_lm <- lm(total_micro_ab_standardized ~ 
+                    (moisture_tx * temp_tx * destructive_time) + 
+                    block_effect, data = abundance_data)
+
+micro.ab_lm2_temp <- lm(total_micro_ab_standardized ~
+                          moisture_tx * temp_tx * destructive_time + 
+                          moisture_tx * temp_tx +
+                          moisture_tx * destructive_time + 
+                          temp_tx * destructive_time +
+                          moisture_tx +
+                          temp_tx +
+                          destructive_time +
+                          block_effect,
+                     data = abundance_data)
+
+micro.ab_lm2 <- lm(total_micro_ab_standardized ~
+                    moisture_tx +
+                    temp_tx +
+                    destructive_time +
+                    block_effect,
+                data = abundance_data)
+
+summary(micro.ab_lm2_temp); summary(micro.ab_lm2)
+
+ggqqplot(residuals(micro.ab_lm2)); shapiro_test(residuals(micro.ab_lm2))
+plot(micro.ab_lm2, 1); abundance_data %>% 
+  levene_test(total_micro_ab_standardized ~ 
+                (moisture_tx * temp_tx * destructive_time))
+```
+
+```{r Total Abundance ANOVA}
+total.ab_aov <- 
+  car::Anova(total.ab_lm, type = 'III')
+
+total.ab_aov2 <- 
+  car::Anova(total.ab_lm2, type = 'III')
+
+key <- cbind(levels(abundance_data$tx_letters), levels(abundance_data$tx))
+colnames(key) <- c("Letter", "Treatment")
+
+total.ab_plot <- 
+  ggplot(abundance_data, aes(x = tx_letters, 
+                             y = total_ab_standardized, 
+                             fill = as.factor(destructive_time))) + 
+  geom_boxplot(outlier.shape = NA) + #avoid plotting outliers twice
+  geom_jitter(aes(pch = as.factor(destructive_time)), 
+              position = position_jitter(width = 0.1, height = 0), size = 3) + 
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) +
+  scale_fill_brewer(palette = "Greys")
+
+total.ab_aov; total.ab_aov2; key; total.ab_plot
+```
+
+```{r Mesofauna Abundance ANOVA}
+meso.ab_aov <- 
+  car::Anova(meso.ab_lm, type = 'III')
+
+meso.ab_aov2 <- 
+  car::Anova(meso.ab_lm2, type = 'III')
+
+meso.ab_aov3 <- 
+  car::Anova(meso.ab_lm3, type = 'III')
+
+meso.ab_plot <- 
+  ggplot(abundance_data, aes(x = tx_letters, 
+                             y = ln_total_meso_ab_standardized,
+                             fill = as.factor(destructive_time))) + 
+  geom_boxplot(outlier.shape = NA) + #avoid plotting outliers twice
+  geom_jitter(aes(pch = as.factor(destructive_time)), 
+              position = position_jitter(width = 0.1, height = 0), size = 3) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) +
+  scale_fill_brewer(palette = "Greys")
+
+meso.ab_aov; meso.ab_aov2; meso.ab_aov3; key; meso.ab_plot
+```
+
+```{r Microfauna Abundance ANOVA}
+micro.ab_aov <- 
+  car::Anova(micro.ab_lm, type = 'III')
+
+micro.ab_aov2 <- 
+  car::Anova(micro.ab_lm2, type = 'III')
+
+micro.ab_plot <- 
+  ggplot(abundance_data, aes(x = tx_letters, 
+                             y = total_micro_ab_standardized,
+                             fill = as.factor(destructive_time))) + 
+  geom_boxplot(outlier.shape = NA) + #avoid plotting outliers twice
+  geom_jitter(aes(pch = as.factor(destructive_time)), 
+              position = position_jitter(width = 0.1, height = 0), size = 3) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) +
+  scale_fill_brewer(palette = "Greys")
+
+micro.ab_aov; micro.ab_aov2; key; micro.ab_plot
+```
+
+```{r Abundance NMDS}
+ab_NMDS <- meso_abundances
+ab_NMDS$microfauna <- micro_abundances$total_micro_ab_standardized
+ab_NMDS <- ab_NMDS %>% dplyr::select(-c(moisture_tx,
+                                        temp_tx, block_effect, 
+                                        extraction_type, dry_weight, others, 
+                                        total_meso_ab_standardized))
+ab_NMDS_T1 <- ab_NMDS %>%
+  filter(destructive_time == "T1") %>%
+  filter(!Sample_ID == "ExRes 5") %>%
+  dplyr::select(-destructive_time)
+
+rownames(ab_NMDS_T1) <- ab_NMDS_T1$Sample_ID
+ab_NMDS_T1 <- ab_NMDS_T1 %>% select(-Sample_ID)
+
+ab_NMDS_T2 <- ab_NMDS %>%
+  filter(destructive_time == "T2") %>%
+  dplyr::select(-destructive_time)
+
+rownames(ab_NMDS_T2) <- ab_NMDS_T2$Sample_ID
+ab_NMDS_T2 <- ab_NMDS_T2 %>% select(-Sample_ID)
+
+metadata_T1 <- sample_metadata %>%
+  filter(destructive_time == "T1") %>%
+  filter(!row_number() %in% c(2)) # remove ExRes 5
+
+metadata_T2 <- sample_metadata %>%
+  filter(destructive_time == "T2")
+
+T1 <- ab_NMDS_T1[order(row.names(ab_NMDS_T1)), ]
+metadata_T1 <- metadata_T1[order(row.names(metadata_T1)), ]
+all.equal(rownames(ab_NMDS_T1), rownames(metadata_T1))  
+
+T2 <- ab_NMDS_T2[order(row.names(ab_NMDS_T2)), ]
+metadata_T2 <- metadata_T2[order(row.names(metadata_T2)), ]
+all.equal(rownames(ab_NMDS_T2), rownames(metadata_T2))  
+
+### calculate Bray-Curtis distance among samples
+sp.dist3_T1 <- vegdist(T1, method = "bray")
+sp.dist3_T1 ### Bray-Curtis will vary between 0-1 (so proportional similarity)
+
+sp.dist3_T2 <- vegdist(T2, method = "bray")
+sp.dist3_T2 ### Bray-Curtis will vary between 0-1 (so proportional similarity)
+
+adonis2(sp.dist3_T1 ~ moisture_tx, data = metadata_T1)  
+adonis2(sp.dist3_T1 ~ temp_tx, data = metadata_T1)  
+adonis2(sp.dist3_T1 ~ block_effect, data = metadata_T1)  
+
+adonis2(sp.dist3_T2 ~ moisture_tx, data = metadata_T2)  
+adonis2(sp.dist3_T2 ~ temp_tx, data = metadata_T2)  
+# moisture appears to be significant in both?
+
+T1.mds <- metaMDS(T1, dist = "bray")
+T1.mds
+stressplot(T1.mds)
+
+T2.mds <- metaMDS(T2, dist = "bray")
+T2.mds
+stressplot(T2.mds)
+
+# T1 NMDS
+ordiplot(T1.mds, display = "sites", type = "text", xlab = "NMDS 1", ylab = "NMDS 2")  
+mds.fig_T1 <- ordiplot(T1.mds, type = "none", xlab = "NMDS 1", ylab = "NMDS 2", 
+                    xlim = c(-0.8, 0.8), ylim = c(-0.8, 0.8)) 
+points(mds.fig_T1, "sites", pch = 19, cex = 1.5, col = "green4", 
+       select = metadata_T1$moisture_tx == "Ambient")
+points(mds.fig_T1, "sites", pch = 19, cex = 1.5, col = "peru", 
+       select = metadata_T1$moisture_tx == "High")
+ordiellipse(T1.mds, metadata_T1$moisture_tx, conf = 0.95, label = TRUE)
+
+abundances_T1 <- abundance_data %>% filter(destructive_time == "T1") 
+abundances.divT1 <- adonis2(abundances_T1$total_ab_standardized ~ 
+                            (moisture_tx*temp_tx) + block_effect, data = abundances_T1, permutations = 999, method="bray")
+
+abundances.divT1
+
+# T2 NMDS
+ordiplot(T2.mds, display = "sites", type = "text", xlab = "NMDS 1", ylab = "NMDS 2")  
+mds.fig_T2 <- ordiplot(T2.mds, type = "none", xlab = "NMDS 1", ylab = "NMDS 2", 
+                       xlim = c(-0.8, 0.8), ylim = c(-0.8, 0.8)) 
+points(mds.fig_T2, "sites", pch = 19, cex = 1.5, col = "green4", 
+       select = metadata_T2$moisture_tx == "Ambient") 
+points(mds.fig_T2, "sites", pch = 19, cex = 1.5, col = "peru", 
+       select = metadata_T2$moisture_tx == "High") 
+ordiellipse(T2.mds, metadata_T2$moisture_tx, conf = 0.95, label = TRUE)
+
+abundances_T2 <- abundance_data %>% filter(destructive_time == "T2") 
+abundances.divT2 <- adonis2(abundances_T2$total_ab_standardized ~ 
+                              (moisture_tx*temp_tx), data = abundances_T2, permutations = 999, method="bray")
+
+abundances.divT2
+
+# try superimposing elipse from T1 NMDS on T2 NMDS plot
+mds.fig_T2 <- ordiplot(T2.mds, type = "none", xlab = "NMDS 1", ylab = "NMDS 2", 
+                       xlim = c(-0.8, 0.8), ylim = c(-0.8, 0.8)) 
+points(mds.fig_T2, "sites", pch = 19, cex = 1.5, col = "green4", 
+       select = metadata_T2$moisture_tx == "Ambient")
+points(mds.fig_T2, "sites", pch = 19, cex = 1.5, col = "peru", 
+       select = metadata_T2$moisture_tx == "High")
+ordiellipse(T2.mds, metadata_T2$moisture_tx, conf = 0.95, label = TRUE)
+ordiellipse(T1.mds, metadata_T1$moisture_tx, conf = 0.95, col = "grey", label = TRUE)
+```

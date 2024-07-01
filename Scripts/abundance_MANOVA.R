@@ -65,3 +65,4 @@ abundances.divT2 <- adonis2(abundances_T2$total_ab_standardized ~
                               (moisture_tx*temp_tx), data = abundances_T2, permutations = 999, method="bray")
 
 abundances.divT2
+
