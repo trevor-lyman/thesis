@@ -45,7 +45,9 @@ header-includes:
 
 ```{r Libraries, message=F, warning=F}
 library(ggplot2)
+library(ggtext) # expression()
 library(dplyr)
+library(forcats) # fct_recode
 library(tidyr)
 library(ggpubr) # ggqqplot()
 library(rstatix) # shapiro_test()
@@ -53,6 +55,8 @@ library(car) # Anova()
 library(vegan)
 library(soilfoodwebs)
 library(tibble) # rownames_to_column
+
+RNGkind(sample.kind = "Rounding") 
 ```
 <br>
 
@@ -624,7 +628,967 @@ head(prop)
 The basal food web nodes included basal resources consisting of (1) labile and (2) recalcitrant detritus estimated based on previously measured soil organic C quality measurements and litter input rates ([Webster et al., 2013](https://doi.org/10.1016/J.ECOLMODEL.2012.10.004); [Palozzi and Lindo, 2017](https://doi.org/10.1007/s11104-017-3291-0)). It is important to note that in the model the biomass of the basal resource was always in excess. The microbial groups included (3) bacteria, (4) fungi, and (5) protists that were previously assessed at this site using phospholipid fatty acid (PLFA) analysis ([Lyons and Lindo, 2020](https://doi.org/10.1007/s11258-020-01037-w)). I quantified the biomass of the remaining soil food web nodes as described above for (6) bacterivorous nematodes, (7) fungivorous nematodes, (8) omnivorous nematodes, (9) predatory nematodes, (10) collembola, (11) adult oribatid mites, (12) juvenile oribatid mites, (13) non-predatory prostigmatid and astigmatid mites, (14) nematode-feeding mites (Mesostigmata: Zerconiidae), and (15) arthropod feeding mites (remaining Mesostigmata) ([Figure 2.1]). Biomass estimates based on empirical data were generated for 15 soil food web nodes to form the basis of the energetic food web model (see [Figure 2.1] for placement of each trophic node in the food web). All biomass values are g C / m2 / year for all nodes.
   
 Total C and N flux values were estimated for the entire food web of each mesocosm (T~0~, T~1~ and T~2~) using the R package *soilfoodwebs* ([Buchkowski et al., 2023](https://CRAN.R-project.org/package=soilfoodwebs)). I also estimated total C and N fluxes in the fungal and bacterial energy channels corresponding to each mesocosm (see [Figure 2.1]). The *soilfoodwebs* package is an ecostoichiometric model that calculates fluxes of C and N through the food web assuming equilibrium ([Buchkowski and Lindo, 2021](https://doi.org/10.1111/1365-2435.13706)). Flux values of N are calculated using data on the C:N ratio of each organism ([Appendix A]). Total flux is the amount of C and N transferred via consumption across food web members and is also partitioned into the amount C and N mineralized (for C this is respiration) vs. C and N retained in the food web as biomass.
-  
+```{r Flux Data}
+model_biomasses <- 
+  as.data.frame(t(biomass_temp2[, -(seq(from=0, to=1, by=1))])) 
+# transpose data
+colnames(model_biomasses) <- biomass_temp2$Sample_ID
+
+# Step 4: Calculate Flux
+# 4.1: Set up data frame with cols for each model
+ExRes_biomasses <- as.data.frame(model_biomasses) %>%
+  rownames_to_column(var = "taxon")
+
+colnames(ExRes_biomasses) <- gsub(" ", ".", colnames(ExRes_biomasses))
+
+# 4.2: Aggregate T1 sample names
+names <- sample_metadata$Sample_ID
+
+# 4.3: Check formatting of each df
+rownames(ExRes_imat) = ExRes_imat$X
+ExRes_imat$X = NULL
+ExRes_imat = as.matrix(ExRes_imat)
+
+# 4.4: Run models
+# ExRes 3
+ExRes_3_prop <- ExRes_prop_control %>% 
+  mutate("B" = ExRes_biomasses$ExRes.3)
+ExRes_3_prop <- ExRes_3_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                 "DetritusRecycling", "isDetritus", "isPlant", 
+                                 "canIMM")]
+ExRes_3 <- list(imat = ExRes_imat, prop = ExRes_3_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_3$prop$a = ExRes_3$prop$a/100
+ExRes_3$prop$p = ExRes_3$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_3_model <- comana(ExRes_3, mkplot=F, whattoplot = "web", 
+                        BOX.SIZE = 0.05,
+                        BOX.PROP = 0.3, # Box proportion (height: width)
+                        arrowlog = F, # Keep it on the normal scale
+                        arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 5
+ExRes_5_prop <- ExRes_prop_warming %>% mutate(B = ExRes_biomasses$ExRes.5)
+ExRes_5_prop <- ExRes_5_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                 "DetritusRecycling", "isDetritus", "isPlant", 
+                                 "canIMM")]
+ExRes_5 <- list(imat = ExRes_imat, prop = ExRes_5_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_5$prop$a = ExRes_5$prop$a/100
+ExRes_5$prop$p = ExRes_5$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_5_model <- comana(ExRes_5, mkplot=F, whattoplot = "web", 
+                        BOX.SIZE = 0.05,
+                        BOX.PROP = 0.3, # Box proportion (height: width)
+                        arrowlog = F, # Keep it on the normal scale
+                        arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 7
+ExRes_7_prop <- ExRes_prop_warming %>% mutate(B = ExRes_biomasses$ExRes.7)
+ExRes_7_prop <- ExRes_7_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                 "DetritusRecycling", "isDetritus", "isPlant", 
+                                 "canIMM")]
+ExRes_7 <- list(imat = ExRes_imat, prop = ExRes_7_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_7$prop$a = ExRes_7$prop$a/100
+ExRes_7$prop$p = ExRes_7$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_7_model <- comana(ExRes_7, mkplot=F, whattoplot = "web", 
+                        BOX.SIZE = 0.05,
+                        BOX.PROP = 0.3, # Box proportion (height: width)
+                        arrowlog = F, # Keep it on the normal scale
+                        arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 8
+ExRes_8_prop <- ExRes_prop_warming %>% mutate(B = ExRes_biomasses$ExRes.8)
+ExRes_8_prop <- ExRes_8_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                 "DetritusRecycling", "isDetritus", "isPlant", 
+                                 "canIMM")]
+ExRes_8 <- list(imat = ExRes_imat, prop = ExRes_8_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_8$prop$a = ExRes_8$prop$a/100
+ExRes_8$prop$p = ExRes_8$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_8_model <- comana(ExRes_8, mkplot=F, whattoplot = "web", 
+                        BOX.SIZE = 0.05,
+                        BOX.PROP = 0.3, # Box proportion (height: width)
+                        arrowlog = F, # Keep it on the normal scale
+                        arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 11
+ExRes_11_prop <- ExRes_prop_warming %>% mutate(B = ExRes_biomasses$ExRes.11)
+ExRes_11_prop <- ExRes_11_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_11 <- list(imat = ExRes_imat, prop = ExRes_11_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_11$prop$a = ExRes_11$prop$a/100
+ExRes_11$prop$p = ExRes_11$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_11_model <- comana(ExRes_11, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 13
+ExRes_13_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.13)
+ExRes_13_prop <- ExRes_13_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_13 <- list(imat = ExRes_imat, prop = ExRes_13_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_13$prop$a = ExRes_13$prop$a/100
+ExRes_13$prop$p = ExRes_13$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_13_model <- comana(ExRes_13, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 16
+ExRes_16_prop <- ExRes_prop_warming %>% mutate(B = ExRes_biomasses$ExRes.16)
+ExRes_16_prop <- ExRes_16_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_16 <- list(imat = ExRes_imat, prop = ExRes_16_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_16$prop$a = ExRes_16$prop$a/100
+ExRes_16$prop$p = ExRes_16$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_16_model <- comana(ExRes_16, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 17
+ExRes_17_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.17)
+ExRes_17_prop <- ExRes_17_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_17 <- list(imat = ExRes_imat, prop = ExRes_17_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_17$prop$a = ExRes_17$prop$a/100
+ExRes_17$prop$p = ExRes_17$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_17_model <- comana(ExRes_17, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 18
+ExRes_18_prop <- ExRes_prop_warming %>% mutate(B = ExRes_biomasses$ExRes.18)
+ExRes_18_prop <- ExRes_18_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_18 <- list(imat = ExRes_imat, prop = ExRes_18_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_18$prop$a = ExRes_18$prop$a/100
+ExRes_18$prop$p = ExRes_18$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_18_model <- comana(ExRes_18, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 19
+ExRes_19_prop <- ExRes_prop_warming %>% mutate(B = ExRes_biomasses$ExRes.19)
+ExRes_19_prop <- ExRes_19_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_19 <- list(imat = ExRes_imat, prop = ExRes_19_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_19$prop$a = ExRes_19$prop$a/100
+ExRes_19$prop$p = ExRes_19$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_19_model <- comana(ExRes_19, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 20
+ExRes_20_prop <- ExRes_prop_warming %>% mutate(B = ExRes_biomasses$ExRes.20)
+ExRes_20_prop <- ExRes_20_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_20 <- list(imat = ExRes_imat, prop = ExRes_20_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_20$prop$a = ExRes_20$prop$a/100
+ExRes_20$prop$p = ExRes_20$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_20_model <- comana(ExRes_20, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 21
+ExRes_21_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.21)
+ExRes_21_prop <- ExRes_21_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_21 <- list(imat = ExRes_imat, prop = ExRes_21_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_21$prop$a = ExRes_21$prop$a/100
+ExRes_21$prop$p = ExRes_21$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_21_model <- comana(ExRes_21, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 24
+ExRes_24_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.24)
+ExRes_24_prop <- ExRes_24_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_24 <- list(imat = ExRes_imat, prop = ExRes_24_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_24$prop$a = ExRes_24$prop$a/100
+ExRes_24$prop$p = ExRes_24$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_24_model <- comana(ExRes_24, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 25
+ExRes_25_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.25)
+ExRes_25_prop <- ExRes_25_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_25 <- list(imat = ExRes_imat, prop = ExRes_25_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_25$prop$a = ExRes_25$prop$a/100
+ExRes_25$prop$p = ExRes_25$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_25_model <- comana(ExRes_25, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 29
+ExRes_29_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.29)
+ExRes_29_prop <- ExRes_29_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_29 <- list(imat = ExRes_imat, prop = ExRes_29_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_29$prop$a = ExRes_29$prop$a/100
+ExRes_29$prop$p = ExRes_29$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_29_model <- comana(ExRes_29, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 31
+ExRes_31_prop <- ExRes_prop_warming %>% mutate(B = ExRes_biomasses$ExRes.31)
+ExRes_31_prop <- ExRes_31_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_31 <- list(imat = ExRes_imat, prop = ExRes_31_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_31$prop$a = ExRes_31$prop$a/100
+ExRes_31$prop$p = ExRes_31$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_31_model <- comana(ExRes_31, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 33
+ExRes_33_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.33)
+ExRes_33_prop <- ExRes_33_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_33 <- list(imat = ExRes_imat, prop = ExRes_33_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_33$prop$a = ExRes_33$prop$a/100
+ExRes_33$prop$p = ExRes_33$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_33_model <- comana(ExRes_33, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 36
+ExRes_36_prop <- ExRes_prop_warming %>% mutate(B = ExRes_biomasses$ExRes.36)
+ExRes_36_prop <- ExRes_36_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_36 <- list(imat = ExRes_imat, prop = ExRes_36_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_36$prop$a = ExRes_36$prop$a/100
+ExRes_36$prop$p = ExRes_36$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_36_model <- comana(ExRes_36, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 37
+ExRes_37_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.37)
+ExRes_37_prop <- ExRes_37_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_37 <- list(imat = ExRes_imat, prop = ExRes_37_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_37$prop$a = ExRes_37$prop$a/100
+ExRes_37$prop$p = ExRes_37$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_37_model <- comana(ExRes_37, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 43
+ExRes_43_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.43)
+ExRes_43_prop <- ExRes_43_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_43 <- list(imat = ExRes_imat, prop = ExRes_43_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_43$prop$a = ExRes_43$prop$a/100
+ExRes_43$prop$p = ExRes_43$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_43_model <- comana(ExRes_43, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 1
+ExRes_1_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.1)
+ExRes_1_prop <- ExRes_1_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                 "DetritusRecycling", "isDetritus", 
+                                 "isPlant", "canIMM")]
+ExRes_1 <- list(imat = ExRes_imat, prop = ExRes_1_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_1$prop$a = ExRes_1$prop$a/100
+ExRes_1$prop$p = ExRes_1$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_1_model <- comana(ExRes_1, mkplot=F, whattoplot = "web", 
+                        BOX.SIZE = 0.05,
+                        BOX.PROP = 0.3, # Box proportion (height: width)
+                        arrowlog = F, # Keep it on the normal scale
+                        arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 2
+ExRes_2_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.2)
+ExRes_2_prop <- ExRes_2_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                 "DetritusRecycling", "isDetritus", 
+                                 "isPlant", "canIMM")]
+ExRes_2 <- list(imat = ExRes_imat, prop = ExRes_2_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_2$prop$a = ExRes_2$prop$a/100
+ExRes_2$prop$p = ExRes_2$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_2_model <- comana(ExRes_2, mkplot=F, whattoplot = "web", 
+                        BOX.SIZE = 0.05,
+                        BOX.PROP = 0.3, # Box proportion (height: width)
+                        arrowlog = F, # Keep it on the normal scale
+                        arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 4
+ExRes_4_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.4)
+ExRes_4_prop <- ExRes_4_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                 "DetritusRecycling", "isDetritus", 
+                                 "isPlant", "canIMM")]
+ExRes_4 <- list(imat = ExRes_imat, prop = ExRes_4_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_4$prop$a = ExRes_4$prop$a/100
+ExRes_4$prop$p = ExRes_4$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_4_model <- comana(ExRes_4, mkplot=F, whattoplot = "web", 
+                        BOX.SIZE = 0.05,
+                        BOX.PROP = 0.3, # Box proportion (height: width)
+                        arrowlog = F, # Keep it on the normal scale
+                        arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 6 
+ExRes_6_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.6)
+ExRes_6_prop <- ExRes_6_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                 "DetritusRecycling", "isDetritus", 
+                                 "isPlant", "canIMM")]
+ExRes_6 <- list(imat = ExRes_imat, prop = ExRes_6_prop)
+
+ExRes_6$prop$a = ExRes_6$prop$a/100
+ExRes_6$prop$p = ExRes_6$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_6_model <- comana(ExRes_6, mkplot=F, whattoplot = "web", 
+                        BOX.SIZE = 0.05,
+                        BOX.PROP = 0.3, # Box proportion (height: width)
+                        arrowlog = F, # Keep it on the normal scale
+                        arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 9 
+ExRes_9_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.9)
+ExRes_9_prop <- ExRes_9_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                 "DetritusRecycling", "isDetritus", 
+                                 "isPlant", "canIMM")]
+ExRes_9 <- list(imat = ExRes_imat, prop = ExRes_9_prop)
+
+ExRes_9$prop$a = ExRes_9$prop$a/100
+ExRes_9$prop$p = ExRes_9$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_9_model <- comana(ExRes_9, mkplot=F, whattoplot = "web", 
+                        BOX.SIZE = 0.05,
+                        BOX.PROP = 0.3, # Box proportion (height: width)
+                        arrowlog = F, # Keep it on the normal scale
+                        arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 10
+ExRes_10_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.10)
+ExRes_10_prop <- ExRes_10_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_10 <- list(imat = ExRes_imat, prop = ExRes_10_prop)
+
+ExRes_10$prop$a = ExRes_10$prop$a/100
+ExRes_10$prop$p = ExRes_10$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_10_model <- comana(ExRes_10, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 12
+ExRes_12_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.12)
+ExRes_12_prop <- ExRes_12_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_12 <- list(imat = ExRes_imat, prop = ExRes_12_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_12$prop$a = ExRes_12$prop$a/100
+ExRes_12$prop$p = ExRes_12$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_12_model <- comana(ExRes_12, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 14
+ExRes_14_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.14)
+ExRes_14_prop <- ExRes_14_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_14 <- list(imat = ExRes_imat, prop = ExRes_14_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_14$prop$a = ExRes_14$prop$a/100
+ExRes_14$prop$p = ExRes_14$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_14_model <- comana(ExRes_14, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 15
+ExRes_15_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.15)
+ExRes_15_prop <- ExRes_15_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_15 <- list(imat = ExRes_imat, prop = ExRes_15_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_15$prop$a = ExRes_15$prop$a/100
+ExRes_15$prop$p = ExRes_15$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_15_model <- comana(ExRes_15, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 26
+ExRes_26_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.26)
+ExRes_26_prop <- ExRes_26_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_26 <- list(imat = ExRes_imat, prop = ExRes_26_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_26$prop$a = ExRes_26$prop$a/100
+ExRes_26$prop$p = ExRes_26$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_26_model <- comana(ExRes_26, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 27
+ExRes_27_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.27)
+ExRes_27_prop <- ExRes_27_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_27 <- list(imat = ExRes_imat, prop = ExRes_27_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_27$prop$a = ExRes_27$prop$a/100
+ExRes_27$prop$p = ExRes_27$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_27_model <- comana(ExRes_27, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 28
+ExRes_28_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.28)
+ExRes_28_prop <- ExRes_28_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_28 <- list(imat = ExRes_imat, prop = ExRes_28_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_28$prop$a = ExRes_28$prop$a/100
+ExRes_28$prop$p = ExRes_28$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_28_model <- comana(ExRes_28, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 30
+ExRes_30_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.30)
+ExRes_30_prop <- ExRes_30_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_30 <- list(imat = ExRes_imat, prop = ExRes_30_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_30$prop$a = ExRes_30$prop$a/100
+ExRes_30$prop$p = ExRes_30$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_30_model <- comana(ExRes_30, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 32
+ExRes_32_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.32)
+ExRes_32_prop <- ExRes_32_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_32 <- list(imat = ExRes_imat, prop = ExRes_32_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_32$prop$a = ExRes_32$prop$a/100
+ExRes_32$prop$p = ExRes_32$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_32_model <- comana(ExRes_32, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 34
+ExRes_34_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.34)
+ExRes_34_prop <- ExRes_34_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_34 <- list(imat = ExRes_imat, prop = ExRes_34_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_34$prop$a = ExRes_34$prop$a/100
+ExRes_34$prop$p = ExRes_34$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_34_model <- comana(ExRes_34, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 35
+ExRes_35_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.35)
+ExRes_35_prop <- ExRes_35_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_35 <- list(imat = ExRes_imat, prop = ExRes_35_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_35$prop$a = ExRes_35$prop$a/100
+ExRes_35$prop$p = ExRes_35$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_35_model <- comana(ExRes_35, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 38
+ExRes_38_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.38)
+ExRes_38_prop <- ExRes_38_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_38 <- list(imat = ExRes_imat, prop = ExRes_38_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_38$prop$a = ExRes_38$prop$a/100
+ExRes_38$prop$p = ExRes_38$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_38_model <- comana(ExRes_38, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 40
+ExRes_40_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.40)
+ExRes_40_prop <- ExRes_40_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_40 <- list(imat = ExRes_imat, prop = ExRes_40_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_40$prop$a = ExRes_40$prop$a/100
+ExRes_40$prop$p = ExRes_40$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_40_model <- comana(ExRes_40, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 41
+ExRes_41_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.41)
+ExRes_41_prop <- ExRes_41_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_41 <- list(imat = ExRes_imat, prop = ExRes_41_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_41$prop$a = ExRes_41$prop$a/100
+ExRes_41$prop$p = ExRes_41$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_41_model <- comana(ExRes_41, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 42
+ExRes_42_prop <- ExRes_prop_control %>% mutate(B = ExRes_biomasses$ExRes.42)
+ExRes_42_prop <- ExRes_42_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", 
+                                   "isPlant", "canIMM")]
+ExRes_42 <- list(imat = ExRes_imat, prop = ExRes_42_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_42$prop$a = ExRes_42$prop$a/100
+ExRes_42$prop$p = ExRes_42$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_42_model <- comana(ExRes_42, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 22
+ExRes_22_prop <- ExRes_prop_control %>% 
+  mutate("B" = ExRes_biomasses$ExRes.22)
+ExRes_22_prop <- ExRes_22_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", "isPlant", 
+                                   "canIMM")]
+ExRes_22 <- list(imat = ExRes_imat, prop = ExRes_22_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_22$prop$a = ExRes_22$prop$a/100
+ExRes_22$prop$p = ExRes_22$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_22_model <- comana(ExRes_22, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 23
+ExRes_23_prop <- ExRes_prop_control %>% 
+  mutate("B" = ExRes_biomasses$ExRes.23)
+ExRes_23_prop <- ExRes_23_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", "isPlant", 
+                                   "canIMM")]
+ExRes_23 <- list(imat = ExRes_imat, prop = ExRes_23_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_23$prop$a = ExRes_23$prop$a/100
+ExRes_23$prop$p = ExRes_23$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_23_model <- comana(ExRes_23, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 39
+ExRes_39_prop <- ExRes_prop_control %>% 
+  mutate("B" = ExRes_biomasses$ExRes.39)
+ExRes_39_prop <- ExRes_39_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", "isPlant", 
+                                   "canIMM")]
+ExRes_39 <- list(imat = ExRes_imat, prop = ExRes_39_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_39$prop$a = ExRes_39$prop$a/100
+ExRes_39$prop$p = ExRes_39$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_39_model <- comana(ExRes_39, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 44
+ExRes_44_prop <- ExRes_prop_control %>% 
+  mutate("B" = ExRes_biomasses$ExRes.44)
+ExRes_44_prop <- ExRes_44_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", "isPlant", 
+                                   "canIMM")]
+ExRes_44 <- list(imat = ExRes_imat, prop = ExRes_44_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_44$prop$a = ExRes_44$prop$a/100
+ExRes_44$prop$p = ExRes_44$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_44_model <- comana(ExRes_44, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+# What range of line sizes do you want: c(min, max)
+
+# ExRes 45
+ExRes_45_prop <- ExRes_prop_control %>% 
+  mutate("B" = ExRes_biomasses$ExRes.45)
+ExRes_45_prop <- ExRes_45_prop[, c("X", "ID", "d", "a", "p", "B", "CN", 
+                                   "DetritusRecycling", "isDetritus", "isPlant", 
+                                   "canIMM")]
+ExRes_45 <- list(imat = ExRes_imat, prop = ExRes_45_prop)
+
+# Rescale a and p to be [0,1] instead of [0,100]
+ExRes_45$prop$a = ExRes_45$prop$a/100
+ExRes_45$prop$p = ExRes_45$prop$p/100
+#pdf("PFC.pdf", width = 8, height = 6, bg= "white", colormodel = "cmyk") 
+# This will put the plot in the working directory
+ExRes_45_model <- comana(ExRes_45, mkplot=F, whattoplot = "web", 
+                         BOX.SIZE = 0.05,
+                         BOX.PROP = 0.3, # Box proportion (height: width)
+                         arrowlog = F, # Keep it on the normal scale
+                         arrowsizerange = c(0.1, 30)) 
+
+# Step 5: Aggregate Data
+# 5.1: Set up df and initialize vectors for loop outputs
+names <- c("ExRes_3_model", "ExRes_5_model", "ExRes_7_model", "ExRes_8_model",
+           "ExRes_11_model", "ExRes_13_model", "ExRes_16_model", 
+           "ExRes_17_model", "ExRes_18_model", "ExRes_19_model", 
+           "ExRes_20_model", "ExRes_21_model", "ExRes_24_model", 
+           "ExRes_25_model", "ExRes_29_model", "ExRes_31_model", 
+           "ExRes_33_model", "ExRes_36_model", "ExRes_37_model",
+           "ExRes_43_model",
+           "ExRes_1_model", "ExRes_2_model", "ExRes_4_model", "ExRes_6_model",
+           "ExRes_9_model", "ExRes_10_model", "ExRes_12_model", 
+           "ExRes_14_model", "ExRes_15_model", "ExRes_26_model",
+           "ExRes_27_model", "ExRes_28_model", "ExRes_30_model",
+           "ExRes_32_model", "ExRes_34_model", "ExRes_35_model", 
+           "ExRes_38_model", "ExRes_40_model", "ExRes_41_model",
+           "ExRes_42_model", "ExRes_22_model", "ExRes_23_model", 
+           "ExRes_39_model", "ExRes_44_model", "ExRes_45_model"
+) # subset T1 & T2 models
+
+node_consumption_temp <- list() # initialize
+node_Cmin_temp <- list()
+node_Nmin_temp <- list()
+total_consumption <- list()
+total_Cmin <- list()
+total_Nmin <- list()
+
+# 5.2: Loop through each model to aggregate total consumption, total C min, 
+# and total N min
+for (i in names){ # loop to get consumption data, indexed from list as df[1]
+  input <- paste(i)
+  output <- get(input)
+  consumption_temp <- output[1]
+  consumption <- as.data.frame(consumption_temp)
+  total_consumption_temp <- sum(consumption)
+  Cmin_temp <- output[2]
+  Cmin <- as.data.frame(Cmin_temp)
+  total_Cmin_temp <- sum(Cmin)
+  Nmin_temp <- output[3]
+  Nmin <- as.data.frame(Nmin_temp)
+  total_Nmin_temp <- sum(Nmin)
+  node_consumption_temp[[i]] = consumption
+  node_Cmin_temp[[i]] = as.data.frame(Cmin)
+  node_Nmin_temp[[i]] = Nmin
+  total_consumption[i] = as.data.frame(total_consumption_temp)
+  total_Cmin[i] = as.data.frame(total_Cmin_temp)
+  total_Nmin[i] = as.data.frame(total_Nmin_temp)
+}
+
+# 5.3: Tidy Data
+total_consumption <- unlist(total_consumption)
+total_Cmin <- unlist(total_Cmin)
+total_Nmin <- unlist(total_Nmin)
+
+Sample_ID <- c("ExRes 3", "ExRes 5", "ExRes 7", "ExRes 8",
+               "ExRes 11", "ExRes 13", "ExRes 16", 
+               "ExRes 17", "ExRes 18", "ExRes 19", 
+               "ExRes 20", "ExRes 21", "ExRes 24", 
+               "ExRes 25", "ExRes 29", "ExRes 31", 
+               "ExRes 33", "ExRes 36", "ExRes 37",
+               "ExRes 43",
+               "ExRes 1", "ExRes 2", "ExRes 4", "ExRes 6", "ExRes 9",
+               "ExRes 10", "ExRes 12", "ExRes 14", "ExRes 15", "ExRes 26",
+               "ExRes 27", "ExRes 28", "ExRes 30", "ExRes 32", "ExRes 34",
+               "ExRes 35", "ExRes 38", "ExRes 40", "ExRes 41", "ExRes 42",
+               "ExRes 22", "ExRes 23", "ExRes 39", "ExRes 44", "ExRes 45"
+) # subset T1 & T2 models
+
+model_outputs_temp <- as.data.frame(cbind(Sample_ID, total_consumption, 
+                                          total_Cmin, total_Nmin))
+
+# Step 6: Merge with Sample Metadata  
+flux_data <- merge(x = sample_metadata, y = model_outputs_temp, 
+                       by = "Sample_ID") 
+
+flux_data$total_consumption <- as.numeric(flux_data$total_consumption)
+flux_data$total_Cmin <- as.numeric(flux_data$total_Cmin)
+flux_data$total_Nmin <- as.numeric(flux_data$total_Nmin)
+
+head(flux_data)
+```
+<br>
+
 Total biomass, microfauna biomass, mesofauna biomass, total flux, total C mineralization, and N mineralization were tested for normality and homogeneity of variance using a Shapiro-Wilk test and Levene’s test, respectively. I constructed linear models from total biomass, microfauna biomass, mesofauna biomass, total flux, total C mineralization, and total N mineralization using reverse order selection to remove insignificant interaction terms (see [Appendix F]). I then statistically analyzed the biomasses of total microfauna, total mesofauna and total faunal between each combination of soil moisture, temperature, and destructive sampling conditions using a three-way full-factorial ANOVA with a block effect to account for any field-based differences in biomass and Tukey’s HSD post-hoc test. I similarly analyzed the output C and N flux and mineralization values of the whole soil food web model using a 3-way factorial ANOVA and Tukey’s HSD post-hoc test to examine differences between soil moisture, temperature, and destructive sampling treatment conditions. Finally, I used Pearson’s correlation test to test for correlations between soil microfauna, mesofauna, and total faunal biomasses.
 
 ### Figure 2.1 The conceptualized peatland soil food web containing 15 trophic nodes (groups).
@@ -755,9 +1719,11 @@ knitr::kable(T0_df1, linesep = "\\hline")
 ```
 <br>
 
-Converting faunal abundance to biomass estimates, I calculated a mean microfauna, mesofauna and total fauna biomass (&plusmn; SE) as 0.009 (&plusmn; 0.002), 0.73 (&plusmn; 0.08), and 0.74 (&plusmn; 0.08) g of C per m^2^, respectively. Mean total consumptive flux (&plusmn; SE) based on the energetic model was 1261 &plusmn; 4 g of C per m^2^ per year, while the mean total C mineralization (&plusmn; SE) was 514 &plusmn; 2 g of C per m^2^ per year, and the mean total N mineralization (&plusmn; SE) was -4.51 &plusmn; 0.02 g of N per m^2^ per year. Mean values are presented in [Appendix D].
+Converting faunal abundance to biomass estimates, I calculated a mean microfauna, mesofauna and total fauna biomass (&plusmn; SE) as 0.009 (&plusmn; 0.002), 0.73 (&plusmn; 0.08), and 0.74 (&plusmn; 0.08) g of C per m^2^, respectively. Mean total consumptive flux (&plusmn; SE) based on the energetic model was 1340 &plusmn; 30 g of C per m^2^ per year, while the mean total C mineralization (&plusmn; SE) was 550 &plusmn; 10 g of C per m^2^ per year, and the mean total N mineralization (&plusmn; SE) was -5.0 &plusmn; 0.1 g of N per m^2^ per year. Mean values are presented in [Appendix D].
 ```{r T0 Results 2, warning=F}
 biomass_T0 <- biomass_data %>% filter(destructive_time == "T0")
+
+flux_T0 <- flux_data %>% filter(destructive_time == "T0")
 
 T0_df2 <- as.data.frame(matrix(data = c(
   "Microfauna Biomass", 
@@ -788,16 +1754,157 @@ T0_df2 <- as.data.frame(matrix(data = c(
                  )),
   signif(sd(biomass_T0$total_biomass)/
                    sqrt(length(biomass_T0$total_biomass)), digits = 1),
-  "g of C / m^2^"
+  "g of C / m^2^",
+  
+  "Total Consumption",
+  round(mean(flux_T0$total_consumption), 
+                 digits = get_round_digit(
+                   signif(sd(flux_T0$total_consumption)/
+                   sqrt(length(flux_T0$total_consumption)), digits = 1)
+                 )),
+  signif(sd(flux_T0$total_consumption)/
+                   sqrt(length(flux_T0$total_consumption)), digits = 1),
+  "g of C / m^2^ / year",
+  
+  "Total C Mineralization",
+  round(mean(flux_T0$total_Cmin), 
+                 digits = get_round_digit(
+                   signif(sd(flux_T0$total_Cmin)/
+                   sqrt(length(flux_T0$total_Cmin)), digits = 1)
+                 )),
+  signif(sd(flux_T0$total_Cmin)/
+                   sqrt(length(flux_T0$total_Cmin)), digits = 1),
+  "g of C / m^2^ / year",
+  
+  "Total N Mineralization",
+  format(round(mean(flux_T0$total_Nmin), 
+                 digits = get_round_digit(
+                   signif(sd(flux_T0$total_Nmin)/
+                   sqrt(length(flux_T0$total_Nmin)), digits = 1)
+                 )), nsmall = 1),
+  signif(sd(flux_T0$total_Nmin)/
+                   sqrt(length(flux_T0$total_Nmin)), digits = 1),
+  "g of C / m^2^ / year"
 ), ncol = 4, byrow = T))
 
 colnames(T0_df2) <- c("Parameter", "Mean", "SE", "Unit")
 
-knitr::kable(T0_df2, linesep = "\\hline")
+knitr::kable(T0_df2)
 ```
 <br>
 
 ## 3.2 Soil Heterotrophic Respiration
+### Figure 3.1 Boxplots of mean heterotrophic soil respiration (ln transformed).
+```{r Figure 3.1, fig.cap="Measurements were taken during the three-week experimental climate disturbance scenarios (T~1~) under each combination of temperature (12 &deg;C, 20 &deg;C) and soil moisture (field-moist, saturated) treatments, and during the following three-week recovery period (T~2~) when mesocosms were returned to in field conditions (12 &deg;C, field-moist).", out.width = '100%'}
+resp_T1uT2 <- resp.data %>% filter(!destructive_time=="T0")
+
+resp_T1uT2$destructive_time <- 
+  as.factor(resp_T1uT2$destructive_time)
+resp_T1uT2$block_effect <- 
+  as.factor(resp_T1uT2$block_effect)
+resp_T1uT2$temp_tx <- 
+  as.factor(resp_T1uT2$temp_tx)
+resp_T1uT2$moisture_tx <- 
+  as.factor(resp_T1uT2$moisture_tx)
+
+resp_T1uT2$tx <- interaction(resp_T1uT2$temp_tx, resp_T1uT2$moisture_tx) 
+
+resp_T1uT2 <- resp_T1uT2 %>%
+  mutate(tx = fct_recode(tx,
+    "12\u00B0 Field-Moist" = "12.Ambient",
+    "20\u00B0 Field-Moist" = "20.Ambient",
+    "12\u00B0 Saturated"   = "12.High",
+    "20\u00B0 Saturated"   = "20.High"
+  ))
+
+resp_plot <- ggplot(resp_T1uT2, 
+       aes(x=tx, 
+           y=cum_resp, fill = as.factor(destructive_time))) + 
+  geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
+  geom_jitter(aes(pch = as.factor(destructive_time)), 
+              position=position_jitter(width=.1, height=0), size = 3) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) +
+  scale_fill_brewer(palette = "Greys") +
+  xlab("Environmental Treatment Condition") + 
+  ylab(expression("Heterotrophic Respiration(ln(g C / m"^2*" / year)"))
+
+resp_plot
+```
+<br>
+
+Heterotrophic respiration was transformed on natural log, (ln) scale to conform to the assumption of normality. Log-transformed soil heterotrophic respiration satisfied the assumptions of normality and homodescacity, as per a Shapiro-Wilk (W = 0.983, p = 0.799) and Levene’s test (F~7,31~ = 0.555, p = 0.786). Log-transformed heterotrophic respiration, estimated for each mesocosm ([Figure 3.1]), was not significantly affected by soil moisture (F[1,34] = 1.670, p = 0.205), but was significantly affected by temperature (F~1,34~ = 3.975, p = 0.054); heterotrophic respiration was greater in mesocosms assigned to 20 &deg;C vs. 12 &deg;C. Neither destructive sampling time (F~1,34~ = 0.109, p = 0.743) nor block effects (F~1,34~ = 0.243, p = 0.6125) used to account for differences in field sampling location significantly affected log-transformed respiration. There were no significant interaction effects between soil moisture, temperature, and destructive sampling time ([Appendix E]). Mean soil heterotrophic respiration (&plusmn; SE) under each treatment is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
+```{r Resp Results 1, warning=F}
+resp_T1uT2 <- resp.data %>% filter(!destructive_time=="T0")
+
+resp_T1uT2$destructive_time <- 
+  as.factor(resp_T1uT2$destructive_time)
+resp_T1uT2$block_effect <- 
+  as.factor(resp_T1uT2$block_effect)
+resp_T1uT2$temp_tx <- 
+  as.factor(resp_T1uT2$temp_tx)
+resp_T1uT2$moisture_tx <- 
+  as.factor(resp_T1uT2$moisture_tx)
+
+resp_lm <- lm(cum_resp ~ block_effect + 
+                (temp_tx * moisture_tx * destructive_time), 
+              data = resp_T1uT2)
+
+resp_lm2_temp <- lm(cum_resp ~
+                    moisture_tx * temp_tx * destructive_time + 
+                    moisture_tx * temp_tx +
+                    moisture_tx * destructive_time + 
+                    temp_tx * destructive_time +
+                    moisture_tx +
+                    temp_tx +
+                    destructive_time +
+                    block_effect,
+                  data = resp_T1uT2)
+
+resp_lm2 <- lm(cum_resp ~
+                moisture_tx +
+                temp_tx +
+                destructive_time +
+                block_effect,
+            data = resp_T1uT2)
+
+resp_assumptions <- as.data.frame(matrix(data = c(
+  "Shapiro-Wilk Test", 
+  NA,
+  NA,
+  round(shapiro_test(residuals(resp_lm2))$statistic, 3),
+  round(shapiro_test(residuals(resp_lm2))$p.value, 3),
+  "Levene's Test",
+  levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), 
+              data = resp_T1uT2)$df1,
+  levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), 
+              data = resp_T1uT2)$df2,
+  round(levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), 
+              data = resp_T1uT2)$statistic, 3),
+  round(levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), 
+              data = resp_T1uT2)$p, 3)
+), ncol = 5, byrow = T))
+
+colnames(resp_assumptions) <- c("Test", "df1", "df2", "Statistic", "P-Value")
+
+knitr::kable(resp_assumptions)
+```
+
+```{r Resp Results 2}
+resp_aov <- 
+  Anova(resp_lm, type = 'III')
+
+resp_aov2 <- 
+  Anova(resp_lm2, type = 'III')
+
+
+resp_aov2
+```
+
+
+<br>
 
 ## 3.3 Physical Soil Properties
 
