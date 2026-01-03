@@ -2212,8 +2212,8 @@ transformations emerge from changes at the level of individual nodes in
 the soil fauna food web. <br></p>
 </div>
 </div>
-<div id="chapter-2" class="section level1">
-<h1>Chapter 2</h1>
+<div id="chapter-2-methods-and-experimental-design" class="section level1">
+<h1>Chapter 2: Methods and Experimental Design</h1>
 <div id="soil-sampling" class="section level2">
 <h2>2.1 Soil Sampling</h2>
 <p>Peatland soils were collected in September 2021 from a
@@ -2379,16 +2379,21 @@ are calculated as the average across three weeks of recovery time.</p>
 <span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>resp.data<span class="sc">$</span>cum_resp <span class="ot">&lt;-</span> <span class="fu">log</span>(<span class="fu">rowSums</span>(resp.data[,<span class="dv">6</span><span class="sc">:</span><span class="dv">9</span>], <span class="at">na.rm =</span> T)<span class="sc">/</span><span class="dv">4</span>)</span>
 <span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a><span class="co">#W0 to W3</span></span>
 <span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>resp.data<span class="sc">$</span>destructive_time <span class="ot">&lt;-</span> </span>
-<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.factor</span>(resp.data<span class="sc">$</span>destructive_time)</span>
-<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>resp.data<span class="sc">$</span>block_effect <span class="ot">&lt;-</span> </span>
-<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.factor</span>(resp.data<span class="sc">$</span>block_effect)</span>
-<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>resp.data<span class="sc">$</span>temp_tx <span class="ot">&lt;-</span> </span>
-<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.factor</span>(resp.data<span class="sc">$</span>temp_tx)</span>
-<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>resp.data<span class="sc">$</span>moisture_tx <span class="ot">&lt;-</span> </span>
-<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.factor</span>(resp.data<span class="sc">$</span>moisture_tx)</span>
-<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(resp.data)</span></code></pre></div>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>resp.data<span class="sc">$</span>cum_resp[resp.data<span class="sc">$</span>destructive_time <span class="sc">==</span> <span class="st">&quot;T0&quot;</span>] <span class="ot">&lt;-</span> </span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">log</span>(<span class="fu">rowSums</span>(resp.data[resp.data<span class="sc">$</span>destructive_time <span class="sc">==</span> <span class="st">&quot;T0&quot;</span>, <span class="dv">6</span><span class="sc">:</span><span class="dv">9</span>], <span class="at">na.rm =</span> T))</span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a><span class="co"># for T0 only 1 week</span></span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>resp.data<span class="sc">$</span>destructive_time <span class="ot">&lt;-</span> </span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.factor</span>(resp.data<span class="sc">$</span>destructive_time)</span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>resp.data<span class="sc">$</span>block_effect <span class="ot">&lt;-</span> </span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.factor</span>(resp.data<span class="sc">$</span>block_effect)</span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>resp.data<span class="sc">$</span>temp_tx <span class="ot">&lt;-</span> </span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.factor</span>(resp.data<span class="sc">$</span>temp_tx)</span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>resp.data<span class="sc">$</span>moisture_tx <span class="ot">&lt;-</span> </span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.factor</span>(resp.data<span class="sc">$</span>moisture_tx)</span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(resp.data)</span></code></pre></div>
 <pre><code>##   Sample_ID destructive_time temp_tx moisture_tx block_effect        W0
 ## 1   ExRes 1               T2      12        High          low 1387.8994
 ## 2  ExRes 10               T2      20        High          low  555.1597
@@ -3035,8 +3040,309 @@ channel.
 </div>
 </div>
 </div>
-<div id="chapter-3" class="section level1">
-<h1>Chapter 3</h1>
+<div id="chapter-3-results" class="section level1">
+<h1>Chapter 3: Results</h1>
+<div id="pre-experimental-group-t0" class="section level2">
+<h2>3.1 Pre-experimental Group (T<sub>0</sub>)</h2>
+<p>Five experimental mesocosms were destructively sampled following a
+three-week recovery period but prior to deployment of the experimental
+treatments (T<sub>0</sub>). The following conditions were recorded for
+these five control mesocosms and were assumed to be representative of
+field values. The mean heterotrophic respiration (± SE) prior to
+implementing experimental soil moisture and temperature conditions at
+T<sub>0</sub> was 7.0 ± 0.1 ln(g of C per m<sup>2</sup> per year), which
+equates to ~1200 ± 200 g of C per m<sup>2</sup> per year. The mean soil
+moisture (± SE) was 800 ± 50% based on a dry weight gravimetric
+measurement, while the average soil pH (± SE) was 4.08 ± 0.05. Mean C:N
+ratio (± SE) was 37 ± 2, while mean microbial enzymatic activity (± SE)
+was 160 ± 20 μmol substrate per g soil per hour for phenol oxidase and
+154 ± 8 μmol substrate per g soil per hour for peroxidase concentration.
+The mean total microfauna, mesofauna, and total fauna abundances (± SE)
+were: 170,000 (± 40,000), 360,000 (± 40,000), and 540,000 (± 50,000)
+individuals per m<sup>2</sup>, respectively.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>resp_T0 <span class="ot">&lt;-</span> resp.data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(destructive_time <span class="sc">==</span> <span class="st">&quot;T0&quot;</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>soil_T0 <span class="ot">&lt;-</span> soil_data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(destructive_time <span class="sc">==</span> <span class="st">&quot;T0&quot;</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>abundance_T0 <span class="ot">&lt;-</span> abundance_data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(destructive_time <span class="sc">==</span> <span class="st">&quot;T0&quot;</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to find decimal places</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>get_round_digit <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (x <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="dv">0</span>)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate the power of 10 of the first significant figure</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># then negate it to match R&#39;s rounding logic</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="fu">floor</span>(<span class="fu">log10</span>(<span class="fu">abs</span>(x)))</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>T0_df1 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">matrix</span>(<span class="at">data =</span> <span class="fu">c</span>(</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Heterotrophic Respiration&quot;</span>, </span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="fu">mean</span>(<span class="fu">exp</span>(resp_T0<span class="sc">$</span>cum_resp)), </span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>                 <span class="at">digits =</span> <span class="fu">get_round_digit</span>(</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">signif</span>(<span class="fu">sd</span>(<span class="fu">exp</span>(resp_T0<span class="sc">$</span>cum_resp))<span class="sc">/</span></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">sqrt</span>(<span class="fu">length</span>(resp_T0<span class="sc">$</span>cum_resp)), <span class="at">digits =</span> <span class="dv">1</span>)</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>                 )),</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">signif</span>(<span class="fu">sd</span>(<span class="fu">exp</span>(resp_T0<span class="sc">$</span>cum_resp))<span class="sc">/</span></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">sqrt</span>(<span class="fu">length</span>(resp_T0<span class="sc">$</span>cum_resp)), <span class="at">digits =</span> <span class="dv">1</span>),</span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;g of C / m^2^ / year&quot;</span>,</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Soil Moisture&quot;</span>,</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="fu">mean</span>(soil_T0<span class="sc">$</span>pct_moisture), </span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>                 <span class="at">digits =</span> <span class="fu">get_round_digit</span>(</span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">signif</span>(<span class="fu">sd</span>(soil_T0<span class="sc">$</span>pct_moisture)<span class="sc">/</span></span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">sqrt</span>(<span class="fu">length</span>(soil_T0<span class="sc">$</span>pct_moisture)), <span class="at">digits =</span> <span class="dv">1</span>)</span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a>                 )),</span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">signif</span>(<span class="fu">sd</span>(soil_T0<span class="sc">$</span>pct_moisture)<span class="sc">/</span></span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">sqrt</span>(<span class="fu">length</span>(soil_T0<span class="sc">$</span>pct_moisture)), <span class="at">digits =</span> <span class="dv">1</span>), </span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;%&quot;</span>,</span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;pH&quot;</span>,</span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="fu">mean</span>(soil_T0<span class="sc">$</span>pH), </span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a>                  <span class="at">digits =</span> <span class="fu">get_round_digit</span>(</span>
+<span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">signif</span>(<span class="fu">sd</span>(soil_T0<span class="sc">$</span>pH)<span class="sc">/</span></span>
+<span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">sqrt</span>(<span class="fu">length</span>(soil_T0<span class="sc">$</span>pH)), <span class="at">digits =</span> <span class="dv">1</span>)</span>
+<span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a>                  )),</span>
+<span id="cb18-42"><a href="#cb18-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">signif</span>(<span class="fu">sd</span>(soil_T0<span class="sc">$</span>pH)<span class="sc">/</span></span>
+<span id="cb18-43"><a href="#cb18-43" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">sqrt</span>(<span class="fu">length</span>(soil_T0<span class="sc">$</span>pH)), <span class="at">digits =</span> <span class="dv">1</span>),</span>
+<span id="cb18-44"><a href="#cb18-44" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Unitless&quot;</span>,</span>
+<span id="cb18-45"><a href="#cb18-45" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-46"><a href="#cb18-46" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;C:N Ratio&quot;</span>,</span>
+<span id="cb18-47"><a href="#cb18-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="fu">mean</span>(soil_T0<span class="sc">$</span>C_N_ratio), </span>
+<span id="cb18-48"><a href="#cb18-48" aria-hidden="true" tabindex="-1"></a>                 <span class="at">digits =</span> <span class="fu">get_round_digit</span>(</span>
+<span id="cb18-49"><a href="#cb18-49" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">signif</span>(<span class="fu">sd</span>(soil_T0<span class="sc">$</span>C_N_ratio)<span class="sc">/</span></span>
+<span id="cb18-50"><a href="#cb18-50" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">sqrt</span>(<span class="fu">length</span>(soil_T0<span class="sc">$</span>C_N_ratio)), <span class="at">digits =</span> <span class="dv">1</span>)</span>
+<span id="cb18-51"><a href="#cb18-51" aria-hidden="true" tabindex="-1"></a>                 )),</span>
+<span id="cb18-52"><a href="#cb18-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">signif</span>(<span class="fu">sd</span>(soil_T0<span class="sc">$</span>C_N_ratio)<span class="sc">/</span></span>
+<span id="cb18-53"><a href="#cb18-53" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">sqrt</span>(<span class="fu">length</span>(soil_T0<span class="sc">$</span>C_N_ratio)), <span class="at">digits =</span> <span class="dv">1</span>),</span>
+<span id="cb18-54"><a href="#cb18-54" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Unitless&quot;</span>,</span>
+<span id="cb18-55"><a href="#cb18-55" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-56"><a href="#cb18-56" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Phenol Oxidase Concentration&quot;</span>,</span>
+<span id="cb18-57"><a href="#cb18-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="fu">mean</span>(soil_T0<span class="sc">$</span>Phenox), </span>
+<span id="cb18-58"><a href="#cb18-58" aria-hidden="true" tabindex="-1"></a>                 <span class="at">digits =</span> <span class="fu">get_round_digit</span>(</span>
+<span id="cb18-59"><a href="#cb18-59" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">signif</span>(<span class="fu">sd</span>(soil_T0<span class="sc">$</span>Phenox)<span class="sc">/</span></span>
+<span id="cb18-60"><a href="#cb18-60" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">sqrt</span>(<span class="fu">length</span>(soil_T0<span class="sc">$</span>Phenox)), <span class="at">digits =</span> <span class="dv">1</span>)</span>
+<span id="cb18-61"><a href="#cb18-61" aria-hidden="true" tabindex="-1"></a>                 )),</span>
+<span id="cb18-62"><a href="#cb18-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">signif</span>(<span class="fu">sd</span>(soil_T0<span class="sc">$</span>Phenox)<span class="sc">/</span></span>
+<span id="cb18-63"><a href="#cb18-63" aria-hidden="true" tabindex="-1"></a>           <span class="fu">sqrt</span>(<span class="fu">length</span>(soil_T0<span class="sc">$</span>Phenox)), <span class="at">digits =</span> <span class="dv">1</span>),</span>
+<span id="cb18-64"><a href="#cb18-64" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;&amp;mu;mol substrate / g soil / hour&quot;</span>,</span>
+<span id="cb18-65"><a href="#cb18-65" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-66"><a href="#cb18-66" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Peroxidase Concentration&quot;</span>,</span>
+<span id="cb18-67"><a href="#cb18-67" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="fu">mean</span>(soil_T0<span class="sc">$</span>Perox), </span>
+<span id="cb18-68"><a href="#cb18-68" aria-hidden="true" tabindex="-1"></a>                 <span class="at">digits =</span> <span class="fu">get_round_digit</span>(</span>
+<span id="cb18-69"><a href="#cb18-69" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">signif</span>(<span class="fu">sd</span>(soil_T0<span class="sc">$</span>Perox)<span class="sc">/</span></span>
+<span id="cb18-70"><a href="#cb18-70" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">sqrt</span>(<span class="fu">length</span>(soil_T0<span class="sc">$</span>Perox)), <span class="at">digits =</span> <span class="dv">1</span>)</span>
+<span id="cb18-71"><a href="#cb18-71" aria-hidden="true" tabindex="-1"></a>                 )), </span>
+<span id="cb18-72"><a href="#cb18-72" aria-hidden="true" tabindex="-1"></a>  <span class="fu">signif</span>(<span class="fu">sd</span>(soil_T0<span class="sc">$</span>Perox)<span class="sc">/</span></span>
+<span id="cb18-73"><a href="#cb18-73" aria-hidden="true" tabindex="-1"></a>           <span class="fu">sqrt</span>(<span class="fu">length</span>(soil_T0<span class="sc">$</span>Perox)), <span class="at">digits =</span> <span class="dv">1</span>), </span>
+<span id="cb18-74"><a href="#cb18-74" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot; &amp;mu;mol substrate / g soil / hour&quot;</span>,</span>
+<span id="cb18-75"><a href="#cb18-75" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-76"><a href="#cb18-76" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Total Microfauna Abundance&quot;</span>,</span>
+<span id="cb18-77"><a href="#cb18-77" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="fu">mean</span>(abundance_T0<span class="sc">$</span>total_micro_ab_standardized), </span>
+<span id="cb18-78"><a href="#cb18-78" aria-hidden="true" tabindex="-1"></a>           <span class="at">digits =</span> <span class="fu">get_round_digit</span>(</span>
+<span id="cb18-79"><a href="#cb18-79" aria-hidden="true" tabindex="-1"></a>             <span class="fu">signif</span>(<span class="fu">sd</span>(abundance_T0<span class="sc">$</span>total_micro_ab_standardized)<span class="sc">/</span></span>
+<span id="cb18-80"><a href="#cb18-80" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">sqrt</span>(<span class="fu">length</span>(abundance_T0<span class="sc">$</span>total_micro_ab_standardized)), </span>
+<span id="cb18-81"><a href="#cb18-81" aria-hidden="true" tabindex="-1"></a>                  <span class="at">digits =</span> <span class="dv">1</span>)</span>
+<span id="cb18-82"><a href="#cb18-82" aria-hidden="true" tabindex="-1"></a>           )),</span>
+<span id="cb18-83"><a href="#cb18-83" aria-hidden="true" tabindex="-1"></a>  <span class="fu">signif</span>(<span class="fu">sd</span>(abundance_T0<span class="sc">$</span>total_micro_ab_standardized)<span class="sc">/</span></span>
+<span id="cb18-84"><a href="#cb18-84" aria-hidden="true" tabindex="-1"></a>           <span class="fu">sqrt</span>(<span class="fu">length</span>(abundance_T0<span class="sc">$</span>total_micro_ab_standardized)), </span>
+<span id="cb18-85"><a href="#cb18-85" aria-hidden="true" tabindex="-1"></a>         <span class="at">digits =</span> <span class="dv">1</span>), </span>
+<span id="cb18-86"><a href="#cb18-86" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;individuals per m^2^&quot;</span>,</span>
+<span id="cb18-87"><a href="#cb18-87" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-88"><a href="#cb18-88" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Total Mesofauna Abundance&quot;</span>,</span>
+<span id="cb18-89"><a href="#cb18-89" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="fu">mean</span>(abundance_T0<span class="sc">$</span>total_meso_ab_standardized), </span>
+<span id="cb18-90"><a href="#cb18-90" aria-hidden="true" tabindex="-1"></a>           <span class="at">digits =</span> <span class="fu">get_round_digit</span>(</span>
+<span id="cb18-91"><a href="#cb18-91" aria-hidden="true" tabindex="-1"></a>             <span class="fu">signif</span>(<span class="fu">sd</span>(abundance_T0<span class="sc">$</span>total_meso_ab_standardized)<span class="sc">/</span></span>
+<span id="cb18-92"><a href="#cb18-92" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">sqrt</span>(<span class="fu">length</span>(abundance_T0<span class="sc">$</span>total_meso_ab_standardized)), </span>
+<span id="cb18-93"><a href="#cb18-93" aria-hidden="true" tabindex="-1"></a>                  <span class="at">digits =</span> <span class="dv">1</span>)</span>
+<span id="cb18-94"><a href="#cb18-94" aria-hidden="true" tabindex="-1"></a>           )),</span>
+<span id="cb18-95"><a href="#cb18-95" aria-hidden="true" tabindex="-1"></a>  <span class="fu">signif</span>(<span class="fu">sd</span>(abundance_T0<span class="sc">$</span>total_meso_ab_standardized)<span class="sc">/</span></span>
+<span id="cb18-96"><a href="#cb18-96" aria-hidden="true" tabindex="-1"></a>           <span class="fu">sqrt</span>(<span class="fu">length</span>(abundance_T0<span class="sc">$</span>total_meso_ab_standardized)), </span>
+<span id="cb18-97"><a href="#cb18-97" aria-hidden="true" tabindex="-1"></a>         <span class="at">digits =</span> <span class="dv">1</span>), </span>
+<span id="cb18-98"><a href="#cb18-98" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;individuals per m^2^&quot;</span>,</span>
+<span id="cb18-99"><a href="#cb18-99" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-100"><a href="#cb18-100" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Total Fauna Abundance&quot;</span>,</span>
+<span id="cb18-101"><a href="#cb18-101" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="fu">mean</span>(abundance_T0<span class="sc">$</span>total_ab_standardized), </span>
+<span id="cb18-102"><a href="#cb18-102" aria-hidden="true" tabindex="-1"></a>           <span class="at">digits =</span> <span class="fu">get_round_digit</span>(</span>
+<span id="cb18-103"><a href="#cb18-103" aria-hidden="true" tabindex="-1"></a>              <span class="fu">signif</span>(<span class="fu">sd</span>(abundance_T0<span class="sc">$</span>total_ab_standardized)<span class="sc">/</span></span>
+<span id="cb18-104"><a href="#cb18-104" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">sqrt</span>(<span class="fu">length</span>(abundance_T0<span class="sc">$</span>total_ab_standardized)), </span>
+<span id="cb18-105"><a href="#cb18-105" aria-hidden="true" tabindex="-1"></a>                  <span class="at">digits =</span> <span class="dv">1</span>) </span>
+<span id="cb18-106"><a href="#cb18-106" aria-hidden="true" tabindex="-1"></a>           )),  </span>
+<span id="cb18-107"><a href="#cb18-107" aria-hidden="true" tabindex="-1"></a>           <span class="fu">signif</span>(<span class="fu">sd</span>(abundance_T0<span class="sc">$</span>total_ab_standardized)<span class="sc">/</span></span>
+<span id="cb18-108"><a href="#cb18-108" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">sqrt</span>(<span class="fu">length</span>(abundance_T0<span class="sc">$</span>total_ab_standardized)), </span>
+<span id="cb18-109"><a href="#cb18-109" aria-hidden="true" tabindex="-1"></a>                  <span class="at">digits =</span> <span class="dv">1</span>),</span>
+<span id="cb18-110"><a href="#cb18-110" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;individuals per m^2^&quot;</span></span>
+<span id="cb18-111"><a href="#cb18-111" aria-hidden="true" tabindex="-1"></a>  ), <span class="at">ncol =</span> <span class="dv">4</span>, <span class="at">byrow =</span> T))</span>
+<span id="cb18-112"><a href="#cb18-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-113"><a href="#cb18-113" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(T0_df1) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Parameter&quot;</span>, <span class="st">&quot;Mean&quot;</span>, <span class="st">&quot;SE&quot;</span>, <span class="st">&quot;Unit&quot;</span>)</span>
+<span id="cb18-114"><a href="#cb18-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-115"><a href="#cb18-115" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(T0_df1, <span class="at">linesep =</span> <span class="st">&quot;</span><span class="sc">\\</span><span class="st">hline&quot;</span>)</span></code></pre></div>
+<table>
+<colgroup>
+<col width="38%" />
+<col width="9%" />
+<col width="7%" />
+<col width="44%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Parameter</th>
+<th align="left">Mean</th>
+<th align="left">SE</th>
+<th align="left">Unit</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Heterotrophic Respiration</td>
+<td align="left">1200</td>
+<td align="left">200</td>
+<td align="left">g of C / m<sup>2</sup> / year</td>
+</tr>
+<tr class="even">
+<td align="left">Soil Moisture</td>
+<td align="left">800</td>
+<td align="left">50</td>
+<td align="left">%</td>
+</tr>
+<tr class="odd">
+<td align="left">pH</td>
+<td align="left">4.08</td>
+<td align="left">0.05</td>
+<td align="left">Unitless</td>
+</tr>
+<tr class="even">
+<td align="left">C:N Ratio</td>
+<td align="left">37</td>
+<td align="left">2</td>
+<td align="left">Unitless</td>
+</tr>
+<tr class="odd">
+<td align="left">Phenol Oxidase Concentration</td>
+<td align="left">160</td>
+<td align="left">20</td>
+<td align="left">μmol substrate / g soil / hour</td>
+</tr>
+<tr class="even">
+<td align="left">Peroxidase Concentration</td>
+<td align="left">154</td>
+<td align="left">8</td>
+<td align="left">μmol substrate / g soil / hour</td>
+</tr>
+<tr class="odd">
+<td align="left">Total Microfauna Abundance</td>
+<td align="left">170000</td>
+<td align="left">40000</td>
+<td align="left">individuals per m<sup>2</sup></td>
+</tr>
+<tr class="even">
+<td align="left">Total Mesofauna Abundance</td>
+<td align="left">360000</td>
+<td align="left">40000</td>
+<td align="left">individuals per m<sup>2</sup></td>
+</tr>
+<tr class="odd">
+<td align="left">Total Fauna Abundance</td>
+<td align="left">540000</td>
+<td align="left">50000</td>
+<td align="left">individuals per m<sup>2</sup></td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<p>Converting faunal abundance to biomass estimates, I calculated a mean
+microfauna, mesofauna and total fauna biomass (± SE) as 0.009 (± 0.002),
+0.73 (± 0.08), and 0.74 (± 0.08) g of C per m<sup>2</sup>, respectively.
+Mean total consumptive flux (± SE) based on the energetic model was 1261
+± 4 g of C per m<sup>2</sup> per year, while the mean total C
+mineralization (± SE) was 514 ± 2 g of C per m<sup>2</sup> per year, and
+the mean total N mineralization (± SE) was -4.51 ± 0.02 g of N per
+m<sup>2</sup> per year. Mean values are presented in <a href="#appendix-d">Appendix D</a>.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>biomass_T0 <span class="ot">&lt;-</span> biomass_data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(destructive_time <span class="sc">==</span> <span class="st">&quot;T0&quot;</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>T0_df2 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">matrix</span>(<span class="at">data =</span> <span class="fu">c</span>(</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Microfauna Biomass&quot;</span>, </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="fu">mean</span>(biomass_T0<span class="sc">$</span>micro_biomass), </span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">digits =</span> <span class="fu">get_round_digit</span>(</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">signif</span>(<span class="fu">sd</span>(biomass_T0<span class="sc">$</span>micro_biomass)<span class="sc">/</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">sqrt</span>(<span class="fu">length</span>(biomass_T0<span class="sc">$</span>micro_biomass)), <span class="at">digits =</span> <span class="dv">1</span>)</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>                 )),</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">signif</span>(<span class="fu">sd</span>(biomass_T0<span class="sc">$</span>micro_biomass)<span class="sc">/</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">sqrt</span>(<span class="fu">length</span>(biomass_T0<span class="sc">$</span>micro_biomass)), <span class="at">digits =</span> <span class="dv">1</span>),</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;g of C / m^2^&quot;</span>,</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Mesofauna Biomass&quot;</span>, </span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="fu">mean</span>(biomass_T0<span class="sc">$</span>meso_biomass), </span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>                 <span class="at">digits =</span> <span class="fu">get_round_digit</span>(</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">signif</span>(<span class="fu">sd</span>(biomass_T0<span class="sc">$</span>meso_biomass)<span class="sc">/</span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">sqrt</span>(<span class="fu">length</span>(biomass_T0<span class="sc">$</span>meso_biomass)), <span class="at">digits =</span> <span class="dv">1</span>)</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>                 )),</span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">signif</span>(<span class="fu">sd</span>(biomass_T0<span class="sc">$</span>meso_biomass)<span class="sc">/</span></span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">sqrt</span>(<span class="fu">length</span>(biomass_T0<span class="sc">$</span>meso_biomass)), <span class="at">digits =</span> <span class="dv">1</span>),</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;g of C / m^2^&quot;</span>,</span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Total Biomass&quot;</span>,</span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="fu">mean</span>(biomass_T0<span class="sc">$</span>total_biomass), </span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>                 <span class="at">digits =</span> <span class="fu">get_round_digit</span>(</span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">signif</span>(<span class="fu">sd</span>(biomass_T0<span class="sc">$</span>total_biomass)<span class="sc">/</span></span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">sqrt</span>(<span class="fu">length</span>(biomass_T0<span class="sc">$</span>total_biomass)), <span class="at">digits =</span> <span class="dv">1</span>)</span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>                 )),</span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">signif</span>(<span class="fu">sd</span>(biomass_T0<span class="sc">$</span>total_biomass)<span class="sc">/</span></span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">sqrt</span>(<span class="fu">length</span>(biomass_T0<span class="sc">$</span>total_biomass)), <span class="at">digits =</span> <span class="dv">1</span>),</span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;g of C / m^2^&quot;</span></span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>), <span class="at">ncol =</span> <span class="dv">4</span>, <span class="at">byrow =</span> T))</span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(T0_df2) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Parameter&quot;</span>, <span class="st">&quot;Mean&quot;</span>, <span class="st">&quot;SE&quot;</span>, <span class="st">&quot;Unit&quot;</span>)</span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(T0_df2, <span class="at">linesep =</span> <span class="st">&quot;</span><span class="sc">\\</span><span class="st">hline&quot;</span>)</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Parameter</th>
+<th align="left">Mean</th>
+<th align="left">SE</th>
+<th align="left">Unit</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Microfauna Biomass</td>
+<td align="left">0.009</td>
+<td align="left">0.002</td>
+<td align="left">g of C / m<sup>2</sup></td>
+</tr>
+<tr class="even">
+<td align="left">Mesofauna Biomass</td>
+<td align="left">0.73</td>
+<td align="left">0.08</td>
+<td align="left">g of C / m<sup>2</sup></td>
+</tr>
+<tr class="odd">
+<td align="left">Total Biomass</td>
+<td align="left">0.74</td>
+<td align="left">0.08</td>
+<td align="left">g of C / m<sup>2</sup></td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+<div id="soil-heterotrophic-respiration" class="section level2">
+<h2>3.2 Soil Heterotrophic Respiration</h2>
+</div>
+<div id="physical-soil-properties" class="section level2">
+<h2>3.3 Physical Soil Properties</h2>
+</div>
+<div id="enzyme-activity" class="section level2">
+<h2>3.4 Enzyme Activity</h2>
+</div>
+<div id="soil-fauna-abundance-and-biomass" class="section level2">
+<h2>3.5 Soil Fauna Abundance and Biomass</h2>
+</div>
+<div id="community-composition-and-smiilarity-among-treatments" class="section level2">
+<h2>3.6 Community Composition and Smiilarity Among Treatments</h2>
+</div>
+<div id="soil-food-web-carbon-and-nitrogen-flux" class="section level2">
+<h2>3.7 Soil Food Web Carbon and Nitrogen Flux</h2>
+</div>
 </div>
 <div id="chapter-4" class="section level1">
 <h1>Chapter 4</h1>

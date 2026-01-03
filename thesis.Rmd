@@ -28,9 +28,19 @@ header-includes:
     .refbox a {
       word-break: break-all;
     }
+    
+    table tr {
+    border-bottom: 1px solid #dee2e6 !important;
+    }
+    /* Remove the extra padding/spacing that mimics a thick line */
+      table {
+      border-collapse: collapse !important;
+      }
+
     </style>
 
 ---
+
 # About this Project
 
 ```{r Libraries, message=F, warning=F}
@@ -139,7 +149,7 @@ In the energetic model of the system, I predicted that the total C flux and C mi
 I used a paired empirical and model approach to capture changes in both the soil community and larger ecosystem functioning under warming and hydrological changes. Comparing empirical changes in abundance and biomass allowed me to examine population level responses in the soil food web at the level of individual nodes, but this approach alone is limited in generalizability as it does not capture emergent soil properties that operate at the scale of whole ecosystems and landscapes. Integrating both empirical and model approaches will allow me to better understand how changes in ecosystem level functions like soil C and N transformations emerge from changes at the level of individual nodes in the soil fauna food web.
 <br>
 
-# Chapter 2
+# Chapter 2: Methods and Experimental Design
 ## 2.1 Soil Sampling
 Peatland soils were collected in September 2021 from a *Sphagnum*-dominated peatland that is part of the BRACE (Biological Response to A Changing Environment) experimental peatland project in the southern boreal mixed-wood forest ecozone. This site is located near White River,
 Ontario, Canada ([48°21′ N, 84°20′ W](https://maps.app.goo.gl/r9KosViMRUCykji5A)), and is a long-term research monitoring site used by the Ontario Ministry of Natural Resources and Forestry for the past 20 years. The peatland is a nutrient-poor fen, with a pH ~4.1 and a water table ~30 cm deep that fluctuates seasonally. Previous studies at this site have characterized vegetation ([Lyons and Lindo, 2020](https://doi.org/10.1007/s11258-020-01037-w)), bacterial and fungal communities (Asemaninejad et al., [2017](https://doi.org/10.1016/J.FUNECO.2017.02.002), [2019](https://doi.org/10.1080/11956860.2019.1595932))), nematodes ([Kamath et al., 2022](https://doi.org/10.1016/j.pedobi.2022.150809)), and soil microarthropods ([Barreto et al., 2021](https://doi.org/10.11158/saa.26.5.4)).
@@ -222,6 +232,11 @@ resp.data <- resp.data.temp5[, c("Sample_ID", "destructive_time",
 
 resp.data$cum_resp <- log(rowSums(resp.data[,6:9], na.rm = T)/4)
 #W0 to W3
+
+resp.data$cum_resp[resp.data$destructive_time == "T0"] <- 
+  log(rowSums(resp.data[resp.data$destructive_time == "T0", 6:9], na.rm = T))
+# for T0 only 1 week
+
 
 resp.data$destructive_time <- 
   as.factor(resp.data$destructive_time)
@@ -618,7 +633,181 @@ knitr::include_graphics("Conceptual Diagrams/Figure 2.1.png")
 ```
 <br>
 
-# Chapter 3
+# Chapter 3: Results
+## 3.1 Pre-experimental Group (T~0~)
+Five experimental mesocosms were destructively sampled following a three-week recovery period but prior to deployment of the experimental treatments (T~0~). The following conditions were recorded for these five control mesocosms and were assumed to be representative of field values. The mean heterotrophic respiration (&plusmn; SE) prior to implementing experimental soil moisture and temperature conditions at T~0~ was 7.0 &plusmn; 0.1 ln(g of C per m^2^ per year), which equates to ~1200 &plusmn; 200 g of C per m^2^ per year. The mean soil moisture (&plusmn; SE) was 800 &plusmn; 50% based on a dry weight gravimetric measurement, while the average soil pH (&plusmn; SE) was 4.08 &plusmn; 0.05. Mean C:N ratio (&plusmn; SE) was 37 &plusmn; 2, while mean microbial enzymatic activity (&plusmn; SE) was 160 &plusmn; 20 &mu;mol substrate per g soil per hour for phenol oxidase and 154 &plusmn; 8 &mu;mol substrate per g soil per hour for peroxidase concentration. The mean total microfauna, mesofauna, and total fauna abundances (&plusmn; SE) were: 170,000 (&plusmn; 40,000), 360,000 (&plusmn; 40,000), and 540,000 (&plusmn; 50,000) individuals per m^2^, respectively.
+```{r T0 Results 1, warning=F}
+resp_T0 <- resp.data %>% filter(destructive_time == "T0")
+
+soil_T0 <- soil_data %>% filter(destructive_time == "T0")
+
+abundance_T0 <- abundance_data %>% filter(destructive_time == "T0")
+
+# Function to find decimal places
+get_round_digit <- function(x) {
+  if (x == 0) return(0)
+  # Calculate the power of 10 of the first significant figure
+  # then negate it to match R's rounding logic
+  -floor(log10(abs(x)))
+}
+
+T0_df1 <- as.data.frame(matrix(data = c(
+  "Heterotrophic Respiration", 
+  round(mean(exp(resp_T0$cum_resp)), 
+                 digits = get_round_digit(
+                   signif(sd(exp(resp_T0$cum_resp))/
+                   sqrt(length(resp_T0$cum_resp)), digits = 1)
+                 )),
+  signif(sd(exp(resp_T0$cum_resp))/
+                   sqrt(length(resp_T0$cum_resp)), digits = 1),
+  "g of C / m^2^ / year",
+  
+  "Soil Moisture",
+  round(mean(soil_T0$pct_moisture), 
+                 digits = get_round_digit(
+                   signif(sd(soil_T0$pct_moisture)/
+                    sqrt(length(soil_T0$pct_moisture)), digits = 1)
+                 )),
+  signif(sd(soil_T0$pct_moisture)/
+                    sqrt(length(soil_T0$pct_moisture)), digits = 1), 
+  "%",
+  
+  "pH",
+  round(mean(soil_T0$pH), 
+                  digits = get_round_digit(
+                    signif(sd(soil_T0$pH)/
+                    sqrt(length(soil_T0$pH)), digits = 1)
+                  )),
+  signif(sd(soil_T0$pH)/
+                    sqrt(length(soil_T0$pH)), digits = 1),
+  "Unitless",
+  
+  "C:N Ratio",
+  round(mean(soil_T0$C_N_ratio), 
+                 digits = get_round_digit(
+                   signif(sd(soil_T0$C_N_ratio)/
+                    sqrt(length(soil_T0$C_N_ratio)), digits = 1)
+                 )),
+  signif(sd(soil_T0$C_N_ratio)/
+                    sqrt(length(soil_T0$C_N_ratio)), digits = 1),
+  "Unitless",
+  
+  "Phenol Oxidase Concentration",
+  round(mean(soil_T0$Phenox), 
+                 digits = get_round_digit(
+                   signif(sd(soil_T0$Phenox)/
+                    sqrt(length(soil_T0$Phenox)), digits = 1)
+                 )),
+  signif(sd(soil_T0$Phenox)/
+           sqrt(length(soil_T0$Phenox)), digits = 1),
+  "&mu;mol substrate / g soil / hour",
+  
+  "Peroxidase Concentration",
+  round(mean(soil_T0$Perox), 
+                 digits = get_round_digit(
+                   signif(sd(soil_T0$Perox)/
+                    sqrt(length(soil_T0$Perox)), digits = 1)
+                 )), 
+  signif(sd(soil_T0$Perox)/
+           sqrt(length(soil_T0$Perox)), digits = 1), 
+  " &mu;mol substrate / g soil / hour",
+  
+  "Total Microfauna Abundance",
+  round(mean(abundance_T0$total_micro_ab_standardized), 
+           digits = get_round_digit(
+             signif(sd(abundance_T0$total_micro_ab_standardized)/
+                    sqrt(length(abundance_T0$total_micro_ab_standardized)), 
+                  digits = 1)
+           )),
+  signif(sd(abundance_T0$total_micro_ab_standardized)/
+           sqrt(length(abundance_T0$total_micro_ab_standardized)), 
+         digits = 1), 
+  "individuals per m^2^",
+  
+  "Total Mesofauna Abundance",
+  round(mean(abundance_T0$total_meso_ab_standardized), 
+           digits = get_round_digit(
+             signif(sd(abundance_T0$total_meso_ab_standardized)/
+                    sqrt(length(abundance_T0$total_meso_ab_standardized)), 
+                  digits = 1)
+           )),
+  signif(sd(abundance_T0$total_meso_ab_standardized)/
+           sqrt(length(abundance_T0$total_meso_ab_standardized)), 
+         digits = 1), 
+  "individuals per m^2^",
+  
+  "Total Fauna Abundance",
+  round(mean(abundance_T0$total_ab_standardized), 
+           digits = get_round_digit(
+              signif(sd(abundance_T0$total_ab_standardized)/
+                    sqrt(length(abundance_T0$total_ab_standardized)), 
+                  digits = 1) 
+           )),  
+           signif(sd(abundance_T0$total_ab_standardized)/
+                    sqrt(length(abundance_T0$total_ab_standardized)), 
+                  digits = 1),
+           "individuals per m^2^"
+  ), ncol = 4, byrow = T))
+
+colnames(T0_df1) <- c("Parameter", "Mean", "SE", "Unit")
+
+knitr::kable(T0_df1, linesep = "\\hline")
+```
+<br>
+
+Converting faunal abundance to biomass estimates, I calculated a mean microfauna, mesofauna and total fauna biomass (&plusmn; SE) as 0.009 (&plusmn; 0.002), 0.73 (&plusmn; 0.08), and 0.74 (&plusmn; 0.08) g of C per m^2^, respectively. Mean total consumptive flux (&plusmn; SE) based on the energetic model was 1261 &plusmn; 4 g of C per m^2^ per year, while the mean total C mineralization (&plusmn; SE) was 514 &plusmn; 2 g of C per m^2^ per year, and the mean total N mineralization (&plusmn; SE) was -4.51 &plusmn; 0.02 g of N per m^2^ per year. Mean values are presented in [Appendix D].
+```{r T0 Results 2, warning=F}
+biomass_T0 <- biomass_data %>% filter(destructive_time == "T0")
+
+T0_df2 <- as.data.frame(matrix(data = c(
+  "Microfauna Biomass", 
+  round(mean(biomass_T0$micro_biomass), 
+                 digits = get_round_digit(
+                   signif(sd(biomass_T0$micro_biomass)/
+                   sqrt(length(biomass_T0$micro_biomass)), digits = 1)
+                 )),
+  signif(sd(biomass_T0$micro_biomass)/
+                   sqrt(length(biomass_T0$micro_biomass)), digits = 1),
+  "g of C / m^2^",
+  
+  "Mesofauna Biomass", 
+  round(mean(biomass_T0$meso_biomass), 
+                 digits = get_round_digit(
+                   signif(sd(biomass_T0$meso_biomass)/
+                   sqrt(length(biomass_T0$meso_biomass)), digits = 1)
+                 )),
+  signif(sd(biomass_T0$meso_biomass)/
+                   sqrt(length(biomass_T0$meso_biomass)), digits = 1),
+  "g of C / m^2^",
+  
+  "Total Biomass",
+  round(mean(biomass_T0$total_biomass), 
+                 digits = get_round_digit(
+                   signif(sd(biomass_T0$total_biomass)/
+                   sqrt(length(biomass_T0$total_biomass)), digits = 1)
+                 )),
+  signif(sd(biomass_T0$total_biomass)/
+                   sqrt(length(biomass_T0$total_biomass)), digits = 1),
+  "g of C / m^2^"
+), ncol = 4, byrow = T))
+
+colnames(T0_df2) <- c("Parameter", "Mean", "SE", "Unit")
+
+knitr::kable(T0_df2, linesep = "\\hline")
+```
+<br>
+
+## 3.2 Soil Heterotrophic Respiration
+
+## 3.3 Physical Soil Properties
+
+## 3.4 Enzyme Activity
+
+## 3.5 Soil Fauna Abundance and Biomass
+
+## 3.6 Community Composition and Smiilarity Among Treatments
+
+## 3.7 Soil Food Web Carbon and Nitrogen Flux
 
 # Chapter 4
 
