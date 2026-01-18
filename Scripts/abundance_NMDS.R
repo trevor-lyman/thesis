@@ -62,6 +62,15 @@ points(mds.fig_T1, "sites", pch = 19, cex = 1.5, col = "peru",
        select = metadata_T1$moisture_tx == "High")
 ordiellipse(T1.mds, metadata_T1$moisture_tx, conf = 0.95, label = TRUE)
 
+ordiplot(T1.mds, display = "sites", type = "text", xlab = "NMDS 1", ylab = "NMDS 2")  
+mds.fig_T1 <- ordiplot(T1.mds, type = "none", xlab = "NMDS 1", ylab = "NMDS 2", 
+                       xlim = c(-0.8, 0.8), ylim = c(-0.8, 0.8)) 
+points(mds.fig_T1, "sites", pch = 19, cex = 1.5, col = "green4", 
+       select = metadata_T1$temp_tx == 12)
+points(mds.fig_T1, "sites", pch = 19, cex = 1.5, col = "peru", 
+       select = metadata_T1$temp_tx == 20)
+ordiellipse(T1.mds, metadata_T1$temp_tx, conf = 0.95, label = TRUE)
+
 # T2 NMDS
 ordiplot(T2.mds, display = "sites", type = "text", xlab = "NMDS 1", ylab = "NMDS 2")  
 mds.fig_T2 <- ordiplot(T2.mds, type = "none", xlab = "NMDS 1", ylab = "NMDS 2", 

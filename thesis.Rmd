@@ -96,7 +96,8 @@ Finally, I thank my family and Sydney for their constant support.
 ## 1.1 Carbon Cycling in the Soil Food Web
 Nearly 80% of all carbon (C) stored in terrestrial ecosystems (2500 GT of C) is found in soils ([Batjes, 1996](https://doi.org/10.1111/j.1365-2389.1996.tb01386.x)). Net primary production derived from aboveground photosynthesis drives the input of fixed C into soil systems as detritus (i.e., dead organic matter) which serves as the basal energy source for soil food webs ([de Vries and Caruso, 2016](https://doi.org/10.1016/J.SOILBIO.2016.06.023)). Carbon is then transferred from one trophic level (or trophic group) to another via consumption during trophic interactions in an overall process that contributes to decomposition of detritus. At the same time, C transformations occur belowground as C is stored as living biomass, recycled to the detritus pool through feces and other consumptive waste, and as natural (non-consumptive) death of soil organisms. Carbon is lost from soils as carbon dioxide (CO~2~) as a function of metabolic respiration by members of the soil food web ([Moore and de Ruiter, 2012](https://books.google.com/books/about/Energetic_Food_Webs.html?id=srX39_-9E0wC)). Thus, the fate of soil C is a function of detrital inputs, the soil food web, and related heterotrophic respiration outputs ([Figure 1.1]).  
   
-### Figure 1.1 Conceptualized flow of carbon and nutrients through soil systems.
+### Figure 1.1
+Conceptualized flow of carbon and nutrients through soil systems.
 ```{r Fig1-1, echo=FALSE, fig.cap="Carbon initially enters the soil system as detritus which is derived from aboveground photosynthesis and net primary productivity (I.e., carbon fixation). Detritus (dead organic inputs largely from aboveground sources) forms the basal resource for the soil food web. Detrital carbon and nutrients is transferred among members of the food web through consumption. Consumption drives fluxes of carbon within and between nodes in the soil food web. Carbon returns to the detrital pool through waste due to inefficient trophic assimilation (E~a~) and through non-consumptive death (d) of soil organisms. Carbon is lost from the soil system through carbon mineralization, by which organic carbon is turned into inorganic (i.e., mineral) forms. In soils, carbon mineralization is largely heterotrophic respiration associated with metabolism of soil organisms (i.e., production efficiency, E~p~). Soil carbon pools are both the detrital pool and the soil organisms themselves that comprise the soil food web.", out.width = '100%'}
 knitr::include_graphics("Conceptual Diagrams/Figure 1.1.png")
 ```
@@ -1591,7 +1592,8 @@ head(flux_data)
 
 Total biomass, microfauna biomass, mesofauna biomass, total flux, total C mineralization, and N mineralization were tested for normality and homogeneity of variance using a Shapiro-Wilk test and Levene’s test, respectively. I constructed linear models from total biomass, microfauna biomass, mesofauna biomass, total flux, total C mineralization, and total N mineralization using reverse order selection to remove insignificant interaction terms (see [Appendix F]). I then statistically analyzed the biomasses of total microfauna, total mesofauna and total faunal between each combination of soil moisture, temperature, and destructive sampling conditions using a three-way full-factorial ANOVA with a block effect to account for any field-based differences in biomass and Tukey’s HSD post-hoc test. I similarly analyzed the output C and N flux and mineralization values of the whole soil food web model using a 3-way factorial ANOVA and Tukey’s HSD post-hoc test to examine differences between soil moisture, temperature, and destructive sampling treatment conditions. Finally, I used Pearson’s correlation test to test for correlations between soil microfauna, mesofauna, and total faunal biomasses.
 
-### Figure 2.1 The conceptualized peatland soil food web containing 15 trophic nodes (groups).
+### Figure 2.1 
+The conceptualized peatland soil food web containing 15 trophic nodes (groups).
 ```{r Fig2-1, echo=FALSE, fig.cap="Arrows represent the flow of energy (carbon) and nutrients corresponding to trophic interactions from resources to consumers. Nodes, shown as boxes, represent distinct phylogenetic groups of soil fauna, microflora and detritus. Dashed lines represent weaker trophic interactions. Grey arrows are bacterial energy channel; black arrows are fungal energy channel.", out.width = '100%'}
 knitr::include_graphics("Conceptual Diagrams/Figure 2.1.png")
 ```
@@ -1794,7 +1796,8 @@ knitr::kable(T0_df2)
 <br>
 
 ## 3.2 Soil Heterotrophic Respiration
-### Figure 3.1 Boxplots of mean heterotrophic soil respiration (ln transformed).
+### Figure 3.1 
+Boxplots of mean heterotrophic soil respiration (ln transformed).
 ```{r Figure 3-1, fig.cap="Measurements were taken during the three-week experimental climate disturbance scenarios (T~1~) under each combination of temperature (12 &deg;C, 20 &deg;C) and soil moisture (field-moist, saturated) treatments, and during the following three-week recovery period (T~2~) when mesocosms were returned to in field conditions (12 &deg;C, field-moist).", out.width = '100%'}
 resp_T1uT2 <- resp.data %>% filter(!destructive_time=="T0")
 
@@ -1906,7 +1909,8 @@ resp_aov2
 <br>
 
 ## 3.3 Physical Soil Properties
-### Figure 3.2 Soil moisture (A), pH (B), and C:N ratio (C).
+### Figure 3.2 
+Soil moisture (A), pH (B), and C:N ratio (C).
 ```{r Figure 3-2, warning=F, fig.cap="Mesocosms were measured across experimental treatments of temperature (12 &deg;C, 20 &deg;C) and soil moisture (field-moist, saturated) destructively sampled after three-weeks (T~1~) or following three-week recovery period (T~2~). Letters denote significant differences between groups, as per Tukey’s HSD test.", out.width = '100%'}
 soil_T1uT2 <- soil_data %>% filter(!destructive_time == "T0") 
 
@@ -2135,7 +2139,8 @@ CN_aov2
 <br>
 
 ## 3.4 Enzyme Activity
-### Figure 3.3 Boxplots of mean phenol oxidase (A) and peroxidase (B) concentration.
+### Figure 3.3 
+Boxplots of mean phenol oxidase (A) and peroxidase (B) concentration.
 ```{r Figure 3-3, warning=F, fig.cap="Measurements were taken across experimental treatments of temperature (12 &deg;C, 20 &deg;C) and soil moisture (field-moist, saturated) destructively sampled after three-weeks (T~1~) or following three-week recovery period (T~2~). Letters denote significant differences between groups, as per Tukey’s HSD test.", out.width = '100%'}
 phenox_plot <- ggplot(soil_T1uT2, aes(x=tx, 
                                           y=Phenox, 
@@ -2282,7 +2287,9 @@ perox_aov2
 <br>
 
 ## 3.5 Soil Fauna Abundance and Biomass
-```{r Figure 3.4, warning=F, fig.cap="Mesocosms were assessed across experimental treatments of temperature (12 &deg;C, 20 &deg;C) and soil moisture (field-moist, saturated) destructively sampled after three-weeks (T~1~) or following three-week recovery period (T~2~).", out.width = '100%'}
+### Figure 3.4
+Boxplots of mean fauna abundance (A) and biomass (B).
+```{r Figure 3-4, warning=F, fig.cap="Mesocosms were assessed across experimental treatments of temperature (12 &deg;C, 20 &deg;C) and soil moisture (field-moist, saturated) destructively sampled after three-weeks (T~1~) or following three-week recovery period (T~2~).", out.width = '100%'}
 abundance_T1uT2 <- abundance_data %>% filter(!destructive_time == "T0") 
 biomass_T1uT2 <- biomass_data %>% filter(!destructive_time == "T0")
 
@@ -2644,7 +2651,114 @@ cor_micro_meso_biom; cor_micro_total_ab; cor_meso_total_ab; total_biom_aov2; mic
 ```
 <br>
 
-## 3.6 Community Composition and Smiilarity Among Treatments
+## 3.6 Community Composition and Similarity Among Treatments
+```{r NMDS T1 Model Building, include = F}
+ab_NMDS_T1 <- ab_NMDS %>%
+  filter(destructive_time == "T1") %>%
+  filter(!Sample_ID == "ExRes 5") %>%
+  dplyr::select(-destructive_time)
+
+rownames(ab_NMDS_T1) <- ab_NMDS_T1$Sample_ID
+ab_NMDS_T1 <- ab_NMDS_T1 %>% select(-Sample_ID)
+
+metadata_T1 <- sample_metadata %>%
+  filter(destructive_time == "T1") %>%
+  filter(!row_number() %in% c(2)) # remove ExRes 5
+
+T1 <- ab_NMDS_T1[order(row.names(ab_NMDS_T1)), ]
+metadata_T1 <- metadata_T1[order(row.names(metadata_T1)), ]
+
+T1.mds <- metaMDS(T1, dist = "bray")
+```
+
+### Figure 3.5
+Non-metric multidimensional scaling plot of mesocosm similarity at T~1~.
+```{r Figure 3-5, warning=F, fig.cap="Non-metric multidimensional scaling plot of mesocosm similarity at T~1~. (A) mesocosms show significant dissimilarity in community composition between field-moist and saturated moisture conditions; (B) mesocosms show similarity in community composition between temperature treatments. Stress = 0.114. Ellipses represent 95% CI based on similarity between samples.", out.width = '100%'}
+# T1 NMDS
+mds.fig_T1 <- ordiplot(T1.mds, type = "none", 
+                       xlab = "NMDS 1", ylab = "NMDS 2", 
+                    xlim = c(-0.8, 0.8), ylim = c(-0.8, 0.8));
+points(mds.fig_T1, "sites", pch = 19, cex = 1.5, col = "green4", 
+       select = metadata_T1$moisture_tx == "Ambient"); 
+points(mds.fig_T1, "sites", pch = 19, cex = 1.5, col = "peru", 
+       select = metadata_T1$moisture_tx == "High");
+ordiellipse(T1.mds, metadata_T1$moisture_tx, conf = 0.95, label = TRUE)
+
+mds.fig_T1 <- ordiplot(T1.mds, type = "none", xlab = "NMDS 1", ylab = "NMDS 2", 
+                       xlim = c(-0.8, 0.8), ylim = c(-0.8, 0.8)) 
+points(mds.fig_T1, "sites", pch = 19, cex = 1.5, col = "green4", 
+       select = metadata_T1$temp_tx == 12)
+points(mds.fig_T1, "sites", pch = 19, cex = 1.5, col = "peru", 
+       select = metadata_T1$temp_tx == 20)
+ordiellipse(T1.mds, metadata_T1$temp_tx, conf = 0.95, label = TRUE)
+```
+<br>
+
+Reductions in total fauna abundance under saturated soil moisture conditions were driven by Mesostigmata, Collembola, and juvenile and adult oribatid mites at T~1~ ([Appendix C]). In all cases the reductions under saturated conditions were more pronounced at 12 &deg;C than 20 &deg;C, with Collembola completely absent in 12 &deg;C saturated mesocosms. Warmer temperatures slightly increased juvenile Oribatida. Thus, moisture conditions had a significant effect (PerMANOVA F~1,17~ = 3.23, p= 0.045) on the overall community composition of the fauna ([Figure 3.5]A). Mesocosms were also significant different depending on where they were initially sampled (i.e., block effect PerMANOVA F~1,17~ = 4.35, p= 0.009). Temperature did not significantly affect
+community composition; however, the community was much more homogeneous under warmed (20 &deg;C) conditions ([Figure 3.5]B).
+```{r NMDS Results 1}
+abundances_T1 <- abundance_data %>% filter(destructive_time == "T1") 
+abundances.divT1 <- adonis2(abundances_T1$total_ab_standardized ~ 
+                            (moisture_tx*temp_tx) + 
+                              block_effect, data = abundances_T1, 
+                            permutations = 999, method="bray")
+
+T1.mds; abundances.divT1
+```
+<br>
+
+```{r NMDS T2 Model Building, include = F}
+ab_NMDS_T2 <- ab_NMDS %>%
+  filter(destructive_time == "T2") %>%
+  dplyr::select(-destructive_time)
+
+rownames(ab_NMDS_T2) <- ab_NMDS_T2$Sample_ID
+ab_NMDS_T2 <- ab_NMDS_T2 %>% select(-Sample_ID)
+
+metadata_T2 <- sample_metadata %>%
+  filter(destructive_time == "T2")
+
+T2 <- ab_NMDS_T2[order(row.names(ab_NMDS_T2)), ]
+metadata_T2 <- metadata_T2[order(row.names(metadata_T2)), ]
+
+T2.mds <- metaMDS(T2, dist = "bray")
+```
+
+### Figure 3.6
+Non-metric multidimensional scaling plot of mesocosm similarity at T~2~.
+```{r Figure 3-6, warning=F, fig.cap="Non-metric multidimensional scaling plot of mesocosm similarity at T~2~. (A) mesocosms show significant dissimilarity in community composition between field-moist and saturated moisture conditions; (B) mesocosms show similarity in community composition between temperature treatments. Stress = 0.146. Ellipses represent 95% CI based on similarity between samples.", out.width = '100%'}
+# T2 NMDS
+mds.fig_T2 <- ordiplot(T2.mds, type = "none", 
+                       xlab = "NMDS 1", ylab = "NMDS 2", 
+                       xlim = c(-0.8, 0.8), ylim = c(-0.8, 0.8)) 
+points(mds.fig_T2, "sites", pch = 19, cex = 1.5, col = "green4", 
+       select = metadata_T2$moisture_tx == "Ambient") 
+points(mds.fig_T2, "sites", pch = 19, cex = 1.5, col = "peru", 
+       select = metadata_T2$moisture_tx == "High") 
+ordiellipse(T2.mds, metadata_T2$moisture_tx, conf = 0.95, label = TRUE)
+
+mds.fig_T2 <- ordiplot(T2.mds, type = "none", 
+                       xlab = "NMDS 1", ylab = "NMDS 2", 
+                       xlim = c(-0.8, 0.8), ylim = c(-0.8, 0.8)) 
+points(mds.fig_T2, "sites", pch = 19, cex = 1.5, col = "green4", 
+       select = metadata_T2$temp_tx == 12) 
+points(mds.fig_T2, "sites", pch = 19, cex = 1.5, col = "peru", 
+       select = metadata_T2$temp_tx == 20) 
+ordiellipse(T2.mds, metadata_T2$temp_tx, conf = 0.95, label = TRUE)
+```
+<br>
+
+The soil food web fauna remained significantly different between the mesocosms that received saturated conditions vs. those under field-moist conditions even after three weeks recovery (T~2~) time (Moisture effect PerMANOVA F~1,18~ = 5.64, p= 0.003; [Figure 3.6]A). The experimental effects of temperature treatment did not significantly affect the soil fauna community composition, and the trend towards homogeneity under increased temperature treatment was not observed following the T~2~ recovery period ([Figure 3.6]B).
+```{r NMDS Results 2}
+abundances_T2 <- abundance_data %>% filter(destructive_time == "T2") 
+abundances.divT2 <- adonis2(abundances_T2$total_ab_standardized ~ 
+                              (moisture_tx*temp_tx), 
+                            data = abundances_T2, permutations = 999, 
+                            method="bray")
+
+T2.mds; abundances.divT2
+```
+<br>
 
 ## 3.7 Soil Food Web Carbon and Nitrogen Flux
 
