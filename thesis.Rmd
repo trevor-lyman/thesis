@@ -1585,6 +1585,9 @@ flux_data <- merge(x = sample_metadata, y = model_outputs_temp,
 flux_data$total_consumption <- as.numeric(flux_data$total_consumption)
 flux_data$total_Cmin <- as.numeric(flux_data$total_Cmin)
 flux_data$total_Nmin <- as.numeric(flux_data$total_Nmin)
+flux_data$destructive_time <- as.factor(flux_data$destructive_time)
+flux_data$moisture_tx <- as.factor(flux_data$moisture_tx)
+flux_data$temp_tx <- as.factor(flux_data$temp_tx)
 
 head(flux_data)
 ```
@@ -2604,7 +2607,7 @@ knitr::kable(ab_biom_df1, linesep = "\\hline")
 ```
 <br>
 Total soil microfauna and mesofauna abundances were significantly correlated (R~42~ = 0.467, p = 0.001); similarly, soil microfauna (R~42~ = 0.834, p < 0.001) and mesofauna (R~42~ = 0.877, p < 0.001) total abundances were each significantly and positively correlated with total fauna abundance. Mean total soil fauna abundance ([Figure 3.4]A) was strongly influenced by the original sampling location (i.e., significant block effects (F~1,34~ = 22.953, p < 0.001)) with a high abundance of both microfauna and mesofauna observed in a single block that contained one sample replicate from each treatment. Total abundance of soil fauna was significantly reduced under saturated vs. field-moist conditions (F~1,34~ = 19.104, p < 0.001). This was driven by decreased microfauna (F~1,34~ = 21.152, p < 0.001) and mesofauna (F~1,33~ = 6.143, p = 0.018) abundances. Destructive sampling did not affect total fauna abundance (F~1,34~ = 0.466, p = 0.499), soil microfauna abundance (F~1,34~ = 0.966, p = 0.33), nor soil mesofauna abundance (F~1,33~ = 1.968, p = 0.170). Neither total soil fauna abundance nor soil microfauna abundance was significantly affected by interaction effects ([Appendix E]), but soil mesofauna exhibited a significant temperature by destructive sampling time interaction effect (F~1,33~ = 4.276, p = 0.047). This suggests that soil mesofauna abundances in mesocosms assigned to 20 &deg;C decreased from T~1~ to T~2~ following a three-week return to initial 12 &deg;C conditions. Overall, mean total abundance (&plusmn; SE) was greatest (360,000 &plusmn; 70,000 individuals per m^2^) in mesocosms assigned to 20 &deg;C field-moist conditions, sampled at T~1~ and was lowest (150,000 &plusmn; 30,000 individuals per m^2^) in those assigned to 12 &deg;C saturated conditions, sampled at T~1~ (see [Appendix D]). Estimates of effect size based on a linear model are given in [Appendix F].
-```{r Abundance and Biomass Results 3, warning=F}
+```{r Abundance and Biomass Results 2, warning=F}
 cor_micro_meso_ab <- 
   cor.test(abundance_T1uT2$total_micro_ab_standardized,
          abundance_T1uT2$total_meso_ab_standardized, method = "pearson")
@@ -2628,7 +2631,7 @@ cor_micro_meso_ab; cor_micro_total_ab; cor_meso_total_ab; total_ab_aov2; micro_a
 <br>
 
 Following trends in soil fauna abundance, total soil microfauna and mesofauna biomasses were significantly correlated (R~42~ = 0.460, p = 0.002) as was total soil microfauna (R~42~ = 0.478, p = 0.001) and mesofauna (R~42~ = 0.999, p < 0.001) biomasses with total faunal biomass. Mean total biomass ([Figure 3.4]B) was strongly related to the original sampling location (F~1,33~ = 17.288, p < 0.001). Total biomass was significantly reduced saturated conditions (F~1,33~ = 8.631, p = 0.006). This was driven by a significant decrease in both soil microfauna (F~1,34~ = 21.152, p < 0.001) and mesofauna (F~1,33~ = 8.266, p = 0.007). Total biomass was not influenced by temperature conditions (F~1,33~ = 0.076, p = 0.784) nor the timing of destructive sampling (F~1,33~ = 1.375, p = 0.249). Soil microfauna biomass was not influenced by significant interaction effects ([Appendix E]), but total fauna (F~1,33~ = 3.386, p = 0.075) and soil mesofauna (F~1,33~ = 3.439, p = 0.073) biomasses exhibited weak soil moisture by destructive sampling time interaction effects. This suggests that the biomasses of total fauna and soil mesofauna in mesocosms assigned to saturated conditions tended to increase from T~1~ to T~2~ following a three-week return to initial field-moist conditions. Overall, mean total biomass (&plusmn; SE) was greatest (0.49 &plusmn; 0.10 g of C per m^2^ per year) in mesocosms assigned to 12 &deg;C field-moist conditions, sampled at T~1~ and was least (0.25 &plusmn; 0.07 g of C per m^2^ per year) in those assigned to 12 &deg;C saturated conditions, sampled at T~1~ (see [Appendix D]). Estimates of effect size based on a linear model are given in [Appendix F].
-```{r Abundance and Biomass Results 4, warning=F}
+```{r Abundance and Biomass Results 3, warning=F}
 cor_micro_meso_biom <- 
   cor.test(biomass_T1uT2$micro_biomass,
          biomass_T1uT2$meso_biomass, method = "pearson")
@@ -2761,6 +2764,240 @@ T2.mds; abundances.divT2
 <br>
 
 ## 3.7 Soil Food Web Carbon and Nitrogen Flux
+### Figure 3.7 
+Modeled rates of (A) carbon flux (consumption), (B) carbon mineralization (respiration), and (C) nitrogen mineralization.
+```{r Figure 3-7, warning=F, fig.cap="Fluxes were modeled across experimental treatments of temperature (12 &deg;C, 20 &deg;C) and soil moisture (field-moist, saturated) destructively sampled after three-weeks (T~1~) or following three-week recovery period (T~2~). Letters denote significant differences between groups, as per Tukey’s HSD test.", out.width = '100%'}
+flux_data <- flux_data %>%
+  filter(!destructive_time == "T0") %>%
+  filter(!Sample_ID == "ExRes 5")
+
+flux_data$tx <- interaction(flux_data$temp_tx, flux_data$moisture_tx) 
+
+flux_data <- flux_data %>%
+  mutate(tx = fct_recode(tx,
+    "12\u00B0 Field-Moist" = "12.Ambient",
+    "20\u00B0 Field-Moist" = "20.Ambient",
+    "12\u00B0 Saturated"   = "12.High",
+    "20\u00B0 Saturated"   = "20.High"
+  ))
+
+consumption_plot <- 
+  ggplot(flux_data, aes(x=tx, y=total_consumption, 
+                            fill = as.factor(destructive_time))) + 
+  geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
+  geom_jitter(aes(pch = as.factor(destructive_time)), 
+              position=position_jitter(width=.1, height=0), size = 3) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) +
+  scale_fill_brewer(palette = "Greys") +
+  xlab("Environmental Treatment Condition") + 
+  ylab(expression("Total consumptive flux (g C / m"^2*" / yr)")) +
+  labs(fill = "Sampling Time", pch = "Sampling Time")
+
+Cmin_plot <- 
+  ggplot(flux_data, aes(x=tx, y=total_Cmin, 
+                            fill = as.factor(destructive_time))) + 
+  geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
+  geom_jitter(aes(pch = as.factor(destructive_time)), 
+              position=position_jitter(width=.1, height=0), size = 3) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) +
+  scale_fill_brewer(palette = "Greys") +
+  xlab("Environmental Treatment Condition") + 
+  ylab(expression("Carbon mineralization (g C / m"^2*" / yr)")) +
+  labs(fill = "Sampling Time", pch = "Sampling Time")
+
+Nmin_plot <- 
+  ggplot(flux_data, aes(x=tx, y=total_Nmin, 
+                            fill = as.factor(destructive_time))) + 
+  geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
+  geom_jitter(aes(pch = as.factor(destructive_time)), 
+              position=position_jitter(width=.1, height=0), size = 3) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) +
+  scale_fill_brewer(palette = "Greys") +
+  xlab("Environmental Treatment Condition") + 
+  ylab(expression("Nitrogen mineralization (g N / m"^2*" / yr)")) +
+  labs(fill = "Sampling Time", pch = "Sampling Time")
+
+consumption_plot; Cmin_plot; Nmin_plot
+```
+<br>
+
+Mean total consumptive flux, C mineralization, and N mineralization were compared across 39 mesocosms. Mean total consumptive flux (W = 0.988, p = 0.944), C mineralization (W = 0.987, p = 0.933), and N mineralization (W = 0.981, p = 0.751) met the assumption of normality, per a Shapiro-Wilk test. Mean total consumptive flux (F~7,31~ = 0.719, p = 0.657), C mineralization (F~7,31~ = 0.747, p = 0.635), and N mineralization (F~7,31~ = 0.847, p = 0.558) also met the assumption of homogeneity of variance, per Levene’s test.
+```{r Flux Results 1, warning = F}
+consumption_lm <- lm(total_consumption ~
+                          moisture_tx * temp_tx * destructive_time + 
+                          moisture_tx * temp_tx +
+                          moisture_tx * destructive_time + 
+                          temp_tx * destructive_time +
+                          moisture_tx +
+                          temp_tx +
+                          destructive_time +
+                          block_effect,
+                     data = flux_data)
+
+consumption_lm2 <- lm(total_consumption ~
+                        
+                        
+                        
+                        temp_tx * destructive_time +
+                        moisture_tx +
+                        temp_tx +
+                        destructive_time +
+                        block_effect,
+                data = flux_data)
+
+Cmin_lm <- lm(total_Cmin ~
+                          moisture_tx * temp_tx * destructive_time + 
+                          moisture_tx * temp_tx +
+                          moisture_tx * destructive_time + 
+                          temp_tx * destructive_time +
+                          moisture_tx +
+                          temp_tx +
+                          destructive_time +
+                          block_effect,
+                     data = flux_data)
+
+Cmin_lm2 <- lm(total_Cmin ~
+                
+                
+                
+                temp_tx * destructive_time +
+                moisture_tx +
+                temp_tx +
+                destructive_time +
+                block_effect,
+                data = flux_data)
+
+Nmin_lm <- lm(total_Nmin ~
+                        moisture_tx * temp_tx * destructive_time + 
+                        moisture_tx * temp_tx +
+                        moisture_tx * destructive_time + 
+                        temp_tx * destructive_time +
+                        moisture_tx +
+                        temp_tx +
+                        destructive_time +
+                        block_effect,
+                    data = flux_data)
+
+Nmin_lm2 <- lm(total_Nmin ~
+                
+                
+                
+                temp_tx * destructive_time +
+                moisture_tx +
+                temp_tx +
+                destructive_time +
+                block_effect,
+               data = flux_data)
+
+flux_df1 <- as.data.frame(matrix(data = c(
+  "Total Consumptive Flux",
+  "Shapiro-Wilk Test", 
+  NA,
+  NA,
+  format(round(shapiro_test(residuals(consumption_lm2))$statistic, 3), 
+         nsmall = 3),
+  format(round(shapiro_test(residuals(consumption_lm2))$p.value, 3),
+         nsmasll = 3),
+  "Total Consumptive Flux",
+  "Levene's Test",
+  levene_test(total_consumption ~ 
+                (moisture_tx * temp_tx * destructive_time), 
+              data = flux_data)$df1,
+  levene_test(total_consumption ~ 
+                (moisture_tx * temp_tx * destructive_time), 
+              data = flux_data)$df2,
+  format(round(levene_test(total_consumption ~ 
+                             (moisture_tx * temp_tx * destructive_time), 
+              data = flux_data)$statistic, 3), nsmall = 3),
+  format(round(levene_test(total_consumption ~ 
+                             (moisture_tx * temp_tx * destructive_time), 
+              data = flux_data)$p, 3), nsmall = 3),
+  "Carbon Minderalization",
+  "Shapiro-Wilk Test", 
+  NA,
+  NA,
+  format(round(shapiro_test(residuals(Cmin_lm2))$statistic, 3), 
+         nsmall = 3),
+  format(round(shapiro_test(residuals(Cmin_lm2))$p.value, 3),
+         nsmasll = 3),
+  "Carbon Minderalization",
+  "Levene's Test",
+  levene_test(total_Cmin ~ 
+                (moisture_tx * temp_tx * destructive_time), 
+              data = flux_data)$df1,
+  levene_test(total_Cmin ~ 
+                (moisture_tx * temp_tx * destructive_time), 
+              data = flux_data)$df2,
+  format(round(levene_test(total_Cmin ~ 
+                             (moisture_tx * temp_tx * destructive_time), 
+              data = flux_data)$statistic, 3), nsmall = 3),
+  format(round(levene_test(total_Cmin ~ 
+                             (moisture_tx * temp_tx * destructive_time), 
+              data = flux_data)$p, 3), nsmall = 3),
+  "Nitrogen Minderalization",
+  "Shapiro-Wilk Test", 
+  NA,
+  NA,
+  format(round(shapiro_test(residuals(Nmin_lm2))$statistic, 3), 
+         nsmall = 3),
+  format(round(shapiro_test(residuals(Nmin_lm2))$p.value, 3),
+         nsmasll = 3),
+  "Nitrogen Minderalization",
+  "Levene's Test",
+  levene_test(total_Nmin ~ 
+                (moisture_tx * temp_tx * destructive_time), 
+              data = flux_data)$df1,
+  levene_test(total_Nmin ~ 
+                (moisture_tx * temp_tx * destructive_time), 
+              data = flux_data)$df2,
+  format(round(levene_test(total_Nmin ~ 
+                             (moisture_tx * temp_tx * destructive_time), 
+              data = flux_data)$statistic, 3), nsmall = 3),
+  format(round(levene_test(total_Nmin ~ 
+                             (moisture_tx * temp_tx * destructive_time), 
+              data = flux_data)$p, 3), nsmall = 3)
+  ), ncol = 6, byrow = T))
+
+colnames(flux_df1) <- 
+  c("Parameter", "Test", "df1", "df2", "Statistic", "P-Value")
+
+knitr::kable(flux_df1, linesep = "\\hline")
+```
+<br>
+
+Mean total consumptive flux of C through the soil fauna food web ([Figure 3.7]A) was significantly related to block effects (F~1,33~ = 6.267, p = 0.017), and was greater in blocks characterized by especially high soil fauna abundances. Total C flux also significantly decreased under saturation (F~1,33~ = 8.653, p = 0.006), but significantly increased at 20 &deg;C vs. 12 &deg;C (F~1,33~ = 214.881, p < 0.001). This was driven by a significant temperature-by-sampling time interaction effect (F~1,33~ = 94.744, p < 0.001), which highlights that mean total flux in mesocosms assigned to 20 &deg;C decreased at T~2~ following a three-week return to 12 &deg;C field-moist conditions. Destructive sampling treatments alone did not significantly affect C flux (F~1,33~ = 0.748, p = 0.393). No other interaction effects significantly affected C flux ([Appendix E]). Mean total flux (&plusmn; SE) under each treatment is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
+```{r Flux Results 2}
+consumption_aov <- Anova(consumption_lm2, type = 'III')
+
+consumption_aov
+```
+<br>
+
+Total C mineralization of the soil food web ([Figure 3.7]B) followed similar trends to total C flux whereby experimental block effects were significant (F~1,33~ = 6.173, p = 0.018). Total C mineralization increased at 20 &deg;C vs. 12 &deg;C (F~1,33~ = 236.901, p < 0.001), but decreased under saturated vs. field-moist soil moisture conditions (F~1,33~ = 8.725, p = 0.006). Destructive sampling treatments alone did not affect C mineralization (F~1,33~ = 0.739, p = 0.396), but C mineralization was influenced by a significant temperature by destructive sampling time interaction effect (F~1,33~
+= 105.313, p < 0.001), highlighting that total C mineralization in mesocosms assigned to 20 &deg;C decreased at T~2~ following a three-week return to 12 &deg;C field-moist conditions. No other interaction effects significantly influenced C mineralization ([Appendix E]). Following three weeks of assigned experimental soil moisture and temperature conditions at T~1~ destructive sampling, C mineralization represented ~41% of total flux in mesocosms assigned to 12 &deg;C conditions, and 42% of total flux in mesocosms assigned to 20 &deg;C conditions. For all mesocosms, during the three weeks of recovery under field (12 &deg;C field-moist) conditions (i.e., T~2~ destructive sampling), C mineralization remained at ~41% of the total flux. Mean total C mineralization (&plusmn; SE) under each treatment is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
+```{r Flux Results 3}
+Cmin_aov <- Anova(Cmin_lm2, type = 'III')
+
+Cmin_aov
+```
+<br>
+
+Mean total N mineralization ([Figure 3.7]C) was significantly influenced by both soil moisture (F~1,33~ = 13.061, p = 0.001) and temperature (F~1,33~ = 78.383, p < 0.001) conditions; mean total N mineralization decreased under saturated field-moist vs. conditions and increased at 20 &deg;C vs. 12 &deg;C. Furthermore, a significant temperature by destructive sampling time interaction effect (F~1,33~ = 54.875, p < 0.001) demonstrates that mean total N mineralization in mesocosms assigned to 20 &deg;C decreased at T~2~ following a three-week return to 12 &deg;C field-moist conditions. There were no significant block effects (F~1,33~ = 0.002, p = 0.965) and destructive sampling treatments did not affect N mineralization (F~1,33~ = 2.387, p = 0.132). No other interaction effects significantly affected N mineralization ([Appendix E]). Mean total N mineralization (&plusmn; SE) under each treatment is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
+```{r Flux Results 4}
+Nmin_aov <- Anova(Nmin_lm2, type = 'III')
+
+Nmin_aov
+```
+<br>
 
 # Chapter 4
 
