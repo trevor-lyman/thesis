@@ -6535,12 +6535,907 @@ linear model are given in <a href="#appendix-f">Appendix F</a>.</p>
 <h1>Appendices</h1>
 <div id="appenix-a" class="section level2">
 <h2>Appenix A</h2>
+<p>Node model parameters for the soil food web trophic groups under
+control (12 °C) and warmed (20 °C) conditions.</p>
+<p>Parameters include C:N and estimated percent assimilation efficiency
+(E<sub>a</sub>), percent production efficiency (E<sub>p</sub>), and
+population death rates (d).<sup>1,2,3</sup></p>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>AppenA.temp1 <span class="ot">&lt;-</span> ExRes_prop_control </span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>AppenA.temp1<span class="sc">$</span>CN <span class="ot">&lt;-</span> <span class="fu">round</span>(AppenA.temp1<span class="sc">$</span>CN, <span class="dv">0</span>)</span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>AppenA.temp1 <span class="ot">&lt;-</span> AppenA.temp1 <span class="sc">%&gt;%</span></span>
+<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">X =</span> X,</span>
+<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Node ID</span><span class="st">`</span> <span class="ot">=</span> ID,</span>
+<span id="cb74-8"><a href="#cb74-8" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">C:N</span><span class="st">`</span> <span class="ot">=</span> CN,</span>
+<span id="cb74-9"><a href="#cb74-9" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">E~a~ (12 &amp;deg;C)</span><span class="st">`</span> <span class="ot">=</span> a,</span>
+<span id="cb74-10"><a href="#cb74-10" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">E~p~ (12 &amp;deg;C)</span><span class="st">`</span> <span class="ot">=</span> p,</span>
+<span id="cb74-11"><a href="#cb74-11" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">d (12 &amp;deg;C)</span><span class="st">`</span> <span class="ot">=</span> d)</span>
+<span id="cb74-12"><a href="#cb74-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-13"><a href="#cb74-13" aria-hidden="true" tabindex="-1"></a>AppenA.temp2 <span class="ot">&lt;-</span> ExRes_prop_warming</span>
+<span id="cb74-14"><a href="#cb74-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-15"><a href="#cb74-15" aria-hidden="true" tabindex="-1"></a>AppenA.temp2<span class="sc">$</span>a <span class="ot">&lt;-</span> <span class="fu">round</span>(AppenA.temp2<span class="sc">$</span>p, <span class="dv">0</span>)</span>
+<span id="cb74-16"><a href="#cb74-16" aria-hidden="true" tabindex="-1"></a>AppenA.temp2<span class="sc">$</span>p <span class="ot">&lt;-</span> <span class="fu">round</span>(AppenA.temp2<span class="sc">$</span>p, <span class="dv">0</span>)</span>
+<span id="cb74-17"><a href="#cb74-17" aria-hidden="true" tabindex="-1"></a>AppenA.temp2<span class="sc">$</span>d <span class="ot">&lt;-</span> <span class="fu">round</span>(AppenA.temp2<span class="sc">$</span>d, <span class="dv">2</span>)</span>
+<span id="cb74-18"><a href="#cb74-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-19"><a href="#cb74-19" aria-hidden="true" tabindex="-1"></a>AppenA.temp2 <span class="ot">&lt;-</span> AppenA.temp2 <span class="sc">%&gt;%</span></span>
+<span id="cb74-20"><a href="#cb74-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="st">`</span><span class="at">Node ID</span><span class="st">`</span> <span class="ot">=</span> ID,</span>
+<span id="cb74-21"><a href="#cb74-21" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">E~a~ (20 &amp;deg;C)</span><span class="st">`</span> <span class="ot">=</span> a,</span>
+<span id="cb74-22"><a href="#cb74-22" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">E~p~ (20 &amp;deg;C)</span><span class="st">`</span> <span class="ot">=</span> p,</span>
+<span id="cb74-23"><a href="#cb74-23" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">d (20 &amp;deg;C)</span><span class="st">`</span> <span class="ot">=</span> d)</span>
+<span id="cb74-24"><a href="#cb74-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-25"><a href="#cb74-25" aria-hidden="true" tabindex="-1"></a>AppenA <span class="ot">&lt;-</span> <span class="fu">merge</span>(<span class="at">x =</span> AppenA.temp1, <span class="at">y =</span> AppenA.temp2, <span class="at">by =</span> <span class="st">&quot;Node ID&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb74-26"><a href="#cb74-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(X) <span class="sc">%&gt;%</span></span>
+<span id="cb74-27"><a href="#cb74-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>X)</span>
+<span id="cb74-28"><a href="#cb74-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-29"><a href="#cb74-29" aria-hidden="true" tabindex="-1"></a>AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span>[AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span> <span class="sc">==</span> <span class="st">&quot;mesostigs&quot;</span>] <span class="ot">&lt;-</span> </span>
+<span id="cb74-30"><a href="#cb74-30" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Arthropod-feeding mites&quot;</span></span>
+<span id="cb74-31"><a href="#cb74-31" aria-hidden="true" tabindex="-1"></a>AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span>[AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span> <span class="sc">==</span> <span class="st">&quot;zerconidae&quot;</span>] <span class="ot">&lt;-</span> </span>
+<span id="cb74-32"><a href="#cb74-32" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Nematode-feeding mites&quot;</span></span>
+<span id="cb74-33"><a href="#cb74-33" aria-hidden="true" tabindex="-1"></a>AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span>[AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span> <span class="sc">==</span> <span class="st">&quot;prostig_astig&quot;</span>] <span class="ot">&lt;-</span> </span>
+<span id="cb74-34"><a href="#cb74-34" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Non-predatory prostigmatid and astigmatid mites&quot;</span></span>
+<span id="cb74-35"><a href="#cb74-35" aria-hidden="true" tabindex="-1"></a>AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span>[AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span> <span class="sc">==</span> <span class="st">&quot;juv_oribatids&quot;</span>] <span class="ot">&lt;-</span> </span>
+<span id="cb74-36"><a href="#cb74-36" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Juvenile oribatid mites&quot;</span></span>
+<span id="cb74-37"><a href="#cb74-37" aria-hidden="true" tabindex="-1"></a>AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span>[AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span> <span class="sc">==</span> <span class="st">&quot;oribatids&quot;</span>] <span class="ot">&lt;-</span> </span>
+<span id="cb74-38"><a href="#cb74-38" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Adult oribatid mites&quot;</span></span>
+<span id="cb74-39"><a href="#cb74-39" aria-hidden="true" tabindex="-1"></a>AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span>[AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span> <span class="sc">==</span> <span class="st">&quot;collembola&quot;</span>] <span class="ot">&lt;-</span> </span>
+<span id="cb74-40"><a href="#cb74-40" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Collembola&quot;</span></span>
+<span id="cb74-41"><a href="#cb74-41" aria-hidden="true" tabindex="-1"></a>AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span>[AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span> <span class="sc">==</span> <span class="st">&quot;predatory_nematodes&quot;</span>] <span class="ot">&lt;-</span> </span>
+<span id="cb74-42"><a href="#cb74-42" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Predatory nematodes&quot;</span></span>
+<span id="cb74-43"><a href="#cb74-43" aria-hidden="true" tabindex="-1"></a>AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span>[AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span> <span class="sc">==</span> <span class="st">&quot;bactivorous_nematodes&quot;</span>] <span class="ot">&lt;-</span> </span>
+<span id="cb74-44"><a href="#cb74-44" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Bactivorous nematodes&quot;</span></span>
+<span id="cb74-45"><a href="#cb74-45" aria-hidden="true" tabindex="-1"></a>AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span>[AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span> <span class="sc">==</span> <span class="st">&quot;fungivorous_nematodes&quot;</span>] <span class="ot">&lt;-</span> </span>
+<span id="cb74-46"><a href="#cb74-46" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Fungivorous nematodes&quot;</span></span>
+<span id="cb74-47"><a href="#cb74-47" aria-hidden="true" tabindex="-1"></a>AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span>[AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span> <span class="sc">==</span> <span class="st">&quot;omnivorous_nematodes&quot;</span>] <span class="ot">&lt;-</span> </span>
+<span id="cb74-48"><a href="#cb74-48" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Omnivorous nematodes&quot;</span></span>
+<span id="cb74-49"><a href="#cb74-49" aria-hidden="true" tabindex="-1"></a>AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span>[AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span> <span class="sc">==</span> <span class="st">&quot;protists&quot;</span>] <span class="ot">&lt;-</span> </span>
+<span id="cb74-50"><a href="#cb74-50" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Protists&quot;</span></span>
+<span id="cb74-51"><a href="#cb74-51" aria-hidden="true" tabindex="-1"></a>AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span>[AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span> <span class="sc">==</span> <span class="st">&quot;bacteria&quot;</span>] <span class="ot">&lt;-</span> </span>
+<span id="cb74-52"><a href="#cb74-52" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Bacteria&quot;</span></span>
+<span id="cb74-53"><a href="#cb74-53" aria-hidden="true" tabindex="-1"></a>AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span>[AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span> <span class="sc">==</span> <span class="st">&quot;fungi&quot;</span>] <span class="ot">&lt;-</span> </span>
+<span id="cb74-54"><a href="#cb74-54" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Fungi&quot;</span></span>
+<span id="cb74-55"><a href="#cb74-55" aria-hidden="true" tabindex="-1"></a>AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span>[AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span> <span class="sc">==</span> <span class="st">&quot;labile&quot;</span>] <span class="ot">&lt;-</span> </span>
+<span id="cb74-56"><a href="#cb74-56" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Labile detritus&quot;</span></span>
+<span id="cb74-57"><a href="#cb74-57" aria-hidden="true" tabindex="-1"></a>AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span>[AppenA<span class="sc">$</span><span class="st">`</span><span class="at">Node ID</span><span class="st">`</span> <span class="sc">==</span> <span class="st">&quot;recalcitrant&quot;</span>] <span class="ot">&lt;-</span> </span>
+<span id="cb74-58"><a href="#cb74-58" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Recalcitrant detritus&quot;</span></span>
+<span id="cb74-59"><a href="#cb74-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-60"><a href="#cb74-60" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(AppenA, <span class="at">linesep =</span> <span class="st">&quot;</span><span class="sc">\\</span><span class="st">hline&quot;</span>)</span></code></pre></div>
+<table style="width:100%;">
+<colgroup>
+<col width="32%" />
+<col width="2%" />
+<col width="11%" />
+<col width="11%" />
+<col width="9%" />
+<col width="11%" />
+<col width="11%" />
+<col width="9%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Node ID</th>
+<th align="right">C:N</th>
+<th align="right">E<sub>a</sub> (12 °C)</th>
+<th align="right">E<sub>p</sub> (12 °C)</th>
+<th align="right">d (12 °C)</th>
+<th align="right">E<sub>a</sub> (20 °C)</th>
+<th align="right">E<sub>p</sub> (20 °C)</th>
+<th align="right">d (20 °C)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Arthropod-feeding mites</td>
+<td align="right">8</td>
+<td align="right">60</td>
+<td align="right">35</td>
+<td align="right">1.84</td>
+<td align="right">31</td>
+<td align="right">31</td>
+<td align="right">2.44</td>
+</tr>
+<tr class="even">
+<td align="left">Nematode-feeding mites</td>
+<td align="right">8</td>
+<td align="right">90</td>
+<td align="right">35</td>
+<td align="right">1.84</td>
+<td align="right">31</td>
+<td align="right">31</td>
+<td align="right">2.44</td>
+</tr>
+<tr class="odd">
+<td align="left">Non-predatory prostigmatid and astigmatid mites</td>
+<td align="right">8</td>
+<td align="right">50</td>
+<td align="right">35</td>
+<td align="right">1.84</td>
+<td align="right">31</td>
+<td align="right">31</td>
+<td align="right">2.44</td>
+</tr>
+<tr class="even">
+<td align="left">Juvenile oribatid mites</td>
+<td align="right">8</td>
+<td align="right">50</td>
+<td align="right">35</td>
+<td align="right">1.20</td>
+<td align="right">31</td>
+<td align="right">31</td>
+<td align="right">1.59</td>
+</tr>
+<tr class="odd">
+<td align="left">Adult oribatid mites</td>
+<td align="right">8</td>
+<td align="right">50</td>
+<td align="right">35</td>
+<td align="right">1.20</td>
+<td align="right">31</td>
+<td align="right">31</td>
+<td align="right">1.59</td>
+</tr>
+<tr class="even">
+<td align="left">Collembola</td>
+<td align="right">8</td>
+<td align="right">50</td>
+<td align="right">35</td>
+<td align="right">1.84</td>
+<td align="right">31</td>
+<td align="right">31</td>
+<td align="right">2.44</td>
+</tr>
+<tr class="odd">
+<td align="left">Predatory nematodes</td>
+<td align="right">10</td>
+<td align="right">50</td>
+<td align="right">37</td>
+<td align="right">1.60</td>
+<td align="right">33</td>
+<td align="right">33</td>
+<td align="right">2.13</td>
+</tr>
+<tr class="even">
+<td align="left">Bactivorous nematodes</td>
+<td align="right">10</td>
+<td align="right">60</td>
+<td align="right">37</td>
+<td align="right">4.36</td>
+<td align="right">33</td>
+<td align="right">33</td>
+<td align="right">5.79</td>
+</tr>
+<tr class="odd">
+<td align="left">Fungivorous nematodes</td>
+<td align="right">10</td>
+<td align="right">38</td>
+<td align="right">37</td>
+<td align="right">1.92</td>
+<td align="right">33</td>
+<td align="right">33</td>
+<td align="right">2.55</td>
+</tr>
+<tr class="even">
+<td align="left">Omnivorous nematodes</td>
+<td align="right">10</td>
+<td align="right">60</td>
+<td align="right">37</td>
+<td align="right">2.68</td>
+<td align="right">33</td>
+<td align="right">33</td>
+<td align="right">3.56</td>
+</tr>
+<tr class="odd">
+<td align="left">Protists</td>
+<td align="right">7</td>
+<td align="right">95</td>
+<td align="right">40</td>
+<td align="right">6.00</td>
+<td align="right">37</td>
+<td align="right">37</td>
+<td align="right">8.03</td>
+</tr>
+<tr class="even">
+<td align="left">Bacteria</td>
+<td align="right">4</td>
+<td align="right">100</td>
+<td align="right">30</td>
+<td align="right">6.00</td>
+<td align="right">28</td>
+<td align="right">28</td>
+<td align="right">8.03</td>
+</tr>
+<tr class="odd">
+<td align="left">Fungi</td>
+<td align="right">10</td>
+<td align="right">100</td>
+<td align="right">30</td>
+<td align="right">1.20</td>
+<td align="right">28</td>
+<td align="right">28</td>
+<td align="right">1.61</td>
+</tr>
+<tr class="even">
+<td align="left">Labile detritus</td>
+<td align="right">57</td>
+<td align="right">100</td>
+<td align="right">100</td>
+<td align="right">0.00</td>
+<td align="right">100</td>
+<td align="right">100</td>
+<td align="right">0.00</td>
+</tr>
+<tr class="odd">
+<td align="left">Recalcitrant detritus</td>
+<td align="right">19</td>
+<td align="right">100</td>
+<td align="right">100</td>
+<td align="right">0.00</td>
+<td align="right">100</td>
+<td align="right">100</td>
+<td align="right">0.00</td>
+</tr>
+</tbody>
+</table>
+<p><sup>1</sup>Metabolic parameters from <a href="https://doi.org/10.1007/BF00260580">Hunt et al. (1987)</a>.<br />
+<sup>2</sup>Metabolic scaling of parameters for microbial nodes from <a href="https://doi.org/10.1111/gcb.14517">Li et al. (2019)</a>.<br />
+<sup>3</sup>Metabolic scaling of parameters for soil fauna nodes from
+Luxton (<a href="https://eurekamag.com/research/000/208/000208036.php">1972</a>, <a href="https://doi.org/10.1016/S0031-4056(23)03677-6">1981</a>). <br></p>
 </div>
 <div id="appendix-b" class="section level2">
 <h2>Appendix B</h2>
+<p>The soil food web interaction matrix.</p>
+<p>Rows denote consumers, columns denote resources. A value of 1
+indicates the presence of a trophic interaction, and a value of 0
+indicates no interaction. Values greater than 0 but less than 1 indicate
+the presence of a weak trophic interaction. Meso = arthropod-feeding
+mites, Zerco = nematode-feeding mites, Mites NP = non-predatory
+prostigmatid and astigmatid mites, Col = collembola, Pred Nem =
+predatory nematodes, Bac Nem = bactivorous nematodes, Fung Nem =
+fungivorous nematodes, Omni Nem = omnivorous nematodes, Pro = protists,
+Bact = bacteria, Fung = fungi, Labile = labile detritus, Recal =
+recalcitrant detritus.</p>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>AppenB <span class="ot">&lt;-</span> ExRes_imat</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(AppenB) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Meso&quot;</span>, <span class="st">&quot;Zerco&quot;</span>, <span class="st">&quot;Mites NP&quot;</span>, <span class="st">&quot;Juv Orib&quot;</span>, <span class="st">&quot;Orib&quot;</span>,</span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>                      <span class="st">&quot;Coll&quot;</span>, <span class="st">&quot;Pred Nem&quot;</span>, <span class="st">&quot;Bac Nem&quot;</span>, <span class="st">&quot;Fung Nem&quot;</span>, <span class="st">&quot;Omni Nem&quot;</span>,</span>
+<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a>                      <span class="st">&quot;Pro&quot;</span>, <span class="st">&quot;Bact&quot;</span>, <span class="st">&quot;Fung&quot;</span>, <span class="st">&quot;Labile&quot;</span>, <span class="st">&quot;Recal&quot;</span>)</span>
+<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(AppenB) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Meso&quot;</span>, <span class="st">&quot;Zerco&quot;</span>, <span class="st">&quot;Mites NP&quot;</span>, <span class="st">&quot;Juv Orib&quot;</span>, <span class="st">&quot;Orib&quot;</span>,</span>
+<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a>                      <span class="st">&quot;Coll&quot;</span>, <span class="st">&quot;Pred Nem&quot;</span>, <span class="st">&quot;Bac Nem&quot;</span>, <span class="st">&quot;Fung Nem&quot;</span>, <span class="st">&quot;Omni Nem&quot;</span>,</span>
+<span id="cb75-8"><a href="#cb75-8" aria-hidden="true" tabindex="-1"></a>                      <span class="st">&quot;Pro&quot;</span>, <span class="st">&quot;Bact&quot;</span>, <span class="st">&quot;Fung&quot;</span>, <span class="st">&quot;Labile&quot;</span>, <span class="st">&quot;Recal&quot;</span>)</span>
+<span id="cb75-9"><a href="#cb75-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-10"><a href="#cb75-10" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(AppenB, <span class="at">linesep =</span> <span class="st">&quot;</span><span class="sc">\\</span><span class="st">hline&quot;</span>)</span></code></pre></div>
+<table style="width:100%;">
+<colgroup>
+<col width="8%" />
+<col width="4%" />
+<col width="5%" />
+<col width="8%" />
+<col width="8%" />
+<col width="4%" />
+<col width="4%" />
+<col width="8%" />
+<col width="7%" />
+<col width="8%" />
+<col width="8%" />
+<col width="3%" />
+<col width="4%" />
+<col width="4%" />
+<col width="6%" />
+<col width="5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">Meso</th>
+<th align="right">Zerco</th>
+<th align="right">Mites NP</th>
+<th align="right">Juv Orib</th>
+<th align="right">Orib</th>
+<th align="right">Coll</th>
+<th align="right">Pred Nem</th>
+<th align="right">Bac Nem</th>
+<th align="right">Fung Nem</th>
+<th align="right">Omni Nem</th>
+<th align="right">Pro</th>
+<th align="right">Bact</th>
+<th align="right">Fung</th>
+<th align="right">Labile</th>
+<th align="right">Recal</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Meso</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+</tr>
+<tr class="even">
+<td align="left">Zerco</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1.0</td>
+<td align="right">1.0</td>
+<td align="right">1.0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+</tr>
+<tr class="odd">
+<td align="left">Mites NP</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+</tr>
+<tr class="even">
+<td align="left">Juv Orib</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+</tr>
+<tr class="odd">
+<td align="left">Orib</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+</tr>
+<tr class="even">
+<td align="left">Coll</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+</tr>
+<tr class="odd">
+<td align="left">Pred Nem</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.0</td>
+<td align="right">1.0</td>
+<td align="right">1.0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+</tr>
+<tr class="even">
+<td align="left">Bac Nem</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+</tr>
+<tr class="odd">
+<td align="left">Fung Nem</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+</tr>
+<tr class="even">
+<td align="left">Omni Nem</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.5</td>
+<td align="right">0.5</td>
+<td align="right">0.5</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+</tr>
+<tr class="odd">
+<td align="left">Pro</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+</tr>
+<tr class="even">
+<td align="left">Bact</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.7</td>
+<td align="right">0.3</td>
+</tr>
+<tr class="odd">
+<td align="left">Fung</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.3</td>
+<td align="right">0.7</td>
+</tr>
+<tr class="even">
+<td align="left">Labile</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+</tr>
+<tr class="odd">
+<td align="left">Recal</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.0</td>
+<td align="right">0.0</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
 </div>
 <div id="appendix-c" class="section level2">
 <h2>Appendix C</h2>
+<p>Mean node biomasses.</p>
+<p>Biomasses (± SE) are given in g of C per m<sup>2</sup> of soil under
+each experimental treatment. Meso = arthropod-feeding mites, Zerco =
+nematode-feeding mites, Mites NP = non-predatory prostigmatid and
+astigmatid mites, Col = collembola, Pred Nem = predatory nematodes, Bac
+Nem = bactivorous nematodes, Fung Nem = fungivorous nematodes, Omni Nem
+= omnivorous nematodes, Pro = protists, Bact = bacteria, Fung = fungi,
+Labile = labile detritus, Recal = recalcitrant detritus.</p>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>AppenC.temp <span class="ot">&lt;-</span> <span class="fu">rownames_to_column</span>(<span class="fu">as.data.frame</span>(<span class="fu">t</span>(model_biomasses)), </span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">&quot;Sample_ID&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>Sample_ID <span class="sc">==</span> <span class="st">&quot;ExRes 5&quot;</span>)</span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>AppenC.temp2 <span class="ot">&lt;-</span> <span class="fu">merge</span>(<span class="at">x =</span> sample_metadata, <span class="at">y =</span> AppenC.temp, </span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>                      <span class="at">by =</span> <span class="st">&quot;Sample_ID&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tx =</span> <span class="fu">interaction</span>(destructive_time, moisture_tx, temp_tx))</span>
+<span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a>AppenC.temp2<span class="sc">$</span>tx2 <span class="ot">&lt;-</span> <span class="fu">recode_factor</span>(AppenC.temp2<span class="sc">$</span>tx, </span>
+<span id="cb76-10"><a href="#cb76-10" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">&quot;T0.Ambient.12&quot;</span> <span class="ot">=</span> <span class="st">&quot;T~0~&quot;</span>,</span>
+<span id="cb76-11"><a href="#cb76-11" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">&quot;T0.Ambient.12&quot;</span> <span class="ot">=</span> <span class="st">&quot;T~0~&quot;</span>,</span>
+<span id="cb76-12"><a href="#cb76-12" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">&quot;T0.Ambient.20&quot;</span> <span class="ot">=</span> <span class="st">&quot;T~0~&quot;</span>, </span>
+<span id="cb76-13"><a href="#cb76-13" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">&quot;T0.High.12&quot;</span> <span class="ot">=</span> <span class="st">&quot;T~0~&quot;</span>,</span>
+<span id="cb76-14"><a href="#cb76-14" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">&quot;T0.High.20&quot;</span> <span class="ot">=</span> <span class="st">&quot;T~0~&quot;</span>,</span>
+<span id="cb76-15"><a href="#cb76-15" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">&quot;T1.Ambient.12&quot;</span> <span class="ot">=</span> <span class="st">&quot;T~1~ Field-Moist 12 &amp;deg;C&quot;</span>,</span>
+<span id="cb76-16"><a href="#cb76-16" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">&quot;T1.Ambient.20&quot;</span> <span class="ot">=</span> <span class="st">&quot;T~1~ Field-Moist 20 &amp;deg;C&quot;</span>,</span>
+<span id="cb76-17"><a href="#cb76-17" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">&quot;T1.High.12&quot;</span> <span class="ot">=</span> <span class="st">&quot;T~1~ Saturated 12 &amp;deg;C&quot;</span>,</span>
+<span id="cb76-18"><a href="#cb76-18" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">&quot;T1.High.20&quot;</span> <span class="ot">=</span> <span class="st">&quot;T~1~ Saturated 20 &amp;deg;C&quot;</span>,</span>
+<span id="cb76-19"><a href="#cb76-19" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">&quot;T2.Ambient.12&quot;</span> <span class="ot">=</span> <span class="st">&quot;T~2~ Field-Moist 12 &amp;deg;C&quot;</span>,</span>
+<span id="cb76-20"><a href="#cb76-20" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">&quot;T2.Ambient.20&quot;</span> <span class="ot">=</span> <span class="st">&quot;T~2~ Field-Moist 20 &amp;deg;C&quot;</span>,</span>
+<span id="cb76-21"><a href="#cb76-21" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">&quot;T2.High.12&quot;</span> <span class="ot">=</span> <span class="st">&quot;T~2~ Saturated 12 &amp;deg;C&quot;</span>,</span>
+<span id="cb76-22"><a href="#cb76-22" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">&quot;T2.High.20&quot;</span> <span class="ot">=</span> <span class="st">&quot;T~2~ Saturated 20 &amp;deg;C&quot;</span>)</span>
+<span id="cb76-23"><a href="#cb76-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-24"><a href="#cb76-24" aria-hidden="true" tabindex="-1"></a>AppenC.temp3 <span class="ot">&lt;-</span> AppenC.temp2 <span class="sc">%&gt;%</span> </span>
+<span id="cb76-25"><a href="#cb76-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(tx2) <span class="sc">%&gt;%</span></span>
+<span id="cb76-26"><a href="#cb76-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb76-27"><a href="#cb76-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">meso.mean =</span> <span class="fu">mean</span>(mesostigs_biomass),</span>
+<span id="cb76-28"><a href="#cb76-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">meso.se =</span> <span class="fu">sd</span>(mesostigs_biomass)<span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">length</span>(mesostigs_biomass)),</span>
+<span id="cb76-29"><a href="#cb76-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">zerco.mean =</span> <span class="fu">mean</span>(zerconidae_biomass),</span>
+<span id="cb76-30"><a href="#cb76-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">zerco.se =</span> <span class="fu">sd</span>(zerconidae_biomass)<span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">length</span>(zerconidae_biomass)),</span>
+<span id="cb76-31"><a href="#cb76-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">mitesNP.mean =</span> <span class="fu">mean</span>(prostig_astig_biomass),</span>
+<span id="cb76-32"><a href="#cb76-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">mitesNP.se =</span> <span class="fu">sd</span>(prostig_astig_biomass)<span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">length</span>(prostig_astig_biomass)),</span>
+<span id="cb76-33"><a href="#cb76-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">juvorib.mean =</span> <span class="fu">mean</span>(juv_oribatids_biomass),</span>
+<span id="cb76-34"><a href="#cb76-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">juvorib.se =</span> <span class="fu">sd</span>(juv_oribatids_biomass)<span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">length</span>(juv_oribatids_biomass)),</span>
+<span id="cb76-35"><a href="#cb76-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">orib.mean =</span> <span class="fu">mean</span>(oribatids_biomass),</span>
+<span id="cb76-36"><a href="#cb76-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">orib.se =</span> <span class="fu">sd</span>(oribatids_biomass)<span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">length</span>(oribatids_biomass)),</span>
+<span id="cb76-37"><a href="#cb76-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">coll.mean =</span> <span class="fu">mean</span>(collembola_biomass),</span>
+<span id="cb76-38"><a href="#cb76-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">coll.se =</span> <span class="fu">sd</span>(collembola_biomass)<span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">length</span>(collembola_biomass)),</span>
+<span id="cb76-39"><a href="#cb76-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">prednem.mean =</span> <span class="fu">mean</span>(n.predator_biomass),</span>
+<span id="cb76-40"><a href="#cb76-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">prednem.se =</span> <span class="fu">sd</span>(n.predator_biomass)<span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">length</span>(n.predator_biomass)),</span>
+<span id="cb76-41"><a href="#cb76-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">bactnem.mean =</span> <span class="fu">mean</span>(n.bacterivore_biomass),</span>
+<span id="cb76-42"><a href="#cb76-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">bactnem.se =</span> <span class="fu">sd</span>(n.bacterivore_biomass)<span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">length</span>(n.bacterivore_biomass)),</span>
+<span id="cb76-43"><a href="#cb76-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">fungnem.mean =</span> <span class="fu">mean</span>(n.fungivore_biomass),</span>
+<span id="cb76-44"><a href="#cb76-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">fungnem.se =</span> <span class="fu">sd</span>(n.fungivore_biomass)<span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">length</span>(n.fungivore_biomass)),</span>
+<span id="cb76-45"><a href="#cb76-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">omninem.mean =</span> <span class="fu">mean</span>(n.omnivore_biomass),</span>
+<span id="cb76-46"><a href="#cb76-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">omninem.se =</span> <span class="fu">sd</span>(n.omnivore_biomass)<span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">length</span>(n.omnivore_biomass)),</span>
+<span id="cb76-47"><a href="#cb76-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">pro.mean =</span> <span class="fu">mean</span>(protists_biomass),</span>
+<span id="cb76-48"><a href="#cb76-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">pro.se =</span> <span class="fu">sd</span>(protists_biomass)<span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">length</span>(protists_biomass)),</span>
+<span id="cb76-49"><a href="#cb76-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">bact.mean =</span> <span class="fu">mean</span>(bacteria_biomass),</span>
+<span id="cb76-50"><a href="#cb76-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">bact.se =</span> <span class="fu">sd</span>(bacteria_biomass)<span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">length</span>(bacteria_biomass)),</span>
+<span id="cb76-51"><a href="#cb76-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">fung.mean =</span> <span class="fu">mean</span>(fungi_biomass),</span>
+<span id="cb76-52"><a href="#cb76-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">fung.se =</span> <span class="fu">sd</span>(fungi_biomass)<span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">length</span>(fungi_biomass)),</span>
+<span id="cb76-53"><a href="#cb76-53" aria-hidden="true" tabindex="-1"></a>    <span class="at">labile.mean =</span> <span class="fu">mean</span>(labile_biomass),</span>
+<span id="cb76-54"><a href="#cb76-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">labile.se =</span> <span class="fu">sd</span>(labile_biomass)<span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">length</span>(labile_biomass)),</span>
+<span id="cb76-55"><a href="#cb76-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">recal.mean =</span> <span class="fu">mean</span>(recal_biomass),</span>
+<span id="cb76-56"><a href="#cb76-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">recal.se =</span> <span class="fu">sd</span>(recal_biomass)<span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">length</span>(recal_biomass))</span>
+<span id="cb76-57"><a href="#cb76-57" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb76-58"><a href="#cb76-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-59"><a href="#cb76-59" aria-hidden="true" tabindex="-1"></a>AppenC <span class="ot">&lt;-</span> AppenC.temp3 <span class="sc">%&gt;%</span></span>
+<span id="cb76-60"><a href="#cb76-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="st">&quot;Treatment&quot;</span> <span class="ot">=</span> <span class="st">&quot;tx2&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb76-61"><a href="#cb76-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Meso =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>meso.mean, <span class="dv">3</span>), </span>
+<span id="cb76-62"><a href="#cb76-62" aria-hidden="true" tabindex="-1"></a>                       <span class="st">&quot; &amp;plusmn; &quot;</span>, </span>
+<span id="cb76-63"><a href="#cb76-63" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>meso.se, <span class="dv">3</span>)), </span>
+<span id="cb76-64"><a href="#cb76-64" aria-hidden="true" tabindex="-1"></a>         <span class="at">Zerco =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>zerco.mean, <span class="dv">3</span>), </span>
+<span id="cb76-65"><a href="#cb76-65" aria-hidden="true" tabindex="-1"></a>                       <span class="st">&quot; &amp;plusmn; &quot;</span>, </span>
+<span id="cb76-66"><a href="#cb76-66" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>zerco.se, <span class="dv">3</span>)),</span>
+<span id="cb76-67"><a href="#cb76-67" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Mites NP</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">paste0</span>(<span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>mitesNP.mean, <span class="dv">3</span>), </span>
+<span id="cb76-68"><a href="#cb76-68" aria-hidden="true" tabindex="-1"></a>                       <span class="st">&quot; &amp;plusmn; &quot;</span>, </span>
+<span id="cb76-69"><a href="#cb76-69" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>mitesNP.se, <span class="dv">3</span>)),</span>
+<span id="cb76-70"><a href="#cb76-70" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Juv Orib</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">paste0</span>(<span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>juvorib.mean, <span class="dv">2</span>), </span>
+<span id="cb76-71"><a href="#cb76-71" aria-hidden="true" tabindex="-1"></a>                       <span class="st">&quot; &amp;plusmn; &quot;</span>, </span>
+<span id="cb76-72"><a href="#cb76-72" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>juvorib.se, <span class="dv">2</span>)),</span>
+<span id="cb76-73"><a href="#cb76-73" aria-hidden="true" tabindex="-1"></a>         <span class="at">Orib =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>orib.mean, <span class="dv">2</span>), </span>
+<span id="cb76-74"><a href="#cb76-74" aria-hidden="true" tabindex="-1"></a>                       <span class="st">&quot; &amp;plusmn; &quot;</span>, </span>
+<span id="cb76-75"><a href="#cb76-75" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>orib.se, <span class="dv">2</span>)),</span>
+<span id="cb76-76"><a href="#cb76-76" aria-hidden="true" tabindex="-1"></a>         <span class="at">Coll =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>coll.mean, <span class="dv">3</span>), </span>
+<span id="cb76-77"><a href="#cb76-77" aria-hidden="true" tabindex="-1"></a>                       <span class="st">&quot; &amp;plusmn; &quot;</span>, </span>
+<span id="cb76-78"><a href="#cb76-78" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>coll.se, <span class="dv">3</span>)),</span>
+<span id="cb76-79"><a href="#cb76-79" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Pred Nem</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">paste0</span>(<span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>prednem.mean, <span class="dv">4</span>), </span>
+<span id="cb76-80"><a href="#cb76-80" aria-hidden="true" tabindex="-1"></a>                       <span class="st">&quot; &amp;plusmn; &quot;</span>, </span>
+<span id="cb76-81"><a href="#cb76-81" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>prednem.se, <span class="dv">4</span>)),</span>
+<span id="cb76-82"><a href="#cb76-82" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Bac Nem</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">paste0</span>(<span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>bactnem.mean, <span class="dv">4</span>), </span>
+<span id="cb76-83"><a href="#cb76-83" aria-hidden="true" tabindex="-1"></a>                       <span class="st">&quot; &amp;plusmn; &quot;</span>, </span>
+<span id="cb76-84"><a href="#cb76-84" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>bactnem.se, <span class="dv">4</span>)),</span>
+<span id="cb76-85"><a href="#cb76-85" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Fung Nem</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">paste0</span>(<span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>fungnem.mean, <span class="dv">4</span>), </span>
+<span id="cb76-86"><a href="#cb76-86" aria-hidden="true" tabindex="-1"></a>                       <span class="st">&quot; &amp;plusmn; &quot;</span>, </span>
+<span id="cb76-87"><a href="#cb76-87" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>fungnem.se, <span class="dv">4</span>)),</span>
+<span id="cb76-88"><a href="#cb76-88" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Omni Nem</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">paste0</span>(<span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>omninem.mean, <span class="dv">4</span>), </span>
+<span id="cb76-89"><a href="#cb76-89" aria-hidden="true" tabindex="-1"></a>                       <span class="st">&quot; &amp;plusmn; &quot;</span>, </span>
+<span id="cb76-90"><a href="#cb76-90" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>omninem.se, <span class="dv">4</span>)),</span>
+<span id="cb76-91"><a href="#cb76-91" aria-hidden="true" tabindex="-1"></a>         <span class="at">Pro =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>pro.mean, <span class="dv">1</span>), </span>
+<span id="cb76-92"><a href="#cb76-92" aria-hidden="true" tabindex="-1"></a>                       <span class="st">&quot; &amp;plusmn; &quot;</span>, </span>
+<span id="cb76-93"><a href="#cb76-93" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>pro.se, <span class="dv">1</span>)),</span>
+<span id="cb76-94"><a href="#cb76-94" aria-hidden="true" tabindex="-1"></a>         <span class="at">Bact =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>bact.mean, <span class="dv">1</span>), </span>
+<span id="cb76-95"><a href="#cb76-95" aria-hidden="true" tabindex="-1"></a>                       <span class="st">&quot; &amp;plusmn; &quot;</span>, </span>
+<span id="cb76-96"><a href="#cb76-96" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>bact.se, <span class="dv">1</span>)),</span>
+<span id="cb76-97"><a href="#cb76-97" aria-hidden="true" tabindex="-1"></a>         <span class="at">Fung =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>fung.mean, <span class="dv">0</span>), </span>
+<span id="cb76-98"><a href="#cb76-98" aria-hidden="true" tabindex="-1"></a>                       <span class="st">&quot; &amp;plusmn; &quot;</span>, </span>
+<span id="cb76-99"><a href="#cb76-99" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>fung.se, <span class="dv">0</span>)),</span>
+<span id="cb76-100"><a href="#cb76-100" aria-hidden="true" tabindex="-1"></a>         <span class="at">Labile =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>labile.mean, <span class="dv">0</span>)),</span>
+<span id="cb76-101"><a href="#cb76-101" aria-hidden="true" tabindex="-1"></a>         <span class="at">Recal =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(AppenC.temp3<span class="sc">$</span>recal.mean, <span class="dv">0</span>))</span>
+<span id="cb76-102"><a href="#cb76-102" aria-hidden="true" tabindex="-1"></a>         )</span>
+<span id="cb76-103"><a href="#cb76-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-104"><a href="#cb76-104" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(AppenC, <span class="at">linesep =</span> <span class="st">&quot;</span><span class="sc">\\</span><span class="st">hline&quot;</span>)</span></code></pre></div>
+<table style="width:100%;">
+<colgroup>
+<col width="9%" />
+<col width="7%" />
+<col width="7%" />
+<col width="7%" />
+<col width="6%" />
+<col width="6%" />
+<col width="7%" />
+<col width="7%" />
+<col width="7%" />
+<col width="7%" />
+<col width="7%" />
+<col width="5%" />
+<col width="6%" />
+<col width="4%" />
+<col width="2%" />
+<col width="2%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Treatment</th>
+<th align="left">Meso</th>
+<th align="left">Zerco</th>
+<th align="left">Mites NP</th>
+<th align="left">Juv Orib</th>
+<th align="left">Orib</th>
+<th align="left">Coll</th>
+<th align="left">Pred Nem</th>
+<th align="left">Bac Nem</th>
+<th align="left">Fung Nem</th>
+<th align="left">Omni Nem</th>
+<th align="left">Pro</th>
+<th align="left">Bact</th>
+<th align="left">Fung</th>
+<th align="left">Labile</th>
+<th align="left">Recal</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">T<sub>0</sub></td>
+<td align="left">0.003 ± 0.002</td>
+<td align="left">0.009 ± 0.004</td>
+<td align="left">0.041 ± 0.008</td>
+<td align="left">0.31 ± 0.04</td>
+<td align="left">0.36 ± 0.04</td>
+<td align="left">0.004 ± 0.002</td>
+<td align="left">0.0019 ± 4e-04</td>
+<td align="left">6e-04 ± 2e-04</td>
+<td align="left">0.006 ± 0.0014</td>
+<td align="left">7e-04 ± 2e-04</td>
+<td align="left">2.8 ± 0.1</td>
+<td align="left">11.7 ± 0.2</td>
+<td align="left">87 ± 2</td>
+<td align="left">135707</td>
+<td align="left">135707</td>
+</tr>
+<tr class="even">
+<td align="left">T<sub>1</sub> Field-Moist 12 °C</td>
+<td align="left">0.006 ± 0.002</td>
+<td align="left">0.005 ± 0.003</td>
+<td align="left">0.04 ± 0.016</td>
+<td align="left">0.14 ± 0.03</td>
+<td align="left">0.29 ± 0.05</td>
+<td align="left">0.006 ± 0.004</td>
+<td align="left">0.0013 ± 9e-04</td>
+<td align="left">5e-04 ± 3e-04</td>
+<td align="left">0.0043 ± 0.0029</td>
+<td align="left">5e-04 ± 3e-04</td>
+<td align="left">2.5 ± 0.1</td>
+<td align="left">10.6 ± 0.6</td>
+<td align="left">79 ± 4</td>
+<td align="left">135707</td>
+<td align="left">135707</td>
+</tr>
+<tr class="odd">
+<td align="left">T<sub>1</sub> Field-Moist 20 °C</td>
+<td align="left">0.005 ± 0.002</td>
+<td align="left">0.004 ± 0.001</td>
+<td align="left">0.045 ± 0.013</td>
+<td align="left">0.12 ± 0.02</td>
+<td align="left">0.28 ± 0.06</td>
+<td align="left">0.004 ± 0.001</td>
+<td align="left">0.0016 ± 3e-04</td>
+<td align="left">6e-04 ± 1e-04</td>
+<td align="left">0.0052 ± 0.0011</td>
+<td align="left">6e-04 ± 1e-04</td>
+<td align="left">2.6 ± 0.1</td>
+<td align="left">10.9 ± 0.4</td>
+<td align="left">81 ± 3</td>
+<td align="left">135707</td>
+<td align="left">135707</td>
+</tr>
+<tr class="even">
+<td align="left">T<sub>1</sub> Saturated 12 °C</td>
+<td align="left">0.001 ± 0.001</td>
+<td align="left">0.006 ± 0.003</td>
+<td align="left">0.027 ± 0.005</td>
+<td align="left">0.07 ± 0.02</td>
+<td align="left">0.14 ± 0.04</td>
+<td align="left">0 ± 0</td>
+<td align="left">5e-04 ± 2e-04</td>
+<td align="left">2e-04 ± 1e-04</td>
+<td align="left">0.0017 ± 5e-04</td>
+<td align="left">2e-04 ± 1e-04</td>
+<td align="left">2.7 ± 0.1</td>
+<td align="left">11.6 ± 0.3</td>
+<td align="left">86 ± 2</td>
+<td align="left">135707</td>
+<td align="left">135707</td>
+</tr>
+<tr class="odd">
+<td align="left">T<sub>1</sub> Saturated 20 °C</td>
+<td align="left">0.004 ± 0.002</td>
+<td align="left">0.003 ± 0.002</td>
+<td align="left">0.03 ± 0.01</td>
+<td align="left">0.12 ± 0.02</td>
+<td align="left">0.2 ± 0.06</td>
+<td align="left">0.002 ± 0.001</td>
+<td align="left">6e-04 ± 1e-04</td>
+<td align="left">2e-04 ± 1e-04</td>
+<td align="left">0.0018 ± 5e-04</td>
+<td align="left">2e-04 ± 1e-04</td>
+<td align="left">2.7 ± 0.1</td>
+<td align="left">11.6 ± 0.3</td>
+<td align="left">86 ± 2</td>
+<td align="left">135707</td>
+<td align="left">135707</td>
+</tr>
+<tr class="even">
+<td align="left">T<sub>2</sub> Field-Moist 12 °C</td>
+<td align="left">0.002 ± 0.001</td>
+<td align="left">0.003 ± 0.001</td>
+<td align="left">0.034 ± 0.01</td>
+<td align="left">0.13 ± 0.03</td>
+<td align="left">0.21 ± 0.04</td>
+<td align="left">0.004 ± 0.002</td>
+<td align="left">0.0014 ± 4e-04</td>
+<td align="left">5e-04 ± 1e-04</td>
+<td align="left">0.0046 ± 0.0013</td>
+<td align="left">5e-04 ± 1e-04</td>
+<td align="left">2.3 ± 0.1</td>
+<td align="left">9.9 ± 0.5</td>
+<td align="left">74 ± 4</td>
+<td align="left">135707</td>
+<td align="left">135707</td>
+</tr>
+<tr class="odd">
+<td align="left">T<sub>2</sub> Field-Moist 20 °C</td>
+<td align="left">0.002 ± 0.001</td>
+<td align="left">0.004 ± 0.002</td>
+<td align="left">0.032 ± 0.011</td>
+<td align="left">0.09 ± 0.02</td>
+<td align="left">0.17 ± 0.02</td>
+<td align="left">0.002 ± 0.001</td>
+<td align="left">0.0018 ± 4e-04</td>
+<td align="left">6e-04 ± 1e-04</td>
+<td align="left">0.0057 ± 0.0012</td>
+<td align="left">7e-04 ± 1e-04</td>
+<td align="left">2.5 ± 0.1</td>
+<td align="left">10.6 ± 0.2</td>
+<td align="left">79 ± 2</td>
+<td align="left">135707</td>
+<td align="left">135707</td>
+</tr>
+<tr class="even">
+<td align="left">T<sub>2</sub> Saturated 12 °C</td>
+<td align="left">0.004 ± 0.002</td>
+<td align="left">0.004 ± 0.002</td>
+<td align="left">0.03 ± 0.006</td>
+<td align="left">0.1 ± 0.02</td>
+<td align="left">0.2 ± 0.04</td>
+<td align="left">0.002 ± 0.002</td>
+<td align="left">6e-04 ± 2e-04</td>
+<td align="left">2e-04 ± 1e-04</td>
+<td align="left">0.0019 ± 5e-04</td>
+<td align="left">2e-04 ± 1e-04</td>
+<td align="left">2.6 ± 0.1</td>
+<td align="left">11.1 ± 0.5</td>
+<td align="left">82 ± 4</td>
+<td align="left">135707</td>
+<td align="left">135707</td>
+</tr>
+<tr class="odd">
+<td align="left">T<sub>2</sub> Saturated 20 °C</td>
+<td align="left">0.002 ± 0.001</td>
+<td align="left">0.002 ± 0.002</td>
+<td align="left">0.023 ± 0.006</td>
+<td align="left">0.1 ± 0.04</td>
+<td align="left">0.18 ± 0.07</td>
+<td align="left">0.001 ± 0.001</td>
+<td align="left">3e-04 ± 1e-04</td>
+<td align="left">1e-04 ± 0</td>
+<td align="left">8e-04 ± 2e-04</td>
+<td align="left">1e-04 ± 0</td>
+<td align="left">2.7 ± 0.1</td>
+<td align="left">11.3 ± 0.2</td>
+<td align="left">84 ± 2</td>
+<td align="left">135707</td>
+<td align="left">135707</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="appendix-d" class="section level2">
 <h2>Appendix D</h2>

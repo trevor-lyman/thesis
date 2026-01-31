@@ -3006,11 +3006,204 @@ Nmin_aov
 # Appendices 
 
 ## Appenix A
+Node model parameters for the soil food web trophic groups under control (12 &deg;C) and warmed (20 &deg;C) conditions.  
+  
+Parameters include C:N and estimated percent assimilation efficiency (E~a~), percent production efficiency (E~p~), and population death rates (d).^1,2,3^
+```{r Appendix A, warning = F}
+AppenA.temp1 <- ExRes_prop_control 
+
+AppenA.temp1$CN <- round(AppenA.temp1$CN, 0)
+
+AppenA.temp1 <- AppenA.temp1 %>%
+  select(X = X,
+         `Node ID` = ID,
+         `C:N` = CN,
+         `E~a~ (12 &deg;C)` = a,
+         `E~p~ (12 &deg;C)` = p,
+         `d (12 &deg;C)` = d)
+
+AppenA.temp2 <- ExRes_prop_warming
+
+AppenA.temp2$a <- round(AppenA.temp2$p, 0)
+AppenA.temp2$p <- round(AppenA.temp2$p, 0)
+AppenA.temp2$d <- round(AppenA.temp2$d, 2)
+
+AppenA.temp2 <- AppenA.temp2 %>%
+  select(`Node ID` = ID,
+         `E~a~ (20 &deg;C)` = a,
+         `E~p~ (20 &deg;C)` = p,
+         `d (20 &deg;C)` = d)
+
+AppenA <- merge(x = AppenA.temp1, y = AppenA.temp2, by = "Node ID") %>%
+  arrange(X) %>%
+  select(-X)
+
+AppenA$`Node ID`[AppenA$`Node ID` == "mesostigs"] <- 
+  "Arthropod-feeding mites"
+AppenA$`Node ID`[AppenA$`Node ID` == "zerconidae"] <- 
+  "Nematode-feeding mites"
+AppenA$`Node ID`[AppenA$`Node ID` == "prostig_astig"] <- 
+  "Non-predatory prostigmatid and astigmatid mites"
+AppenA$`Node ID`[AppenA$`Node ID` == "juv_oribatids"] <- 
+  "Juvenile oribatid mites"
+AppenA$`Node ID`[AppenA$`Node ID` == "oribatids"] <- 
+  "Adult oribatid mites"
+AppenA$`Node ID`[AppenA$`Node ID` == "collembola"] <- 
+  "Collembola"
+AppenA$`Node ID`[AppenA$`Node ID` == "predatory_nematodes"] <- 
+  "Predatory nematodes"
+AppenA$`Node ID`[AppenA$`Node ID` == "bactivorous_nematodes"] <- 
+  "Bactivorous nematodes"
+AppenA$`Node ID`[AppenA$`Node ID` == "fungivorous_nematodes"] <- 
+  "Fungivorous nematodes"
+AppenA$`Node ID`[AppenA$`Node ID` == "omnivorous_nematodes"] <- 
+  "Omnivorous nematodes"
+AppenA$`Node ID`[AppenA$`Node ID` == "protists"] <- 
+  "Protists"
+AppenA$`Node ID`[AppenA$`Node ID` == "bacteria"] <- 
+  "Bacteria"
+AppenA$`Node ID`[AppenA$`Node ID` == "fungi"] <- 
+  "Fungi"
+AppenA$`Node ID`[AppenA$`Node ID` == "labile"] <- 
+  "Labile detritus"
+AppenA$`Node ID`[AppenA$`Node ID` == "recalcitrant"] <- 
+  "Recalcitrant detritus"
+
+knitr::kable(AppenA, linesep = "\\hline")
+```
+^1^Metabolic parameters from [Hunt et al. (1987)](https://doi.org/10.1007/BF00260580).  
+^2^Metabolic scaling of parameters for microbial nodes from [Li et al. (2019)](https://doi.org/10.1111/gcb.14517).  
+^3^Metabolic scaling of parameters for soil fauna nodes from Luxton ([1972](https://eurekamag.com/research/000/208/000208036.php), [1981](https://doi.org/10.1016/S0031-4056(23)03677-6)).
+<br>
 
 ## Appendix B
+The soil food web interaction matrix.  
+  
+Rows denote consumers, columns denote resources. A value of 1 indicates the presence of a trophic interaction, and a value of 0 indicates no interaction. Values greater than 0 but less than 1 indicate the presence of a weak trophic interaction. Meso = arthropod-feeding mites, Zerco = nematode-feeding mites, Mites NP = non-predatory prostigmatid and astigmatid mites, Col = collembola, Pred Nem = predatory nematodes, Bac Nem = bactivorous nematodes, Fung Nem = fungivorous nematodes, Omni Nem = omnivorous nematodes, Pro = protists, Bact = bacteria, Fung = fungi, Labile = labile detritus, Recal = recalcitrant detritus.
+```{r Appendix B, warning = F}
+AppenB <- ExRes_imat
+
+colnames(AppenB) <- c("Meso", "Zerco", "Mites NP", "Juv Orib", "Orib",
+                      "Coll", "Pred Nem", "Bac Nem", "Fung Nem", "Omni Nem",
+                      "Pro", "Bact", "Fung", "Labile", "Recal")
+rownames(AppenB) <- c("Meso", "Zerco", "Mites NP", "Juv Orib", "Orib",
+                      "Coll", "Pred Nem", "Bac Nem", "Fung Nem", "Omni Nem",
+                      "Pro", "Bact", "Fung", "Labile", "Recal")
+
+knitr::kable(AppenB, linesep = "\\hline")
+```
+<br>
 
 ## Appendix C
+Mean node biomasses.  
+  
+Biomasses (&plusmn; SE) are given in g of C per m^2^ of soil under each experimental treatment. Meso = arthropod-feeding mites, Zerco = nematode-feeding mites, Mites NP = non-predatory prostigmatid and astigmatid mites, Col = collembola, Pred Nem = predatory nematodes, Bac Nem = bactivorous nematodes, Fung Nem = fungivorous nematodes, Omni Nem = omnivorous nematodes, Pro = protists, Bact = bacteria, Fung = fungi, Labile = labile detritus, Recal = recalcitrant detritus.
+```{r Appendix C, warning = F}
+AppenC.temp <- rownames_to_column(as.data.frame(t(model_biomasses)), 
+                                  "Sample_ID") %>%
+  filter(!Sample_ID == "ExRes 5")
 
+AppenC.temp2 <- merge(x = sample_metadata, y = AppenC.temp, 
+                      by = "Sample_ID") %>%
+  mutate(tx = interaction(destructive_time, moisture_tx, temp_tx))
+
+AppenC.temp2$tx2 <- recode_factor(AppenC.temp2$tx, 
+                                  "T0.Ambient.12" = "T~0~",
+                                  "T0.Ambient.12" = "T~0~",
+                                  "T0.Ambient.20" = "T~0~", 
+                                  "T0.High.12" = "T~0~",
+                                  "T0.High.20" = "T~0~",
+                                  "T1.Ambient.12" = "T~1~ Field-Moist 12 &deg;C",
+                                  "T1.Ambient.20" = "T~1~ Field-Moist 20 &deg;C",
+                                  "T1.High.12" = "T~1~ Saturated 12 &deg;C",
+                                  "T1.High.20" = "T~1~ Saturated 20 &deg;C",
+                                  "T2.Ambient.12" = "T~2~ Field-Moist 12 &deg;C",
+                                  "T2.Ambient.20" = "T~2~ Field-Moist 20 &deg;C",
+                                  "T2.High.12" = "T~2~ Saturated 12 &deg;C",
+                                  "T2.High.20" = "T~2~ Saturated 20 &deg;C")
+
+AppenC.temp3 <- AppenC.temp2 %>% 
+  group_by(tx2) %>%
+  summarise(
+    meso.mean = mean(mesostigs_biomass),
+    meso.se = sd(mesostigs_biomass)/sqrt(length(mesostigs_biomass)),
+    zerco.mean = mean(zerconidae_biomass),
+    zerco.se = sd(zerconidae_biomass)/sqrt(length(zerconidae_biomass)),
+    mitesNP.mean = mean(prostig_astig_biomass),
+    mitesNP.se = sd(prostig_astig_biomass)/sqrt(length(prostig_astig_biomass)),
+    juvorib.mean = mean(juv_oribatids_biomass),
+    juvorib.se = sd(juv_oribatids_biomass)/sqrt(length(juv_oribatids_biomass)),
+    orib.mean = mean(oribatids_biomass),
+    orib.se = sd(oribatids_biomass)/sqrt(length(oribatids_biomass)),
+    coll.mean = mean(collembola_biomass),
+    coll.se = sd(collembola_biomass)/sqrt(length(collembola_biomass)),
+    prednem.mean = mean(n.predator_biomass),
+    prednem.se = sd(n.predator_biomass)/sqrt(length(n.predator_biomass)),
+    bactnem.mean = mean(n.bacterivore_biomass),
+    bactnem.se = sd(n.bacterivore_biomass)/sqrt(length(n.bacterivore_biomass)),
+    fungnem.mean = mean(n.fungivore_biomass),
+    fungnem.se = sd(n.fungivore_biomass)/sqrt(length(n.fungivore_biomass)),
+    omninem.mean = mean(n.omnivore_biomass),
+    omninem.se = sd(n.omnivore_biomass)/sqrt(length(n.omnivore_biomass)),
+    pro.mean = mean(protists_biomass),
+    pro.se = sd(protists_biomass)/sqrt(length(protists_biomass)),
+    bact.mean = mean(bacteria_biomass),
+    bact.se = sd(bacteria_biomass)/sqrt(length(bacteria_biomass)),
+    fung.mean = mean(fungi_biomass),
+    fung.se = sd(fungi_biomass)/sqrt(length(fungi_biomass)),
+    labile.mean = mean(labile_biomass),
+    labile.se = sd(labile_biomass)/sqrt(length(labile_biomass)),
+    recal.mean = mean(recal_biomass),
+    recal.se = sd(recal_biomass)/sqrt(length(recal_biomass))
+  )
+
+AppenC <- AppenC.temp3 %>%
+  select("Treatment" = "tx2") %>%
+  mutate(Meso = paste0(round(AppenC.temp3$meso.mean, 3), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$meso.se, 3)), 
+         Zerco = paste0(round(AppenC.temp3$zerco.mean, 3), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$zerco.se, 3)),
+         `Mites NP` = paste0(round(AppenC.temp3$mitesNP.mean, 3), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$mitesNP.se, 3)),
+         `Juv Orib` = paste0(round(AppenC.temp3$juvorib.mean, 2), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$juvorib.se, 2)),
+         Orib = paste0(round(AppenC.temp3$orib.mean, 2), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$orib.se, 2)),
+         Coll = paste0(round(AppenC.temp3$coll.mean, 3), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$coll.se, 3)),
+         `Pred Nem` = paste0(round(AppenC.temp3$prednem.mean, 4), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$prednem.se, 4)),
+         `Bac Nem` = paste0(round(AppenC.temp3$bactnem.mean, 4), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$bactnem.se, 4)),
+         `Fung Nem` = paste0(round(AppenC.temp3$fungnem.mean, 4), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$fungnem.se, 4)),
+         `Omni Nem` = paste0(round(AppenC.temp3$omninem.mean, 4), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$omninem.se, 4)),
+         Pro = paste0(round(AppenC.temp3$pro.mean, 1), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$pro.se, 1)),
+         Bact = paste0(round(AppenC.temp3$bact.mean, 1), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$bact.se, 1)),
+         Fung = paste0(round(AppenC.temp3$fung.mean, 0), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$fung.se, 0)),
+         Labile = paste0(round(AppenC.temp3$labile.mean, 0)),
+         Recal = paste0(round(AppenC.temp3$recal.mean, 0))
+         )
+
+knitr::kable(AppenC, linesep = "\\hline")
+```
 ## Appendix D
 
 ## Appendix E
