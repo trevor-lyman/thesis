@@ -164,8 +164,9 @@ Intact peat core samples (8 x 8 cm x 15 cm deep) were cut and removed using a sm
 In the lab, each intact peat core was placed into a 500 mL glass jar to create experimental mesocosms that were placed into incubation at 12 &deg;C under field moist conditions for two weeks to allow each mesocosm to recover from the disturbance. Both the weight of the soil core and the final weight of the mesocosm (soil plus jar) was recorded to monitor moisture loss and replace moisture loss as necessary during the experiment. Following this recovery period, five mesocosms were selected to be destructively sampled (T~0~). The remaining 40 mesocosms were randomized into experimental treatments of temperature (12 &deg;C and 20 &deg;C) and moisture level regime (field-moist and saturated soil moisture) with ten replicates of each factorial treatment (12 &deg;C field-moist, 12 &deg;C saturated, 20 &deg;C field-moist, 20 &deg;C saturated). Temperature treatments were chosen to reflect the average ambient growing season temperature of the area (12 &deg;C) and an extreme warming event of +8 &deg;C. The southern boreal zone is predicted to see ~4 &deg;C increases in mean annual surface temperature by the end of the century, with increased occurrence of ‘heat waves’ ([Perkins-Kirkpatrick and Lewis, 2020](https://doi.org/10.1038/s41467-020-16970-7)), while increases of ~8 &deg;C in mean annual surface temperature are forecast for northern boreal and subarctic areas ([Price et al., 2013](https://doi.org/10.1139/er-2013-0042)). Air temperature data from the field site over the past four years indicate that peat-soil surface air temperatures reach or exceed 30 &deg;C at least two days per year, and average soil surface temperatures exceed 20 &deg;C for prolonged periods during summers. Soil moisture regimes were chosen to represent one possible water table scenario that future peatlands may experience under climate change, which has potential for both drying and wetting conditions as well as fluctuations between the two ([Zhang et al., 2022](https://doi.org/10.1038/s41467-022-32711-4)).
 ```{r Sample Metadata}
 sample_metadata <- read.csv("Data/sample metadata v2.csv")
-sample_metadata$block_effect <- ordered(sample_metadata$block_effect, 
+sample_metadata$block_effect <- factor(sample_metadata$block_effect, 
                                         levels = c("low", "high"))
+
 head(sample_metadata)
 ```
 <br>
@@ -341,7 +342,7 @@ abundance_data$temp_tx <- as.factor(abundance_data$temp_tx)
 abundance_data$block_effect <- 
   as.factor(abundance_data$block_effect)
 
-abundance_data$block_effect <- ordered(abundance_data$block_effect, 
+abundance_data$block_effect <- factor(abundance_data$block_effect, 
                                         levels = c("low", "high"))
 
 head(abundance_data)
@@ -518,7 +519,7 @@ biomass_data$moisture_tx <- as.factor(biomass_data$moisture_tx)
 biomass_data$temp_tx <- as.factor(biomass_data$temp_tx)
 biomass_data$block_effect <- as.factor(biomass_data$block_effect)
 
-biomass_data$block_effect <- ordered(biomass_data$block_effect, 
+biomass_data$block_effect <- factor(biomass_data$block_effect, 
                                         levels = c("low", "high"))
 
 head(biomass_data)
@@ -556,7 +557,7 @@ soil_data$destructive_time <-
   as.factor(soil_data$destructive_time)
 soil_data$moisture_tx <- as.factor(soil_data$moisture_tx)
 soil_data$temp_tx <- as.factor(soil_data$temp_tx)
-soil_data$block_effect <- ordered(soil_data$block_effect, 
+soil_data$block_effect <- factor(soil_data$block_effect, 
                                         levels = c("low", "high"))
 
 head(soil_data)
@@ -1580,7 +1581,8 @@ model_outputs_temp <- as.data.frame(cbind(Sample_ID, total_consumption,
 
 # Step 6: Merge with Sample Metadata  
 flux_data <- merge(x = sample_metadata, y = model_outputs_temp, 
-                       by = "Sample_ID") 
+                       by = "Sample_ID") %>%
+  filter(!"Sample_ID" == "ExRes 5")
 
 flux_data$total_consumption <- as.numeric(flux_data$total_consumption)
 flux_data$total_Cmin <- as.numeric(flux_data$total_Cmin)
@@ -2767,22 +2769,23 @@ T2.mds; abundances.divT2
 ### Figure 3.7 
 Modeled rates of (A) carbon flux (consumption), (B) carbon mineralization (respiration), and (C) nitrogen mineralization.
 ```{r Figure 3-7, warning=F, fig.cap="Fluxes were modeled across experimental treatments of temperature (12 &deg;C, 20 &deg;C) and soil moisture (field-moist, saturated) destructively sampled after three-weeks (T~1~) or following three-week recovery period (T~2~). Letters denote significant differences between groups, as per Tukey’s HSD test.", out.width = '100%'}
-flux_data <- flux_data %>%
+flux_data_T1uT2 <- flux_data %>%
   filter(!destructive_time == "T0") %>%
   filter(!Sample_ID == "ExRes 5")
 
-flux_data$tx <- interaction(flux_data$temp_tx, flux_data$moisture_tx) 
+flux_data_T1uT2$tx <- interaction(flux_data_T1uT2$temp_tx, 
+                            flux_data_T1uT2$moisture_tx) 
 
-flux_data <- flux_data %>%
+flux_data_T1uT2 <- flux_data_T1uT2 %>%
   mutate(tx = fct_recode(tx,
-    "12\u00B0 Field-Moist" = "12.Ambient",
-    "20\u00B0 Field-Moist" = "20.Ambient",
-    "12\u00B0 Saturated"   = "12.High",
-    "20\u00B0 Saturated"   = "20.High"
+    "12\u00B0C Field-Moist" = "12.Ambient",
+    "20\u00B0C Field-Moist" = "20.Ambient",
+    "12\u00B0C Saturated"   = "12.High",
+    "20\u00B0C Saturated"   = "20.High"
   ))
 
 consumption_plot <- 
-  ggplot(flux_data, aes(x=tx, y=total_consumption, 
+  ggplot(flux_data_T1uT2, aes(x=tx, y=total_consumption, 
                             fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
   geom_jitter(aes(pch = as.factor(destructive_time)), 
@@ -2797,7 +2800,7 @@ consumption_plot <-
   labs(fill = "Sampling Time", pch = "Sampling Time")
 
 Cmin_plot <- 
-  ggplot(flux_data, aes(x=tx, y=total_Cmin, 
+  ggplot(flux_data_T1uT2, aes(x=tx, y=total_Cmin, 
                             fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
   geom_jitter(aes(pch = as.factor(destructive_time)), 
@@ -2812,7 +2815,7 @@ Cmin_plot <-
   labs(fill = "Sampling Time", pch = "Sampling Time")
 
 Nmin_plot <- 
-  ggplot(flux_data, aes(x=tx, y=total_Nmin, 
+  ggplot(flux_data_T1uT2, aes(x=tx, y=total_Nmin, 
                             fill = as.factor(destructive_time))) + 
   geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
   geom_jitter(aes(pch = as.factor(destructive_time)), 
@@ -2841,7 +2844,7 @@ consumption_lm <- lm(total_consumption ~
                           temp_tx +
                           destructive_time +
                           block_effect,
-                     data = flux_data)
+                     data = flux_data_T1uT2)
 
 consumption_lm2 <- lm(total_consumption ~
                         
@@ -2852,7 +2855,7 @@ consumption_lm2 <- lm(total_consumption ~
                         temp_tx +
                         destructive_time +
                         block_effect,
-                data = flux_data)
+                data = flux_data_T1uT2)
 
 Cmin_lm <- lm(total_Cmin ~
                           moisture_tx * temp_tx * destructive_time + 
@@ -2863,7 +2866,7 @@ Cmin_lm <- lm(total_Cmin ~
                           temp_tx +
                           destructive_time +
                           block_effect,
-                     data = flux_data)
+                     data = flux_data_T1uT2)
 
 Cmin_lm2 <- lm(total_Cmin ~
                 
@@ -2874,7 +2877,7 @@ Cmin_lm2 <- lm(total_Cmin ~
                 temp_tx +
                 destructive_time +
                 block_effect,
-                data = flux_data)
+                data = flux_data_T1uT2)
 
 Nmin_lm <- lm(total_Nmin ~
                         moisture_tx * temp_tx * destructive_time + 
@@ -2885,7 +2888,7 @@ Nmin_lm <- lm(total_Nmin ~
                         temp_tx +
                         destructive_time +
                         block_effect,
-                    data = flux_data)
+                    data = flux_data_T1uT2)
 
 Nmin_lm2 <- lm(total_Nmin ~
                 
@@ -2896,7 +2899,7 @@ Nmin_lm2 <- lm(total_Nmin ~
                 temp_tx +
                 destructive_time +
                 block_effect,
-               data = flux_data)
+               data = flux_data_T1uT2)
 
 flux_df1 <- as.data.frame(matrix(data = c(
   "Total Consumptive Flux",
@@ -2911,16 +2914,16 @@ flux_df1 <- as.data.frame(matrix(data = c(
   "Levene's Test",
   levene_test(total_consumption ~ 
                 (moisture_tx * temp_tx * destructive_time), 
-              data = flux_data)$df1,
+              data = flux_data_T1uT2)$df1,
   levene_test(total_consumption ~ 
                 (moisture_tx * temp_tx * destructive_time), 
-              data = flux_data)$df2,
+              data = flux_data_T1uT2)$df2,
   format(round(levene_test(total_consumption ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = flux_data)$statistic, 3), nsmall = 3),
+              data = flux_data_T1uT2)$statistic, 3), nsmall = 3),
   format(round(levene_test(total_consumption ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = flux_data)$p, 3), nsmall = 3),
+              data = flux_data_T1uT2)$p, 3), nsmall = 3),
   "Carbon Minderalization",
   "Shapiro-Wilk Test", 
   NA,
@@ -2933,16 +2936,16 @@ flux_df1 <- as.data.frame(matrix(data = c(
   "Levene's Test",
   levene_test(total_Cmin ~ 
                 (moisture_tx * temp_tx * destructive_time), 
-              data = flux_data)$df1,
+              data = flux_data_T1uT2)$df1,
   levene_test(total_Cmin ~ 
                 (moisture_tx * temp_tx * destructive_time), 
-              data = flux_data)$df2,
+              data = flux_data_T1uT2)$df2,
   format(round(levene_test(total_Cmin ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = flux_data)$statistic, 3), nsmall = 3),
+              data = flux_data_T1uT2)$statistic, 3), nsmall = 3),
   format(round(levene_test(total_Cmin ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = flux_data)$p, 3), nsmall = 3),
+              data = flux_data_T1uT2)$p, 3), nsmall = 3),
   "Nitrogen Minderalization",
   "Shapiro-Wilk Test", 
   NA,
@@ -2955,16 +2958,16 @@ flux_df1 <- as.data.frame(matrix(data = c(
   "Levene's Test",
   levene_test(total_Nmin ~ 
                 (moisture_tx * temp_tx * destructive_time), 
-              data = flux_data)$df1,
+              data = flux_data_T1uT2)$df1,
   levene_test(total_Nmin ~ 
                 (moisture_tx * temp_tx * destructive_time), 
-              data = flux_data)$df2,
+              data = flux_data_T1uT2)$df2,
   format(round(levene_test(total_Nmin ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = flux_data)$statistic, 3), nsmall = 3),
+              data = flux_data_T1uT2)$statistic, 3), nsmall = 3),
   format(round(levene_test(total_Nmin ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = flux_data)$p, 3), nsmall = 3)
+              data = flux_data_T1uT2)$p, 3), nsmall = 3)
   ), ncol = 6, byrow = T))
 
 colnames(flux_df1) <- 
@@ -2976,26 +2979,26 @@ knitr::kable(flux_df1, linesep = "\\hline")
 
 Mean total consumptive flux of C through the soil fauna food web ([Figure 3.7]A) was significantly related to block effects (F~1,33~ = 6.267, p = 0.017), and was greater in blocks characterized by especially high soil fauna abundances. Total C flux also significantly decreased under saturation (F~1,33~ = 8.653, p = 0.006), but significantly increased at 20 &deg;C vs. 12 &deg;C (F~1,33~ = 214.881, p < 0.001). This was driven by a significant temperature-by-sampling time interaction effect (F~1,33~ = 94.744, p < 0.001), which highlights that mean total flux in mesocosms assigned to 20 &deg;C decreased at T~2~ following a three-week return to 12 &deg;C field-moist conditions. Destructive sampling treatments alone did not significantly affect C flux (F~1,33~ = 0.748, p = 0.393). No other interaction effects significantly affected C flux ([Appendix E]). Mean total flux (&plusmn; SE) under each treatment is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
 ```{r Flux Results 2}
-consumption_aov <- Anova(consumption_lm2, type = 'III')
+consumption_aov2 <- Anova(consumption_lm2, type = 'III')
 
-consumption_aov
+consumption_aov2
 ```
 <br>
 
 Total C mineralization of the soil food web ([Figure 3.7]B) followed similar trends to total C flux whereby experimental block effects were significant (F~1,33~ = 6.173, p = 0.018). Total C mineralization increased at 20 &deg;C vs. 12 &deg;C (F~1,33~ = 236.901, p < 0.001), but decreased under saturated vs. field-moist soil moisture conditions (F~1,33~ = 8.725, p = 0.006). Destructive sampling treatments alone did not affect C mineralization (F~1,33~ = 0.739, p = 0.396), but C mineralization was influenced by a significant temperature by destructive sampling time interaction effect (F~1,33~
 = 105.313, p < 0.001), highlighting that total C mineralization in mesocosms assigned to 20 &deg;C decreased at T~2~ following a three-week return to 12 &deg;C field-moist conditions. No other interaction effects significantly influenced C mineralization ([Appendix E]). Following three weeks of assigned experimental soil moisture and temperature conditions at T~1~ destructive sampling, C mineralization represented ~41% of total flux in mesocosms assigned to 12 &deg;C conditions, and 42% of total flux in mesocosms assigned to 20 &deg;C conditions. For all mesocosms, during the three weeks of recovery under field (12 &deg;C field-moist) conditions (i.e., T~2~ destructive sampling), C mineralization remained at ~41% of the total flux. Mean total C mineralization (&plusmn; SE) under each treatment is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
 ```{r Flux Results 3}
-Cmin_aov <- Anova(Cmin_lm2, type = 'III')
+Cmin_aov2 <- Anova(Cmin_lm2, type = 'III')
 
-Cmin_aov
+Cmin_aov2
 ```
 <br>
 
 Mean total N mineralization ([Figure 3.7]C) was significantly influenced by both soil moisture (F~1,33~ = 13.061, p = 0.001) and temperature (F~1,33~ = 78.383, p < 0.001) conditions; mean total N mineralization decreased under saturated field-moist vs. conditions and increased at 20 &deg;C vs. 12 &deg;C. Furthermore, a significant temperature by destructive sampling time interaction effect (F~1,33~ = 54.875, p < 0.001) demonstrates that mean total N mineralization in mesocosms assigned to 20 &deg;C decreased at T~2~ following a three-week return to 12 &deg;C field-moist conditions. There were no significant block effects (F~1,33~ = 0.002, p = 0.965) and destructive sampling treatments did not affect N mineralization (F~1,33~ = 2.387, p = 0.132). No other interaction effects significantly affected N mineralization ([Appendix E]). Mean total N mineralization (&plusmn; SE) under each treatment is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
 ```{r Flux Results 4}
-Nmin_aov <- Anova(Nmin_lm2, type = 'III')
+Nmin_aov2 <- Anova(Nmin_lm2, type = 'III')
 
-Nmin_aov
+Nmin_aov2
 ```
 <br>
 
@@ -3006,16 +3009,614 @@ Nmin_aov
 # Appendices 
 
 ## Appenix A
+Node model parameters for the soil food web trophic groups under control (12 &deg;C) and warmed (20 &deg;C) conditions.  
+  
+Parameters include C:N and estimated percent assimilation efficiency (E~a~), percent production efficiency (E~p~), and population death rates (d).^1,2,3^
+```{r Appendix A, warning = F}
+AppenA.temp1 <- ExRes_prop_control 
+
+AppenA.temp1$CN <- round(AppenA.temp1$CN, 0)
+
+AppenA.temp1 <- AppenA.temp1 %>%
+  select(X = X,
+         `Node ID` = ID,
+         `C:N` = CN,
+         `E~a~ (12 &deg;C)` = a,
+         `E~p~ (12 &deg;C)` = p,
+         `d (12 &deg;C)` = d)
+
+AppenA.temp2 <- ExRes_prop_warming
+
+AppenA.temp2$a <- round(AppenA.temp2$p, 0)
+AppenA.temp2$p <- round(AppenA.temp2$p, 0)
+AppenA.temp2$d <- round(AppenA.temp2$d, 2)
+
+AppenA.temp2 <- AppenA.temp2 %>%
+  select(`Node ID` = ID,
+         `E~a~ (20 &deg;C)` = a,
+         `E~p~ (20 &deg;C)` = p,
+         `d (20 &deg;C)` = d)
+
+AppenA <- merge(x = AppenA.temp1, y = AppenA.temp2, by = "Node ID") %>%
+  arrange(X) %>%
+  select(-X)
+
+AppenA$`Node ID`[AppenA$`Node ID` == "mesostigs"] <- 
+  "Arthropod-feeding mites"
+AppenA$`Node ID`[AppenA$`Node ID` == "zerconidae"] <- 
+  "Nematode-feeding mites"
+AppenA$`Node ID`[AppenA$`Node ID` == "prostig_astig"] <- 
+  "Non-predatory prostigmatid and astigmatid mites"
+AppenA$`Node ID`[AppenA$`Node ID` == "juv_oribatids"] <- 
+  "Juvenile oribatid mites"
+AppenA$`Node ID`[AppenA$`Node ID` == "oribatids"] <- 
+  "Adult oribatid mites"
+AppenA$`Node ID`[AppenA$`Node ID` == "collembola"] <- 
+  "Collembola"
+AppenA$`Node ID`[AppenA$`Node ID` == "predatory_nematodes"] <- 
+  "Predatory nematodes"
+AppenA$`Node ID`[AppenA$`Node ID` == "bactivorous_nematodes"] <- 
+  "Bactivorous nematodes"
+AppenA$`Node ID`[AppenA$`Node ID` == "fungivorous_nematodes"] <- 
+  "Fungivorous nematodes"
+AppenA$`Node ID`[AppenA$`Node ID` == "omnivorous_nematodes"] <- 
+  "Omnivorous nematodes"
+AppenA$`Node ID`[AppenA$`Node ID` == "protists"] <- 
+  "Protists"
+AppenA$`Node ID`[AppenA$`Node ID` == "bacteria"] <- 
+  "Bacteria"
+AppenA$`Node ID`[AppenA$`Node ID` == "fungi"] <- 
+  "Fungi"
+AppenA$`Node ID`[AppenA$`Node ID` == "labile"] <- 
+  "Labile detritus"
+AppenA$`Node ID`[AppenA$`Node ID` == "recalcitrant"] <- 
+  "Recalcitrant detritus"
+
+knitr::kable(AppenA, linesep = "\\hline")
+```
+^1^Metabolic parameters from [Hunt et al. (1987)](https://doi.org/10.1007/BF00260580).  
+^2^Metabolic scaling of parameters for microbial nodes from [Li et al. (2019)](https://doi.org/10.1111/gcb.14517).  
+^3^Metabolic scaling of parameters for soil fauna nodes from Luxton ([1972](https://eurekamag.com/research/000/208/000208036.php), [1981](https://doi.org/10.1016/S0031-4056(23)03677-6)).
+<br>
 
 ## Appendix B
+The soil food web interaction matrix.  
+  
+Rows denote consumers, columns denote resources. A value of 1 indicates the presence of a trophic interaction, and a value of 0 indicates no interaction. Values greater than 0 but less than 1 indicate the presence of a weak trophic interaction. Meso = arthropod-feeding mites, Zerco = nematode-feeding mites, Mites NP = non-predatory prostigmatid and astigmatid mites, Col = collembola, Pred Nem = predatory nematodes, Bac Nem = bactivorous nematodes, Fung Nem = fungivorous nematodes, Omni Nem = omnivorous nematodes, Pro = protists, Bact = bacteria, Fung = fungi, Labile = labile detritus, Recal = recalcitrant detritus.
+```{r Appendix B, warning = F}
+AppenB <- ExRes_imat
+
+colnames(AppenB) <- c("Meso", "Zerco", "Mites NP", "Juv Orib", "Orib",
+                      "Coll", "Pred Nem", "Bac Nem", "Fung Nem", "Omni Nem",
+                      "Pro", "Bact", "Fung", "Labile", "Recal")
+rownames(AppenB) <- c("Meso", "Zerco", "Mites NP", "Juv Orib", "Orib",
+                      "Coll", "Pred Nem", "Bac Nem", "Fung Nem", "Omni Nem",
+                      "Pro", "Bact", "Fung", "Labile", "Recal")
+
+knitr::kable(AppenB, linesep = "\\hline")
+```
+<br>
 
 ## Appendix C
+Mean node biomasses.  
+  
+Biomasses (&plusmn; SE) are given in g of C per m^2^ of soil under each experimental treatment. Meso = arthropod-feeding mites, Zerco = nematode-feeding mites, Mites NP = non-predatory prostigmatid and astigmatid mites, Col = collembola, Pred Nem = predatory nematodes, Bac Nem = bactivorous nematodes, Fung Nem = fungivorous nematodes, Omni Nem = omnivorous nematodes, Pro = protists, Bact = bacteria, Fung = fungi, Labile = labile detritus, Recal = recalcitrant detritus.
+```{r Appendix C, warning = F}
+AppenC.temp <- rownames_to_column(as.data.frame(t(model_biomasses)), 
+                                  "Sample_ID") %>%
+  filter(!Sample_ID == "ExRes 5")
+
+AppenC.temp2 <- merge(x = sample_metadata, y = AppenC.temp, 
+                      by = "Sample_ID") %>%
+  mutate(tx = interaction(destructive_time, moisture_tx, temp_tx))
+
+AppenC.temp2$tx2 <- recode_factor(AppenC.temp2$tx, 
+                                  "T0.Ambient.12" = "T~0~",
+                                  "T0.Ambient.12" = "T~0~",
+                                  "T0.Ambient.20" = "T~0~", 
+                                  "T0.High.12" = "T~0~",
+                                  "T0.High.20" = "T~0~",
+                                  "T1.Ambient.12" = "T~1~ Field-Moist 12 &deg;C",
+                                  "T1.Ambient.20" = "T~1~ Field-Moist 20 &deg;C",
+                                  "T1.High.12" = "T~1~ Saturated 12 &deg;C",
+                                  "T1.High.20" = "T~1~ Saturated 20 &deg;C",
+                                  "T2.Ambient.12" = "T~2~ Field-Moist 12 &deg;C",
+                                  "T2.Ambient.20" = "T~2~ Field-Moist 20 &deg;C",
+                                  "T2.High.12" = "T~2~ Saturated 12 &deg;C",
+                                  "T2.High.20" = "T~2~ Saturated 20 &deg;C")
+
+AppenC.temp3 <- AppenC.temp2 %>% 
+  group_by(tx2) %>%
+  summarise(
+    meso.mean = mean(mesostigs_biomass),
+    meso.se = sd(mesostigs_biomass)/sqrt(length(mesostigs_biomass)),
+    zerco.mean = mean(zerconidae_biomass),
+    zerco.se = sd(zerconidae_biomass)/sqrt(length(zerconidae_biomass)),
+    mitesNP.mean = mean(prostig_astig_biomass),
+    mitesNP.se = sd(prostig_astig_biomass)/sqrt(length(prostig_astig_biomass)),
+    juvorib.mean = mean(juv_oribatids_biomass),
+    juvorib.se = sd(juv_oribatids_biomass)/sqrt(length(juv_oribatids_biomass)),
+    orib.mean = mean(oribatids_biomass),
+    orib.se = sd(oribatids_biomass)/sqrt(length(oribatids_biomass)),
+    coll.mean = mean(collembola_biomass),
+    coll.se = sd(collembola_biomass)/sqrt(length(collembola_biomass)),
+    prednem.mean = mean(n.predator_biomass),
+    prednem.se = sd(n.predator_biomass)/sqrt(length(n.predator_biomass)),
+    bactnem.mean = mean(n.bacterivore_biomass),
+    bactnem.se = sd(n.bacterivore_biomass)/sqrt(length(n.bacterivore_biomass)),
+    fungnem.mean = mean(n.fungivore_biomass),
+    fungnem.se = sd(n.fungivore_biomass)/sqrt(length(n.fungivore_biomass)),
+    omninem.mean = mean(n.omnivore_biomass),
+    omninem.se = sd(n.omnivore_biomass)/sqrt(length(n.omnivore_biomass)),
+    pro.mean = mean(protists_biomass),
+    pro.se = sd(protists_biomass)/sqrt(length(protists_biomass)),
+    bact.mean = mean(bacteria_biomass),
+    bact.se = sd(bacteria_biomass)/sqrt(length(bacteria_biomass)),
+    fung.mean = mean(fungi_biomass),
+    fung.se = sd(fungi_biomass)/sqrt(length(fungi_biomass)),
+    labile.mean = mean(labile_biomass),
+    labile.se = sd(labile_biomass)/sqrt(length(labile_biomass)),
+    recal.mean = mean(recal_biomass),
+    recal.se = sd(recal_biomass)/sqrt(length(recal_biomass))
+  )
+
+AppenC <- AppenC.temp3 %>%
+  select("Treatment" = "tx2") %>%
+  mutate(Meso = paste0(round(AppenC.temp3$meso.mean, 3), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$meso.se, 3)), 
+         Zerco = paste0(round(AppenC.temp3$zerco.mean, 3), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$zerco.se, 3)),
+         `Mites NP` = paste0(round(AppenC.temp3$mitesNP.mean, 3), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$mitesNP.se, 3)),
+         `Juv Orib` = paste0(round(AppenC.temp3$juvorib.mean, 2), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$juvorib.se, 2)),
+         Orib = paste0(round(AppenC.temp3$orib.mean, 2), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$orib.se, 2)),
+         Coll = paste0(round(AppenC.temp3$coll.mean, 3), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$coll.se, 3)),
+         `Pred Nem` = paste0(round(AppenC.temp3$prednem.mean, 4), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$prednem.se, 4)),
+         `Bac Nem` = paste0(round(AppenC.temp3$bactnem.mean, 4), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$bactnem.se, 4)),
+         `Fung Nem` = paste0(round(AppenC.temp3$fungnem.mean, 4), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$fungnem.se, 4)),
+         `Omni Nem` = paste0(round(AppenC.temp3$omninem.mean, 4), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$omninem.se, 4)),
+         Pro = paste0(round(AppenC.temp3$pro.mean, 1), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$pro.se, 1)),
+         Bact = paste0(round(AppenC.temp3$bact.mean, 1), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$bact.se, 1)),
+         Fung = paste0(round(AppenC.temp3$fung.mean, 0), 
+                       " &plusmn; ", 
+                       round(AppenC.temp3$fung.se, 0)),
+         Labile = paste0(round(AppenC.temp3$labile.mean, 0)),
+         Recal = paste0(round(AppenC.temp3$recal.mean, 0))
+         )
+
+knitr::kable(AppenC, linesep = "\\hline")
+```
+<br>
 
 ## Appendix D
+Supplementary table of means.
+  
+Mean value (&plusmn; SE) for each variable measured. Heterotrophic respiration is given in g of C per m^2^ per year; soil moisture is given in ln(percent) gravimetrically; pH is given in ln(pH); C:N ratio is a unitless quantity; phenol oxidase and peroxidase concentration is given in &mu;Mol substrate per g soil per hour; total abundance and microfauna abundance is given in individuals per m^2^; mesofauna abundance is given in ln(individuals per m^2^); total biomass is given in g of C per m^2^; consumptive flux and C mineralization are given in g of C per m^2^ per year; N mineralization is given in g of N per m^2^ per year.
+```{r Appendix D, warning = F}
+resp.data$tx <- interaction(resp.data$destructive_time,
+                            resp.data$temp_tx, resp.data$moisture_tx) 
+
+resp.data <- resp.data %>%
+  mutate(tx = 
+           fct_recode(tx,
+                      "T\u2080" = "T0.12.Ambient",
+                      "T\u2080" = "T0.12.High",
+                      "T\u2080" = "T0.20.Ambient",
+                      "T\u2080" = "T0.20.High",
+                      "T\u2081 12\u00B0C Field-Moist" = "T1.12.Ambient",
+                      "T\u2081 12\u00B0C Saturated" = "T1.12.High",
+                      "T\u2081 20\u00B0C Field-Moist" = "T1.20.Ambient",
+                      "T\u2081 20\u00B0C Saturated" = "T1.20.High",
+                      "T\u2082 12\u00B0C Field-Moist" = "T2.12.Ambient",
+                      "T\u2082 12\u00B0C Saturated" = "T2.12.High",
+                      "T\u2082 20\u00B0C Field-Moist" = "T2.20.Ambient",
+                      "T\u2082 20\u00B0C Saturated" = "T2.20.High"
+  ))
+
+resp_summary <- resp.data %>%
+  group_by(tx) %>%
+  summarize(
+    mean.resp = mean(cum_resp),
+    se.resp = sd(cum_resp)/sqrt(length(cum_resp))
+  ) %>%
+  mutate(`Heterotrophic Respiration` = 
+           paste0(format(round(mean.resp, 1), nsmall = 1), 
+                  " &plusmn; ",
+                  format(round(se.resp, 1), nsmall=1))) %>%
+  select(-c(mean.resp, se.resp))
+
+soil_data$tx <- interaction(soil_data$destructive_time,
+                            soil_data$temp_tx, soil_data$moisture_tx) 
+
+soil_data <- soil_data %>%
+  mutate(tx = 
+           fct_recode(tx,
+                      "T\u2080" = "T0.12.Ambient",
+                      "T\u2080" = "T0.12.High",
+                      "T\u2080" = "T0.20.Ambient",
+                      "T\u2080" = "T0.20.High",
+                      "T\u2081 12\u00B0C Field-Moist" = "T1.12.Ambient",
+                      "T\u2081 12\u00B0C Saturated" = "T1.12.High",
+                      "T\u2081 20\u00B0C Field-Moist" = "T1.20.Ambient",
+                      "T\u2081 20\u00B0C Saturated" = "T1.20.High",
+                      "T\u2082 12\u00B0C Field-Moist" = "T2.12.Ambient",
+                      "T\u2082 12\u00B0C Saturated" = "T2.12.High",
+                      "T\u2082 20\u00B0C Field-Moist" = "T2.20.Ambient",
+                      "T\u2082 20\u00B0C Saturated" = "T2.20.High"
+  ))
+
+soil_summary <- soil_data %>%
+  group_by(tx) %>%
+  summarize(
+    mean.moisture = mean(log(pct_moisture)),
+    se.moisture = sd(log(pct_moisture))/sqrt(length(pct_moisture)),
+    mean.pH = mean(log(pH)),
+    se.pH = sd(log(pH))/sqrt(length(pH)),
+    mean.CN = mean(C_N_ratio),
+    se.CN = sd(C_N_ratio)/sqrt(length(C_N_ratio)),
+    mean.phenox = mean(Phenox),
+    se.phenox = sd(Phenox)/sqrt(length(Phenox)),
+    mean.perox = mean(na.omit(Perox)),
+    se.perox = sd(na.omit(Perox))/sqrt(length(na.omit(Perox)))
+  ) %>%
+  mutate(`Soil Moisture` = 
+           paste0(format(round(mean.moisture, 2), nsmall = 2), 
+                  " &plusmn; ",
+                  format(round(se.moisture, 2), nsmall = 2)),
+         `pH` = 
+           paste0(format(round(mean.pH, 3), nsmall = 3), 
+                  " &plusmn; ",
+                  format(round(se.pH, 3), nsmall = 3)),
+         `C:N` = 
+           paste0(format(round(mean.CN, 0), nsmall = 0), 
+                  " &plusmn; ",
+                  format(round(se.CN, 0), nsmall = 0)),
+         `Phenol oxidase` = 
+           paste0(format(round(mean.phenox, 0), nsmall = 0), 
+                  " &plusmn; ",
+                  format(round(se.phenox, 0), nsmall = 0)),
+         `Peroxidase` = 
+           paste0(format(round(mean.perox, 0), nsmall = 0), 
+                  " &plusmn; ",
+                  format(round(se.perox, 0), nsmall = 0))
+         ) %>%
+  select(-c(mean.moisture, se.moisture, mean.pH, se.pH, mean.CN, se.CN,
+            mean.phenox, se.phenox, mean.perox, se.perox))
+
+abundance_data$tx <- interaction(abundance_data$destructive_time,
+                                 abundance_data$temp_tx, 
+                                 abundance_data$moisture_tx) 
+
+abundance_data <- abundance_data %>%
+  mutate(tx = 
+           fct_recode(tx,
+                      "T\u2080" = "T0.12.Ambient",
+                      "T\u2080" = "T0.12.High",
+                      "T\u2080" = "T0.20.Ambient",
+                      "T\u2080" = "T0.20.High",
+                      "T\u2081 12\u00B0C Field-Moist" = "T1.12.Ambient",
+                      "T\u2081 12\u00B0C Saturated" = "T1.12.High",
+                      "T\u2081 20\u00B0C Field-Moist" = "T1.20.Ambient",
+                      "T\u2081 20\u00B0C Saturated" = "T1.20.High",
+                      "T\u2082 12\u00B0C Field-Moist" = "T2.12.Ambient",
+                      "T\u2082 12\u00B0C Saturated" = "T2.12.High",
+                      "T\u2082 20\u00B0C Field-Moist" = "T2.20.Ambient",
+                      "T\u2082 20\u00B0C Saturated" = "T2.20.High"
+  ))
+
+abundance_summary <- abundance_data %>%
+  group_by(tx) %>%
+  summarize(
+    mean.total.ab = mean(total_ab_standardized),
+    se.total.ab = sd(total_ab_standardized)/
+      sqrt(length(total_ab_standardized)),
+    mean.micro.ab = mean(total_micro_ab_standardized),
+    se.micro.ab = sd(total_micro_ab_standardized)/
+      sqrt(length(total_micro_ab_standardized)),
+    mean.meso.ab = mean(log(total_meso_ab_standardized)),
+    se.meso.ab = sd(log(total_meso_ab_standardized))/
+      sqrt(length(total_meso_ab_standardized))
+  ) %>%
+  mutate(`Total Abundance` = 
+           paste0(format(round(mean.total.ab, -4), nsmall = 0), 
+                  " &plusmn; ",
+                  format(round(se.total.ab, -4), nsmall=0)),
+         `Microfauna Abundance` = 
+           paste0(format(round(mean.micro.ab, -4), nsmall = 0), 
+                  " &plusmn; ",
+                  format(round(se.micro.ab, -4), nsmall=0)),
+         `Mesofauna Abundance` = 
+           paste0(format(round(mean.meso.ab, 1), nsmall = 1), 
+                  " &plusmn; ",
+                  format(round(se.meso.ab, 1), nsmall=1))
+         ) %>%
+  select(-c(mean.total.ab, se.total.ab, mean.micro.ab, se.micro.ab, 
+            mean.meso.ab, se.meso.ab))
+
+biomass_data$tx <- interaction(biomass_data$destructive_time,
+                               biomass_data$temp_tx, 
+                               biomass_data$moisture_tx) 
+
+biomass_data <- biomass_data %>%
+  mutate(tx = 
+           fct_recode(tx,
+                      "T\u2080" = "T0.12.Ambient",
+                      "T\u2080" = "T0.12.High",
+                      "T\u2080" = "T0.20.Ambient",
+                      "T\u2080" = "T0.20.High",
+                      "T\u2081 12\u00B0C Field-Moist" = "T1.12.Ambient",
+                      "T\u2081 12\u00B0C Saturated" = "T1.12.High",
+                      "T\u2081 20\u00B0C Field-Moist" = "T1.20.Ambient",
+                      "T\u2081 20\u00B0C Saturated" = "T1.20.High",
+                      "T\u2082 12\u00B0C Field-Moist" = "T2.12.Ambient",
+                      "T\u2082 12\u00B0C Saturated" = "T2.12.High",
+                      "T\u2082 20\u00B0C Field-Moist" = "T2.20.Ambient",
+                      "T\u2082 20\u00B0C Saturated" = "T2.20.High"
+  ))
+
+biomass_summary <- biomass_data %>%
+  group_by(tx) %>%
+  summarize(
+    mean.total.biom = mean(total_biomass),
+    se.total.biom = sd(total_biomass)/
+      sqrt(length(total_biomass)),
+    mean.micro.biom = mean(micro_biomass),
+    se.micro.biom = sd(micro_biomass)/
+      sqrt(length(micro_biomass)),
+    mean.meso.biom = mean(meso_biomass),
+    se.meso.biom = sd(meso_biomass)/
+      sqrt(length(meso_biomass))
+  ) %>%
+  mutate(`Total Biomass` = 
+           paste0(format(round(mean.total.biom, 2), nsmall = 2), 
+                  " &plusmn; ",
+                  format(round(se.total.biom, 2), nsmall = 2)),
+         `Microfauna Biomass` = 
+           paste0(format(round(mean.micro.biom, 4), nsmall = 4), 
+                  " &plusmn; ",
+                  format(round(se.micro.biom, 4), nsmall = 4)),
+         `Mesofauna Biomass` = 
+           paste0(format(round(mean.meso.biom, 2), nsmall = 2), 
+                  " &plusmn; ",
+                  format(round(se.meso.biom, 2), nsmall = 2))
+         ) %>%
+  select(-c(mean.total.biom, se.total.biom, mean.micro.biom, se.micro.biom, 
+            mean.meso.biom, se.meso.biom))
+
+flux_data$tx <- interaction(flux_data$destructive_time,
+                            flux_data$temp_tx,
+                            flux_data$moisture_tx) 
+
+flux_data <- flux_data %>%
+  mutate(tx = 
+           fct_recode(tx,
+                      "T\u2080" = "T0.12.Ambient",
+                      "T\u2080" = "T0.12.High",
+                      "T\u2080" = "T0.20.Ambient",
+                      "T\u2080" = "T0.20.High",
+                      "T\u2081 12\u00B0C Field-Moist" = "T1.12.Ambient",
+                      "T\u2081 12\u00B0C Saturated" = "T1.12.High",
+                      "T\u2081 20\u00B0C Field-Moist" = "T1.20.Ambient",
+                      "T\u2081 20\u00B0C Saturated" = "T1.20.High",
+                      "T\u2082 12\u00B0C Field-Moist" = "T2.12.Ambient",
+                      "T\u2082 12\u00B0C Saturated" = "T2.12.High",
+                      "T\u2082 20\u00B0C Field-Moist" = "T2.20.Ambient",
+                      "T\u2082 20\u00B0C Saturated" = "T2.20.High"
+  ))
+
+flux_summary <- flux_data %>%
+  group_by(tx) %>%
+  summarize(
+    mean.cons = mean(total_consumption),
+    se.cons = sd(total_consumption)/
+      sqrt(length(total_consumption)),
+    mean.Cmin = mean(total_Cmin),
+    se.Cmin = sd(total_Cmin)/
+      sqrt(length(total_Cmin)),
+    mean.Nmin = mean(total_Nmin),
+    se.Nmin = sd(total_Nmin)/
+      sqrt(length(total_Nmin))
+  ) %>%
+  mutate(`Consumptive Flux` = 
+           paste0(format(round(mean.cons, 0), nsmall = 0), 
+                  " &plusmn; ",
+                  format(round(se.cons, 0), nsmall = 0)),
+         `C Mineralization` = 
+           paste0(format(round(mean.Cmin, 0), nsmall = 0), 
+                  " &plusmn; ",
+                  format(round(se.Cmin, 0), nsmall = 0)),
+         `N Mineralization` = 
+           paste0(format(round(mean.Nmin, 2), nsmall = 2), 
+                  " &plusmn; ",
+                  format(round(se.Nmin, 2), nsmall = 2))
+         ) %>%
+  select(-c(mean.cons, se.cons, mean.Cmin, se.Cmin, 
+            mean.Nmin, se.Nmin))
+
+AppenD <- t(merge(x = resp_summary, y = soil_summary, by = "tx") %>%
+  left_join(abundance_summary, by = "tx") %>%
+  left_join(biomass_summary, by = "tx") %>%
+  left_join(flux_summary, by = "tx") %>%
+  column_to_rownames("tx"))
+
+knitr::kable(AppenD, linesep = "\\hline")
+```
+<br>
 
 ## Appendix E
+Supplementary table of ANOVA outputs.
+  
+ANOVA output for each variable measured. Heterotrophic respiration is given in ln(g of C per m^2^ per year); soil moisture is given in ln(percent) gravimetrically; pH is given in ln(pH); C:N ratio is a unitless quantity; phenol oxidase and peroxidase concentration is given in &mu;Mol substrate per g soil per hour; total abundance and microfauna abundance is given in individuals per m^2^; mesofauna abundance is given in ln(individuals per m^2^); total biomass is given in in g of C per m^2^; consumptive flux and C mineralization are given in g of C per m^2^ per year; N mineralization is given in g of N per m^2^ per year.
+```{r Appendix E, warning = F}
+sub_digits <- function(x) {
+  subs <- c("₀","₁","₂","₃","₄","₅","₆","₇","₈","₉")
+  digits <- strsplit(as.character(x), "")[[1]]
+  paste0(subs[as.integer(digits) + 1], collapse = "")
+}
+
+terms <- c(
+  "(Intercept)",
+  "moisture_tx",
+  "temp_tx",
+  "destructive_time",
+  "block_effect",
+  "temp_tx:moisture_tx",
+  "destructive_tx:moisture_tx",
+  "temp_tx:destructive_tx",
+  "temp_tx:destructive_tx:moisture_tx"
+)
+
+fmt_term_safe <- function(aov_tbl, term) {
+  # Check if term exists in the ANOVA table
+  if (!(term %in% rownames(aov_tbl))) {
+    return("--")  # or "-" if you prefer
+  }
+  
+  F_val <- round(aov_tbl[term, "F value"], 3)
+  p_val <- round(aov_tbl[term, "Pr(>F)"], 3)
+  df_term <- aov_tbl[term, "Df"]
+  df_res  <- aov_tbl["Residuals", "Df"]
+  
+  paste0(
+    "F", sub_digits(df_term),
+    "\u02CC",
+    sub_digits(df_res),
+    " = ", format(F_val, nsmall = 3),
+    ", <br> p = ", format(p_val, nsmall = 3)
+  )
+}
+
+fmt_aov_row_safe <- function(aov_tbl, terms) {
+  vapply(terms, fmt_term_safe, aov_tbl = aov_tbl, FUN.VALUE = character(1))
+}
+
+aov_list <- list(
+  `Heterotrophic Respiration` = resp_aov2,
+  `Soil pH` = pH_aov2,
+   `C:N` = CN_aov2,
+  `Phenol oxidase` = phenox_aov2,
+  `Peroxidase` = perox_aov2,
+  `Total Abundance` = total_ab_aov2,
+  `Microfauna Abundance` = micro_ab_aov2,
+  `Mesofauna Abudnace` = meso_ab_aov2,
+  `Total Biomass` = total_biom_aov2,
+  `Microfauna Biomass` = micro_biom_aov2,
+  `Mesofauna Biomass` = meso_biom_aov2,
+  `Consumptive Flux` = consumption_aov2,
+  `C Mineralization` = Cmin_aov2,
+  `N Mineralization` = Nmin_aov2
+)
+
+AppenE <- do.call(
+  rbind,
+  lapply(aov_list, fmt_aov_row_safe, terms = terms)
+)
+
+colnames(AppenE) <- c("Intercept", "Soil Moisture Treatment", 
+                      "Temperature Treatment", 
+                      "Destructive Sampling Treatment", "Block Effect", 
+                      "Soil Moisture x Temperature Interaction", 
+                      "Soil Moisture x Destructive Sampling Interaction",
+                      "Temperature x Destructive Sampling Interaction",
+                      "Soil Moisture x Temperature x Destructive Sampling Interaction")
+
+knitr::kable(AppenE, linesep = "\\hline")
+```
+<br>
 
 ## Appendix F
+Supplementary table of linear model outputs.
+  
+Estimate of coefficient (&plusmn; SEM) for each variable measured, based on corresponding linear models. Heterotrophic respiration is given in ln(g of C per m^2^ per year); soil moisture is given in ln(percent) gravimetrically; pH is given in ln(pH); C:N ratio is a unitless quantity; phenol oxidase and peroxidase concentration is given in &mu;Mol substrate per g soil per hour; total abundance and microfauna abundance is given in individuals per m2; mesofauna abundance is given in ln(individuals per m^2^); total biomass is given in in g of C per m^2^; consumptive flux and C mineralization are given in g of C per m^2^ per year; N mineralization is given in g of N per m^2^ per year.
+```{r Appendix F, warning = F}
+lm_terms <- c(
+  "(Intercept)",
+  "moisture_txHigh",
+  "temp_tx20",
+  "destructive_timeT2",
+  "block_effecthigh ",
+  "moisture_txHigh:temp_tx20",
+  "moisture_txHigh:destructive_timeT2",
+  "temp_tx20:destructive_timeT2",
+  "moisture_txHigh:temp_tx20:destructive_timeT2"
+)
+
+fmt_lm_term_safe <- function(lm_tbl, term) {
+  coefs <- summary(lm_tbl)$coefficients
+  if (!(term %in% rownames(coefs))) {
+    return("--")   # or "-" if you prefer
+  }
+  
+  est <- coefs[term, "Estimate"]
+  se  <- coefs[term, "Std. Error"]
+  digits <- get_round_digit(se)
+  
+  paste0(
+    format(round(est, digits), digits),
+    " \u00B1 ",
+    format(round(se, digits), digits)
+  )
+}
+
+
+fmt_lm_row_safe <- function(lm_tbl, terms) {
+  vapply(terms, fmt_lm_term_safe, lm_tbl = lm_tbl, FUN.VALUE = character(1))
+}
+
+lm_list <- list(
+  `Heterotrophic Respiration` = resp_lm2,
+  `Soil pH` = pH_lm2,
+   `C:N` = CN_lm2,
+  `Phenol oxidase` = phenox_lm2,
+  `Peroxidase` = perox_lm2,
+  `Total Abundance` = total_ab_lm2,
+  `Microfauna Abundance` = micro_ab_lm2,
+  `Mesofauna Abudnace` = meso_ab_lm2,
+  `Total Biomass` = total_biom_lm2,
+  `Microfauna Biomass` = micro_biom_lm2,
+  `Mesofauna Biomass` = meso_biom_lm2,
+  `Consumptive Flux` = consumption_lm2,
+  `C Mineralization` = Cmin_lm2,
+  `N Mineralization` = Nmin_lm2
+)
+
+AppenF <- do.call(
+  rbind,
+  lapply(lm_list, fmt_lm_row_safe, terms = lm_terms)
+)
+
+colnames(AppenF) <- c("Intercept", "Saturated Soil Moisture", 
+                      "+ 8\u00B0C Warming", 
+                      "T\u2082 Destructive Sampling", "High Abundance Block", 
+                      "Saturated Soil Moisture x + 8\u00B0C Warming Interaction", 
+                      "Saturated Soil Moisture x T\u2082 Destructive Sampling Interaction",
+                      "Temperature x T\u2082 Destructive Sampling Interaction",
+                      "Saturated Soil Moisture x + 8\u00B0C Warming x T\u2082 Destructive Sampling Interaction")
+
+knitr::kable(AppenF, linesep = "\\hline")
+```
+<br>
 
 # Curriculum Vitae
 
