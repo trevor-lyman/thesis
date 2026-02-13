@@ -288,7 +288,7 @@ CN_plot; CN_summary; summary(CN_lm); CN_aov
 # aggregate everything
 soil_data_temp <- pH_data %>%
   select(!pH_weight) %>%
-  mutate("pct_moisture" = soil_moisture_data$pct_moisture) 
+  mutate("pct_moisture" = soil_moisture_data$pct_moisture) ### INCORRECT JOIN!!!
 
 soil_data <- merge(x = soil_data_temp, y = CNS_data, 
                    by = "Sample_ID", all = T) %>%

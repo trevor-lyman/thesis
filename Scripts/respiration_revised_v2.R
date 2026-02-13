@@ -216,3 +216,4 @@ resp_plot; resp_summary; summary(resp_lm); resp_aov
 temp <- lm(cum_resp~moisture_tx*temp_tx*destructive_time+block_effect, data = resp.data)
 tukey <- aov(temp)
 TukeyHSD(tukey)
+

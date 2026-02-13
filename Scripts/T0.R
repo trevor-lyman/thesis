@@ -78,8 +78,7 @@ resp_summary2
 
 aggregated_soil_data <- merge(x = sample_metadata, y = soil_data,
                            by = "Sample_ID") %>%
-  filter(destructive_time == "T0") %>%
-  mutate(pct_moisture = log(pct_moisture))
+  filter(destructive_time == "T0") 
 
 aggregated_soil_data$destructive_time <- 
   as.factor(aggregated_soil_data$destructive_time)
