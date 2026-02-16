@@ -166,7 +166,6 @@ In the lab, each intact peat core was placed into a 500 mL glass jar to create e
 sample_metadata <- read.csv("Data/sample metadata v2.csv")
 sample_metadata$block_effect <- factor(sample_metadata$block_effect, 
                                         levels = c("low", "high"))
-
 head(sample_metadata)
 ```
 <br>
@@ -537,20 +536,23 @@ CNS_data <- read.csv("Data/CNS data.csv")
 enzyme_data <- na.omit(read.csv("Data/enzyme data.csv"))
 
 # remove enzyme outliers
-enzyme_data$Perox[27] <- NA
+enzyme_data$Perox[enzyme_data$Sample_ID == "ExRes 37"] <- NA
 enzyme_data$Perox[enzyme_data$Sample_ID == "ExRes 33"] <- NA
 
 # merge pH and soil moisture
 soil_temp1 <- merge(x = pH_data, y = soil_moisture_data, by = "Sample_ID")
 
 # merge above df with CNS data
-soil_temp2 <- merge(x = soil_temp1, y = CNS_data, by = "Sample_ID")
+soil_temp2 <- merge(x = soil_temp1, y = CNS_data, by = "Sample_ID", 
+                    all = TRUE)
 
 # merge above df with enzyme data
-soil_temp3 <- merge(x = soil_temp2, y = enzyme_data, by = "Sample_ID")
+soil_temp3 <- merge(x = soil_temp2, y = enzyme_data, by = "Sample_ID", 
+                    all = TRUE)
 
 # merge soil data with sample metadata
-soil_data <- merge(x = sample_metadata, y = soil_temp3, by = "Sample_ID")
+soil_data <- merge(x = sample_metadata, y = soil_temp3, by = "Sample_ID",
+                   all = TRUE)
 
 # tidy data
 soil_data$destructive_time <- 
@@ -1582,7 +1584,7 @@ model_outputs_temp <- as.data.frame(cbind(Sample_ID, total_consumption,
 # Step 6: Merge with Sample Metadata  
 flux_data <- merge(x = sample_metadata, y = model_outputs_temp, 
                        by = "Sample_ID") %>%
-  filter(!"Sample_ID" == "ExRes 5")
+  filter(!Sample_ID == "ExRes 5")
 
 flux_data$total_consumption <- as.numeric(flux_data$total_consumption)
 flux_data$total_Cmin <- as.numeric(flux_data$total_Cmin)
@@ -1844,7 +1846,7 @@ resp_plot
 ```
 <br>
 
-Heterotrophic respiration was transformed on natural log, (ln) scale to conform to the assumption of normality. Log-transformed soil heterotrophic respiration satisfied the assumptions of normality and homodescacity, as per a Shapiro-Wilk (W = 0.983, p = 0.794) and Levene’s test (F~7,31~ = 0.519, p = 0.813). Log-transformed heterotrophic respiration, estimated for each mesocosm ([Figure 3.1]), was not significantly affected by soil moisture (F[1,34] = 1.777, p = 0.191), nor temperature (F~1,34~ = 2.849, p = 0.101); heterotrophic respiration tended to be greater in mesocosms assigned to 20 &deg;C vs. 12 &deg;C. Neither destructive sampling time (F~1,34~ = 0.004, p = 0.950) nor block effects (F~1,34~ = 0.216, p = 0.645) used to account for differences in field sampling location significantly affected log-transformed respiration. There were no significant interaction effects between soil moisture, temperature, and destructive sampling time ([Appendix E]). Mean soil heterotrophic respiration (&plusmn; SE) under each treatment is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
+Heterotrophic respiration was transformed on natural log, (ln) scale to conform to the assumption of normality. Log-transformed soil heterotrophic respiration satisfied the assumptions of normality and homodescacity, as per a Shapiro-Wilk (W = 0.983, p = 0.794) and Levene’s test (F~7,31~ = 0.519, p = 0.813). Log-transformed heterotrophic respiration, estimated for each mesocosm ([Figure 3.1]), was not significantly affected by soil moisture (F~1,34~ = 1.777, p = 0.191), nor temperature (F~1,34~ = 2.849, p = 0.101); heterotrophic respiration tended to be greater in mesocosms assigned to 20 &deg;C vs. 12 &deg;C. Neither destructive sampling time (F~1,34~ = 0.004, p = 0.950) nor block effects (F~1,34~ = 0.216, p = 0.645) used to account for differences in field sampling location significantly affected log-transformed respiration. There were no significant interaction effects between soil moisture, temperature, and destructive sampling time ([Appendix E]). Mean soil heterotrophic respiration (&plusmn; SE) under each treatment is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
 ```{r Resp Results 1, warning=F}
 resp_T1uT2 <- resp.data %>% filter(!destructive_time=="T0")
 
@@ -2237,7 +2239,7 @@ enzymes_df1 <- as.data.frame(matrix(data = c(
          nsmall = 3),
   format(round(shapiro_test(residuals(phenox_lm2))$p.value, 3),
          nsmasll = 3),
-  "Soil Moisture",
+  "Phenol Oxidase Concentration",
   "Levene's Test",
   levene_test(Phenox ~ (moisture_tx * temp_tx * destructive_time), 
               data = soil_T1uT2)$df1,
@@ -2255,7 +2257,7 @@ enzymes_df1 <- as.data.frame(matrix(data = c(
   NA,
   format(round(shapiro_test(residuals(perox_lm2))$statistic, 3), nsmall = 3),
   format(round(shapiro_test(residuals(perox_lm2))$p.value, 3), nsmall = 3),
-  "Soil pH",
+  "Peroxidase Concentration",
   "Levene's Test",
   levene_test(Perox ~ (moisture_tx * temp_tx * destructive_time), 
               data = soil_T1uT2)$df1,
@@ -2774,14 +2776,14 @@ flux_data_T1uT2 <- flux_data %>%
   filter(!Sample_ID == "ExRes 5")
 
 flux_data_T1uT2$tx <- interaction(flux_data_T1uT2$temp_tx, 
-                            flux_data_T1uT2$moisture_tx) 
+                                  flux_data_T1uT2$moisture_tx) 
 
 flux_data_T1uT2 <- flux_data_T1uT2 %>%
   mutate(tx = fct_recode(tx,
-    "12\u00B0C Field-Moist" = "12.Ambient",
-    "20\u00B0C Field-Moist" = "20.Ambient",
-    "12\u00B0C Saturated"   = "12.High",
-    "20\u00B0C Saturated"   = "20.High"
+    "12\u00B0 Field-Moist" = "12.Ambient",
+    "20\u00B0 Field-Moist" = "20.Ambient",
+    "12\u00B0 Saturated"   = "12.High",
+    "20\u00B0 Saturated"   = "20.High"
   ))
 
 consumption_plot <- 
