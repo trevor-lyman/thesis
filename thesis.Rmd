@@ -55,6 +55,7 @@ library(car) # Anova()
 library(vegan)
 library(soilfoodwebs)
 library(tibble) # rownames_to_column
+library(scales) # comma
 
 RNGkind(sample.kind = "Rounding") 
 ```
@@ -1608,14 +1609,7 @@ knitr::include_graphics("Conceptual Diagrams/Figure 2.1.png")
 
 # Chapter 3: Results
 ## 3.1 Pre-experimental Group (T~0~)
-Five experimental mesocosms were destructively sampled following a three-week recovery period but prior to deployment of the experimental treatments (T~0~). The following conditions were recorded for these five control mesocosms and were assumed to be representative of field values. The mean heterotrophic respiration (&plusmn; SE) prior to implementing experimental soil moisture and temperature conditions at T~0~ was 7.0 &plusmn; 0.1 ln(g of C per m^2^ per year), which equates to ~1200 &plusmn; 200 g of C per m^2^ per year. The mean soil moisture (&plusmn; SE) was 800 &plusmn; 50% based on a dry weight gravimetric measurement, while the average soil pH (&plusmn; SE) was 4.08 &plusmn; 0.05. Mean C:N ratio (&plusmn; SE) was 37 &plusmn; 2, while mean microbial enzymatic activity (&plusmn; SE) was 160 &plusmn; 20 &mu;mol substrate per g soil per hour for phenol oxidase and 154 &plusmn; 8 &mu;mol substrate per g soil per hour for peroxidase concentration. The mean total microfauna, mesofauna, and total fauna abundances (&plusmn; SE) were: 170,000 (&plusmn; 40,000), 360,000 (&plusmn; 40,000), and 540,000 (&plusmn; 50,000) individuals per m^2^, respectively.
-```{r T0 Results 1, warning=F}
-resp_T0 <- resp.data %>% filter(destructive_time == "T0")
-
-soil_T0 <- soil_data %>% filter(destructive_time == "T0")
-
-abundance_T0 <- abundance_data %>% filter(destructive_time == "T0")
-
+```{r T0 Results 1}
 # Function to find decimal places
 get_round_digit <- function(x) {
   if (x == 0) return(0)
@@ -1624,13 +1618,23 @@ get_round_digit <- function(x) {
   -floor(log10(abs(x)))
 }
 
+resp_T0 <- resp.data %>% filter(destructive_time == "T0")
+
+soil_T0 <- soil_data %>% filter(destructive_time == "T0")
+
+abundance_T0 <- abundance_data %>% filter(destructive_time == "T0")
+```
+<br>
+
+Five experimental mesocosms were destructively sampled following a three-week recovery period but prior to deployment of the experimental treatments (T~0~). The following conditions were recorded for these five control mesocosms and were assumed to be representative of field values. The mean heterotrophic respiration (&plusmn; SE) prior to implementing experimental soil moisture and temperature conditions at T~0~ was `r format(round(mean(resp_T0$cum_resp), digits = get_round_digit(signif(sd(resp_T0$cum_resp)/sqrt(length(resp_T0$cum_resp)), digits = 1))), nsmall = 1)` &plusmn; `r signif(sd(resp_T0$cum_resp)/sqrt(length(resp_T0$cum_resp)), digits = 1)` ln(g of C per m^2^ per year), which equates to ~`r comma(round(mean(exp(resp_T0$cum_resp)), digits = get_round_digit(signif(sd(exp(resp_T0$cum_resp))/sqrt(length(resp_T0$cum_resp)), digits = 1))))` &plusmn; `r signif(sd(exp(resp_T0$cum_resp))/sqrt(length(resp_T0$cum_resp)), digits = 1)` g of C per m^2^ per year. The mean soil moisture (&plusmn; SE) was `r round(mean(soil_T0$pct_moisture), digits = get_round_digit(signif(sd(soil_T0$pct_moisture)/sqrt(length(soil_T0$pct_moisture)), digits = 1)))` &plusmn; `r signif(sd(soil_T0$pct_moisture)/sqrt(length(soil_T0$pct_moisture)), digits = 1)`% based on a dry weight gravimetric measurement, while the average soil pH (&plusmn; SE) was `r round(mean(soil_T0$pH), digits = get_round_digit(signif(sd(soil_T0$pH)/sqrt(length(soil_T0$pH)), digits = 1)))` &plusmn; `r signif(sd(soil_T0$pH)/sqrt(length(soil_T0$pH)), digits = 1)`. Mean C:N ratio (&plusmn; SE) was `r round(mean(soil_T0$C_N_ratio), digits = get_round_digit(signif(sd(soil_T0$C_N_ratio)/sqrt(length(soil_T0$C_N_ratio)), digits = 1)))` &plusmn; `r signif(sd(soil_T0$C_N_ratio)/sqrt(length(soil_T0$C_N_ratio)), digits = 1)`, while mean microbial enzymatic activity (&plusmn; SE) was `r round(mean(soil_T0$Phenox), digits = get_round_digit(signif(sd(soil_T0$Phenox)/sqrt(length(soil_T0$Phenox)), digits = 1)))` &plusmn; `r signif(sd(soil_T0$Phenox)/sqrt(length(soil_T0$Phenox)), digits = 1)` &mu;mol substrate per g soil per hour for phenol oxidase and `r round(mean(soil_T0$Perox), digits = get_round_digit(signif(sd(soil_T0$Perox)/sqrt(length(soil_T0$Perox)), digits = 1)))` &plusmn; `r signif(sd(soil_T0$Perox)/sqrt(length(soil_T0$Perox)), digits = 1)` &mu;mol substrate per g soil per hour for peroxidase concentration. The mean total microfauna, mesofauna, and total fauna abundances (&plusmn; SE) were: `r comma(round(mean(abundance_T0$total_micro_ab_standardized), digits = get_round_digit(signif(sd(abundance_T0$total_micro_ab_standardized)/sqrt(length(abundance_T0$total_micro_ab_standardized)), digits = 1))))` (&plusmn; `r comma(signif(sd(abundance_T0$total_micro_ab_standardized)/sqrt(length(abundance_T0$total_micro_ab_standardized)), digits = 1))`), `r comma(round(mean(abundance_T0$total_meso_ab_standardized), digits = get_round_digit(signif(sd(abundance_T0$total_meso_ab_standardized)/sqrt(length(abundance_T0$total_meso_ab_standardized)), digits = 1))))` (&plusmn; `r comma(signif(sd(abundance_T0$total_meso_ab_standardized)/sqrt(length(abundance_T0$total_meso_ab_standardized)), digits = 1))`), and `r comma(round(mean(abundance_T0$total_ab_standardized), digits = get_round_digit(signif(sd(abundance_T0$total_ab_standardized)/sqrt(length(abundance_T0$total_ab_standardized)), digits = 1))))` (&plusmn; `r comma(signif(sd(abundance_T0$total_ab_standardized)/sqrt(length(abundance_T0$total_ab_standardized)), digits = 1))`) individuals per m^2^, respectively.
+```{r T0 Results 2, warning=F}
 T0_df1 <- as.data.frame(matrix(data = c(
   "Heterotrophic Respiration", 
-  round(mean(exp(resp_T0$cum_resp)), 
+  comma(round(mean(exp(resp_T0$cum_resp)), 
                  digits = get_round_digit(
                    signif(sd(exp(resp_T0$cum_resp))/
                    sqrt(length(resp_T0$cum_resp)), digits = 1)
-                 )),
+                 ))),
   signif(sd(exp(resp_T0$cum_resp))/
                    sqrt(length(resp_T0$cum_resp)), digits = 1),
   "g of C / m^2^ / year",
@@ -1686,39 +1690,39 @@ T0_df1 <- as.data.frame(matrix(data = c(
   " &mu;mol substrate / g soil / hour",
   
   "Total Microfauna Abundance",
-  round(mean(abundance_T0$total_micro_ab_standardized), 
+  comma(round(mean(abundance_T0$total_micro_ab_standardized), 
            digits = get_round_digit(
              signif(sd(abundance_T0$total_micro_ab_standardized)/
                     sqrt(length(abundance_T0$total_micro_ab_standardized)), 
                   digits = 1)
-           )),
-  signif(sd(abundance_T0$total_micro_ab_standardized)/
+           ))),
+  comma(signif(sd(abundance_T0$total_micro_ab_standardized)/
            sqrt(length(abundance_T0$total_micro_ab_standardized)), 
-         digits = 1), 
+         digits = 1)), 
   "individuals per m^2^",
   
   "Total Mesofauna Abundance",
-  round(mean(abundance_T0$total_meso_ab_standardized), 
+  comma(round(mean(abundance_T0$total_meso_ab_standardized), 
            digits = get_round_digit(
              signif(sd(abundance_T0$total_meso_ab_standardized)/
                     sqrt(length(abundance_T0$total_meso_ab_standardized)), 
                   digits = 1)
-           )),
-  signif(sd(abundance_T0$total_meso_ab_standardized)/
+           ))),
+  comma(signif(sd(abundance_T0$total_meso_ab_standardized)/
            sqrt(length(abundance_T0$total_meso_ab_standardized)), 
-         digits = 1), 
+         digits = 1)), 
   "individuals per m^2^",
   
   "Total Fauna Abundance",
-  round(mean(abundance_T0$total_ab_standardized), 
+  comma(round(mean(abundance_T0$total_ab_standardized), 
            digits = get_round_digit(
               signif(sd(abundance_T0$total_ab_standardized)/
                     sqrt(length(abundance_T0$total_ab_standardized)), 
                   digits = 1) 
-           )),  
-           signif(sd(abundance_T0$total_ab_standardized)/
-                    sqrt(length(abundance_T0$total_ab_standardized)), 
-                  digits = 1),
+           ))),  
+  comma(signif(sd(abundance_T0$total_ab_standardized)/
+              sqrt(length(abundance_T0$total_ab_standardized)), 
+            digits = 1)),
            "individuals per m^2^"
   ), ncol = 4, byrow = T))
 
@@ -1728,12 +1732,15 @@ knitr::kable(T0_df1, linesep = "\\hline")
 ```
 <br>
 
-Converting faunal abundance to biomass estimates, I calculated a mean microfauna, mesofauna and total fauna biomass (&plusmn; SE) as 0.009 (&plusmn; 0.002), 0.73 (&plusmn; 0.08), and 0.74 (&plusmn; 0.08) g of C per m^2^, respectively. Mean total consumptive flux (&plusmn; SE) based on the energetic model was 1340 &plusmn; 30 g of C per m^2^ per year, while the mean total C mineralization (&plusmn; SE) was 550 &plusmn; 10 g of C per m^2^ per year, and the mean total N mineralization (&plusmn; SE) was -5.0 &plusmn; 0.1 g of N per m^2^ per year. Mean values are presented in [Appendix D].
-```{r T0 Results 2, warning=F}
+```{r T0 Results 3, warning = F}
 biomass_T0 <- biomass_data %>% filter(destructive_time == "T0")
 
 flux_T0 <- flux_data %>% filter(destructive_time == "T0")
+```
+<br>
 
+Converting faunal abundance to biomass estimates, I calculated mean microfauna, mesofauna and total fauna biomass (&plusmn; SE) as `r round(mean(biomass_T0$micro_biomass), digits = get_round_digit(signif(sd(biomass_T0$micro_biomass)/sqrt(length(biomass_T0$micro_biomass)), digits = 1)))` (&plusmn; `r signif(sd(biomass_T0$micro_biomass)/sqrt(length(biomass_T0$micro_biomass)), digits = 1)`), `r round(mean(biomass_T0$meso_biomass), digits = get_round_digit(signif(sd(biomass_T0$meso_biomass)/sqrt(length(biomass_T0$meso_biomass)), digits = 1)))` (&plusmn; `r signif(sd(biomass_T0$meso_biomass)/sqrt(length(biomass_T0$meso_biomass)), digits = 1)`), and `r round(mean(biomass_T0$total_biomass), digits = get_round_digit(signif(sd(biomass_T0$total_biomass)/sqrt(length(biomass_T0$total_biomass)), digits = 1)))` (&plusmn; `r signif(sd(biomass_T0$total_biomass)/sqrt(length(biomass_T0$total_biomass)), digits = 1)`) g of C per m^2^, respectively. Mean total consumptive flux (&plusmn; SE) based on the energetic model was `r comma(round(mean(flux_T0$total_consumption), digits = get_round_digit(signif(sd(flux_T0$total_consumption)/sqrt(length(flux_T0$total_consumption)), digits = 1))))` &plusmn; `r signif(sd(flux_T0$total_consumption)/sqrt(length(flux_T0$total_consumption)), digits = 1)` g of C per m^2^ per year, while the mean total C mineralization (&plusmn; SE) was `r round(mean(flux_T0$total_Cmin), digits = get_round_digit(signif(sd(flux_T0$total_Cmin)/sqrt(length(flux_T0$total_Cmin)), digits = 1)))` &plusmn; `r signif(sd(flux_T0$total_Cmin)/sqrt(length(flux_T0$total_Cmin)), digits = 1)` g of C per m^2^ per year, and the mean total N mineralization (&plusmn; SE) was `r format(round(mean(flux_T0$total_Nmin), digits = get_round_digit(signif(sd(flux_T0$total_Nmin)/sqrt(length(flux_T0$total_Nmin)), digits = 1))), nsmall = 1)` &plusmn; `r signif(sd(flux_T0$total_Nmin)/sqrt(length(flux_T0$total_Nmin)), digits = 1)` g of N per m^2^ per year. Mean values are presented in [Appendix D].
+```{r T0 Results 4, warning=F}
 T0_df2 <- as.data.frame(matrix(data = c(
   "Microfauna Biomass", 
   round(mean(biomass_T0$micro_biomass), 
@@ -1766,11 +1773,11 @@ T0_df2 <- as.data.frame(matrix(data = c(
   "g of C / m^2^",
   
   "Total Consumption",
-  round(mean(flux_T0$total_consumption), 
+  comma(round(mean(flux_T0$total_consumption), 
                  digits = get_round_digit(
                    signif(sd(flux_T0$total_consumption)/
                    sqrt(length(flux_T0$total_consumption)), digits = 1)
-                 )),
+                 ))),
   signif(sd(flux_T0$total_consumption)/
                    sqrt(length(flux_T0$total_consumption)), digits = 1),
   "g of C / m^2^ / year",
