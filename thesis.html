@@ -4059,17 +4059,25 @@ was 160 ± 20 μmol substrate per g soil per hour for phenol oxidase and
 154 ± 8 μmol substrate per g soil per hour for peroxidase concentration.
 The mean total microfauna, mesofauna, and total fauna abundances (± SE)
 were: 170,000 (± 40,000), 360,000 (± 40,000), and 540,000 (± 50,000)
-individuals per m<sup>2</sup>, respectively.</p>
+individuals per m<sup>2</sup>, respectively. <br></p>
+<div id="supplemental-table-3.1" class="section level3">
+<h3>Supplemental Table 3.1</h3>
+<p>Summary table of mean (± SE) heterotrophic respiration, soil
+moisture, pH, C:N ratio, phenol oxidase concentration, peroxidase
+concentration, total microfauna abundance, total mesofauna abundance,
+and total fauna abundance prior to deployment of the experimental
+treatments (T<sub>0</sub>). Units for each parameter are displayed in
+the table.</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>T0_df1 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">matrix</span>(<span class="at">data =</span> <span class="fu">c</span>(</span>
 <span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>  <span class="st">&quot;Heterotrophic Respiration&quot;</span>, </span>
-<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a>  <span class="fu">comma</span>(<span class="fu">round</span>(<span class="fu">mean</span>(<span class="fu">exp</span>(resp_T0<span class="sc">$</span>cum_resp)), </span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a>  <span class="fu">format</span>(<span class="fu">round</span>(<span class="fu">mean</span>(resp_T0<span class="sc">$</span>cum_resp), </span>
 <span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a>                 <span class="at">digits =</span> <span class="fu">get_round_digit</span>(</span>
-<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a>                   <span class="fu">signif</span>(<span class="fu">sd</span>(<span class="fu">exp</span>(resp_T0<span class="sc">$</span>cum_resp))<span class="sc">/</span></span>
+<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a>                   <span class="fu">signif</span>(<span class="fu">sd</span>(resp_T0<span class="sc">$</span>cum_resp)<span class="sc">/</span></span>
 <span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a>                   <span class="fu">sqrt</span>(<span class="fu">length</span>(resp_T0<span class="sc">$</span>cum_resp)), <span class="at">digits =</span> <span class="dv">1</span>)</span>
-<span id="cb21-7"><a href="#cb21-7" tabindex="-1"></a>                 ))),</span>
-<span id="cb21-8"><a href="#cb21-8" tabindex="-1"></a>  <span class="fu">signif</span>(<span class="fu">sd</span>(<span class="fu">exp</span>(resp_T0<span class="sc">$</span>cum_resp))<span class="sc">/</span></span>
+<span id="cb21-7"><a href="#cb21-7" tabindex="-1"></a>                 )), <span class="at">nsmall =</span> <span class="dv">1</span>),</span>
+<span id="cb21-8"><a href="#cb21-8" tabindex="-1"></a>  <span class="fu">signif</span>(<span class="fu">sd</span>(resp_T0<span class="sc">$</span>cum_resp)<span class="sc">/</span></span>
 <span id="cb21-9"><a href="#cb21-9" tabindex="-1"></a>                   <span class="fu">sqrt</span>(<span class="fu">length</span>(resp_T0<span class="sc">$</span>cum_resp)), <span class="at">digits =</span> <span class="dv">1</span>),</span>
-<span id="cb21-10"><a href="#cb21-10" tabindex="-1"></a>  <span class="st">&quot;g of C / m^2^ / year&quot;</span>,</span>
+<span id="cb21-10"><a href="#cb21-10" tabindex="-1"></a>  <span class="st">&quot;ln(g of C / m^2^ / year)&quot;</span>,</span>
 <span id="cb21-11"><a href="#cb21-11" tabindex="-1"></a>  </span>
 <span id="cb21-12"><a href="#cb21-12" tabindex="-1"></a>  <span class="st">&quot;Soil Moisture&quot;</span>,</span>
 <span id="cb21-13"><a href="#cb21-13" tabindex="-1"></a>  <span class="fu">round</span>(<span class="fu">mean</span>(soil_T0<span class="sc">$</span>pct_moisture), </span>
@@ -4179,9 +4187,9 @@ individuals per m<sup>2</sup>, respectively.</p>
 <tbody>
 <tr class="odd">
 <td align="left">Heterotrophic Respiration</td>
-<td align="left">1,200</td>
-<td align="left">200</td>
-<td align="left">g of C / m<sup>2</sup> / year</td>
+<td align="left">7.0</td>
+<td align="left">0.1</td>
+<td align="left">ln(g of C / m<sup>2</sup> / year)</td>
 </tr>
 <tr class="even">
 <td align="left">Soil Moisture</td>
@@ -4245,7 +4253,15 @@ Mean total consumptive flux (± SE) based on the energetic model was
 1,340 ± 30 g of C per m<sup>2</sup> per year, while the mean total C
 mineralization (± SE) was 550 ± 10 g of C per m<sup>2</sup> per year,
 and the mean total N mineralization (± SE) was -5.0 ± 0.1 g of N per
-m<sup>2</sup> per year. Mean values are presented in <a href="#appendix-d">Appendix D</a>.</p>
+m<sup>2</sup> per year. Mean values are presented in <a href="#appendix-d">Appendix D</a>. <br></p>
+</div>
+<div id="supplemental-table-3.2" class="section level3">
+<h3>Supplemental Table 3.2</h3>
+<p>Summary table of mean (± SE) microfauna biomass, mesofauna biomass,
+total biomass, total consumption, total C mineralization, and total N
+mineralization prior to deployment of the experimental treatments
+(T<sub>0</sub>). Units for each parameter are displayed in the
+table.</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>T0_df2 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">matrix</span>(<span class="at">data =</span> <span class="fu">c</span>(</span>
 <span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>  <span class="st">&quot;Microfauna Biomass&quot;</span>, </span>
 <span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a>  <span class="fu">round</span>(<span class="fu">mean</span>(biomass_T0<span class="sc">$</span>micro_biomass), </span>
@@ -4361,6 +4377,7 @@ m<sup>2</sup> per year. Mean values are presented in <a href="#appendix-d">Appen
 </table>
 <p><br></p>
 </div>
+</div>
 <div id="soil-heterotrophic-respiration" class="section level2">
 <h2>3.2 Soil Heterotrophic Respiration</h2>
 <div id="figure-3.1" class="section level3">
@@ -4415,82 +4432,75 @@ treatments, and during the following three-week recovery period
 </p>
 </div>
 <p><br></p>
-<p>Heterotrophic respiration was transformed on natural log, (ln) scale
-to conform to the assumption of normality. Log-transformed soil
-heterotrophic respiration satisfied the assumptions of normality and
-homodescacity, as per a Shapiro-Wilk (W = 0.983, p = 0.794) and Levene’s
-test (F<sub>7,31</sub> = 0.519, p = 0.813). Log-transformed
-heterotrophic respiration, estimated for each mesocosm (<a href="#figure-3.1">Figure 3.1</a>), was not significantly affected by
-soil moisture (F<sub>1,34</sub> = 1.777, p = 0.191), nor temperature
-(F<sub>1,34</sub> = 2.849, p = 0.101); heterotrophic respiration tended
-to be greater in mesocosms assigned to 20 °C vs. 12 °C. Neither
-destructive sampling time (F<sub>1,34</sub> = 0.004, p = 0.950) nor
-block effects (F<sub>1,34</sub> = 0.216, p = 0.645) used to account for
-differences in field sampling location significantly affected
-log-transformed respiration. There were no significant interaction
-effects between soil moisture, temperature, and destructive sampling
-time (<a href="#appendix-e">Appendix E</a>). Mean soil heterotrophic
-respiration (± SE) under each treatment is presented in <a href="#appendix-d">Appendix D</a>. Estimates of effect size based on a
-linear model are given in <a href="#appendix-f">Appendix F</a>.</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>resp_T1uT2 <span class="ot">&lt;-</span> resp.data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span>destructive_time<span class="sc">==</span><span class="st">&quot;T0&quot;</span>)</span>
-<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a></span>
-<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a>resp_T1uT2<span class="sc">$</span>destructive_time <span class="ot">&lt;-</span> </span>
-<span id="cb25-4"><a href="#cb25-4" tabindex="-1"></a>  <span class="fu">as.factor</span>(resp_T1uT2<span class="sc">$</span>destructive_time)</span>
-<span id="cb25-5"><a href="#cb25-5" tabindex="-1"></a>resp_T1uT2<span class="sc">$</span>block_effect <span class="ot">&lt;-</span> </span>
-<span id="cb25-6"><a href="#cb25-6" tabindex="-1"></a>  <span class="fu">as.factor</span>(resp_T1uT2<span class="sc">$</span>block_effect)</span>
-<span id="cb25-7"><a href="#cb25-7" tabindex="-1"></a>resp_T1uT2<span class="sc">$</span>temp_tx <span class="ot">&lt;-</span> </span>
-<span id="cb25-8"><a href="#cb25-8" tabindex="-1"></a>  <span class="fu">as.factor</span>(resp_T1uT2<span class="sc">$</span>temp_tx)</span>
-<span id="cb25-9"><a href="#cb25-9" tabindex="-1"></a>resp_T1uT2<span class="sc">$</span>moisture_tx <span class="ot">&lt;-</span> </span>
-<span id="cb25-10"><a href="#cb25-10" tabindex="-1"></a>  <span class="fu">as.factor</span>(resp_T1uT2<span class="sc">$</span>moisture_tx)</span>
-<span id="cb25-11"><a href="#cb25-11" tabindex="-1"></a></span>
-<span id="cb25-12"><a href="#cb25-12" tabindex="-1"></a>resp_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(cum_resp <span class="sc">~</span> block_effect <span class="sc">+</span> </span>
-<span id="cb25-13"><a href="#cb25-13" tabindex="-1"></a>                (temp_tx <span class="sc">*</span> moisture_tx <span class="sc">*</span> destructive_time), </span>
-<span id="cb25-14"><a href="#cb25-14" tabindex="-1"></a>              <span class="at">data =</span> resp_T1uT2)</span>
-<span id="cb25-15"><a href="#cb25-15" tabindex="-1"></a></span>
-<span id="cb25-16"><a href="#cb25-16" tabindex="-1"></a>resp_lm2_temp <span class="ot">&lt;-</span> <span class="fu">lm</span>(cum_resp <span class="sc">~</span></span>
-<span id="cb25-17"><a href="#cb25-17" tabindex="-1"></a>                    moisture_tx <span class="sc">*</span> temp_tx <span class="sc">*</span> destructive_time <span class="sc">+</span> </span>
-<span id="cb25-18"><a href="#cb25-18" tabindex="-1"></a>                    moisture_tx <span class="sc">*</span> temp_tx <span class="sc">+</span></span>
-<span id="cb25-19"><a href="#cb25-19" tabindex="-1"></a>                    moisture_tx <span class="sc">*</span> destructive_time <span class="sc">+</span> </span>
-<span id="cb25-20"><a href="#cb25-20" tabindex="-1"></a>                    temp_tx <span class="sc">*</span> destructive_time <span class="sc">+</span></span>
-<span id="cb25-21"><a href="#cb25-21" tabindex="-1"></a>                    moisture_tx <span class="sc">+</span></span>
-<span id="cb25-22"><a href="#cb25-22" tabindex="-1"></a>                    temp_tx <span class="sc">+</span></span>
-<span id="cb25-23"><a href="#cb25-23" tabindex="-1"></a>                    destructive_time <span class="sc">+</span></span>
-<span id="cb25-24"><a href="#cb25-24" tabindex="-1"></a>                    block_effect,</span>
-<span id="cb25-25"><a href="#cb25-25" tabindex="-1"></a>                  <span class="at">data =</span> resp_T1uT2)</span>
-<span id="cb25-26"><a href="#cb25-26" tabindex="-1"></a></span>
-<span id="cb25-27"><a href="#cb25-27" tabindex="-1"></a>resp_lm2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(cum_resp <span class="sc">~</span></span>
-<span id="cb25-28"><a href="#cb25-28" tabindex="-1"></a>                moisture_tx <span class="sc">+</span></span>
-<span id="cb25-29"><a href="#cb25-29" tabindex="-1"></a>                temp_tx <span class="sc">+</span></span>
-<span id="cb25-30"><a href="#cb25-30" tabindex="-1"></a>                destructive_time <span class="sc">+</span></span>
-<span id="cb25-31"><a href="#cb25-31" tabindex="-1"></a>                block_effect,</span>
-<span id="cb25-32"><a href="#cb25-32" tabindex="-1"></a>            <span class="at">data =</span> resp_T1uT2)</span>
-<span id="cb25-33"><a href="#cb25-33" tabindex="-1"></a></span>
-<span id="cb25-34"><a href="#cb25-34" tabindex="-1"></a>resp_assumptions <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">matrix</span>(<span class="at">data =</span> <span class="fu">c</span>(</span>
-<span id="cb25-35"><a href="#cb25-35" tabindex="-1"></a>  <span class="st">&quot;Shapiro-Wilk Test&quot;</span>, </span>
-<span id="cb25-36"><a href="#cb25-36" tabindex="-1"></a>  <span class="cn">NA</span>,</span>
-<span id="cb25-37"><a href="#cb25-37" tabindex="-1"></a>  <span class="cn">NA</span>,</span>
-<span id="cb25-38"><a href="#cb25-38" tabindex="-1"></a>  <span class="fu">round</span>(<span class="fu">shapiro_test</span>(<span class="fu">residuals</span>(resp_lm2))<span class="sc">$</span>statistic, <span class="dv">3</span>),</span>
-<span id="cb25-39"><a href="#cb25-39" tabindex="-1"></a>  <span class="fu">round</span>(<span class="fu">shapiro_test</span>(<span class="fu">residuals</span>(resp_lm2))<span class="sc">$</span>p.value, <span class="dv">3</span>),</span>
-<span id="cb25-40"><a href="#cb25-40" tabindex="-1"></a>  <span class="st">&quot;Levene&#39;s Test&quot;</span>,</span>
-<span id="cb25-41"><a href="#cb25-41" tabindex="-1"></a>  <span class="fu">levene_test</span>(cum_resp <span class="sc">~</span> (moisture_tx <span class="sc">*</span> temp_tx <span class="sc">*</span> destructive_time), </span>
-<span id="cb25-42"><a href="#cb25-42" tabindex="-1"></a>              <span class="at">data =</span> resp_T1uT2)<span class="sc">$</span>df1,</span>
-<span id="cb25-43"><a href="#cb25-43" tabindex="-1"></a>  <span class="fu">levene_test</span>(cum_resp <span class="sc">~</span> (moisture_tx <span class="sc">*</span> temp_tx <span class="sc">*</span> destructive_time), </span>
-<span id="cb25-44"><a href="#cb25-44" tabindex="-1"></a>              <span class="at">data =</span> resp_T1uT2)<span class="sc">$</span>df2,</span>
-<span id="cb25-45"><a href="#cb25-45" tabindex="-1"></a>  <span class="fu">round</span>(<span class="fu">levene_test</span>(cum_resp <span class="sc">~</span> (moisture_tx <span class="sc">*</span> temp_tx <span class="sc">*</span> destructive_time), </span>
-<span id="cb25-46"><a href="#cb25-46" tabindex="-1"></a>              <span class="at">data =</span> resp_T1uT2)<span class="sc">$</span>statistic, <span class="dv">3</span>),</span>
-<span id="cb25-47"><a href="#cb25-47" tabindex="-1"></a>  <span class="fu">round</span>(<span class="fu">levene_test</span>(cum_resp <span class="sc">~</span> (moisture_tx <span class="sc">*</span> temp_tx <span class="sc">*</span> destructive_time), </span>
-<span id="cb25-48"><a href="#cb25-48" tabindex="-1"></a>              <span class="at">data =</span> resp_T1uT2)<span class="sc">$</span>p, <span class="dv">3</span>)</span>
-<span id="cb25-49"><a href="#cb25-49" tabindex="-1"></a>), <span class="at">ncol =</span> <span class="dv">5</span>, <span class="at">byrow =</span> T))</span>
-<span id="cb25-50"><a href="#cb25-50" tabindex="-1"></a></span>
-<span id="cb25-51"><a href="#cb25-51" tabindex="-1"></a><span class="fu">colnames</span>(resp_assumptions) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Test&quot;</span>, <span class="st">&quot;df1&quot;</span>, <span class="st">&quot;df2&quot;</span>, <span class="st">&quot;Statistic&quot;</span>, <span class="st">&quot;P-Value&quot;</span>)</span>
-<span id="cb25-52"><a href="#cb25-52" tabindex="-1"></a></span>
-<span id="cb25-53"><a href="#cb25-53" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(resp_assumptions)</span></code></pre></div>
+</div>
+<div id="supplemental-table-3.3" class="section level3">
+<h3>Supplemental Table 3.3</h3>
+<p>Shapiro-Wilk and Levene’s Tests constructed to test whether
+heterotrophic soil respiration (ln transformed) conforms to the
+assumptions of normality and homodescacity, respectively.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>sub_digits <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a>  subs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;₀&quot;</span>,<span class="st">&quot;₁&quot;</span>,<span class="st">&quot;₂&quot;</span>,<span class="st">&quot;₃&quot;</span>,<span class="st">&quot;₄&quot;</span>,<span class="st">&quot;₅&quot;</span>,<span class="st">&quot;₆&quot;</span>,<span class="st">&quot;₇&quot;</span>,<span class="st">&quot;₈&quot;</span>,<span class="st">&quot;₉&quot;</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a>  digits <span class="ot">&lt;-</span> <span class="fu">strsplit</span>(<span class="fu">as.character</span>(x), <span class="st">&quot;&quot;</span>)[[<span class="dv">1</span>]]</span>
+<span id="cb25-4"><a href="#cb25-4" tabindex="-1"></a>  <span class="fu">paste0</span>(subs[<span class="fu">as.integer</span>(digits) <span class="sc">+</span> <span class="dv">1</span>], <span class="at">collapse =</span> <span class="st">&quot;&quot;</span>)</span>
+<span id="cb25-5"><a href="#cb25-5" tabindex="-1"></a>}</span>
+<span id="cb25-6"><a href="#cb25-6" tabindex="-1"></a></span>
+<span id="cb25-7"><a href="#cb25-7" tabindex="-1"></a>resp_T1uT2 <span class="ot">&lt;-</span> resp.data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span>destructive_time<span class="sc">==</span><span class="st">&quot;T0&quot;</span>)</span>
+<span id="cb25-8"><a href="#cb25-8" tabindex="-1"></a></span>
+<span id="cb25-9"><a href="#cb25-9" tabindex="-1"></a>resp_T1uT2<span class="sc">$</span>destructive_time <span class="ot">&lt;-</span> </span>
+<span id="cb25-10"><a href="#cb25-10" tabindex="-1"></a>  <span class="fu">as.factor</span>(resp_T1uT2<span class="sc">$</span>destructive_time)</span>
+<span id="cb25-11"><a href="#cb25-11" tabindex="-1"></a>resp_T1uT2<span class="sc">$</span>block_effect <span class="ot">&lt;-</span> </span>
+<span id="cb25-12"><a href="#cb25-12" tabindex="-1"></a>  <span class="fu">as.factor</span>(resp_T1uT2<span class="sc">$</span>block_effect)</span>
+<span id="cb25-13"><a href="#cb25-13" tabindex="-1"></a>resp_T1uT2<span class="sc">$</span>temp_tx <span class="ot">&lt;-</span> </span>
+<span id="cb25-14"><a href="#cb25-14" tabindex="-1"></a>  <span class="fu">as.factor</span>(resp_T1uT2<span class="sc">$</span>temp_tx)</span>
+<span id="cb25-15"><a href="#cb25-15" tabindex="-1"></a>resp_T1uT2<span class="sc">$</span>moisture_tx <span class="ot">&lt;-</span> </span>
+<span id="cb25-16"><a href="#cb25-16" tabindex="-1"></a>  <span class="fu">as.factor</span>(resp_T1uT2<span class="sc">$</span>moisture_tx)</span>
+<span id="cb25-17"><a href="#cb25-17" tabindex="-1"></a></span>
+<span id="cb25-18"><a href="#cb25-18" tabindex="-1"></a>resp_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(cum_resp <span class="sc">~</span> block_effect <span class="sc">+</span> </span>
+<span id="cb25-19"><a href="#cb25-19" tabindex="-1"></a>                (temp_tx <span class="sc">*</span> moisture_tx <span class="sc">*</span> destructive_time), </span>
+<span id="cb25-20"><a href="#cb25-20" tabindex="-1"></a>              <span class="at">data =</span> resp_T1uT2)</span>
+<span id="cb25-21"><a href="#cb25-21" tabindex="-1"></a></span>
+<span id="cb25-22"><a href="#cb25-22" tabindex="-1"></a>resp_lm2_temp <span class="ot">&lt;-</span> <span class="fu">lm</span>(cum_resp <span class="sc">~</span></span>
+<span id="cb25-23"><a href="#cb25-23" tabindex="-1"></a>                    moisture_tx <span class="sc">*</span> temp_tx <span class="sc">*</span> destructive_time <span class="sc">+</span> </span>
+<span id="cb25-24"><a href="#cb25-24" tabindex="-1"></a>                    moisture_tx <span class="sc">*</span> temp_tx <span class="sc">+</span></span>
+<span id="cb25-25"><a href="#cb25-25" tabindex="-1"></a>                    moisture_tx <span class="sc">*</span> destructive_time <span class="sc">+</span> </span>
+<span id="cb25-26"><a href="#cb25-26" tabindex="-1"></a>                    temp_tx <span class="sc">*</span> destructive_time <span class="sc">+</span></span>
+<span id="cb25-27"><a href="#cb25-27" tabindex="-1"></a>                    moisture_tx <span class="sc">+</span></span>
+<span id="cb25-28"><a href="#cb25-28" tabindex="-1"></a>                    temp_tx <span class="sc">+</span></span>
+<span id="cb25-29"><a href="#cb25-29" tabindex="-1"></a>                    destructive_time <span class="sc">+</span></span>
+<span id="cb25-30"><a href="#cb25-30" tabindex="-1"></a>                    block_effect,</span>
+<span id="cb25-31"><a href="#cb25-31" tabindex="-1"></a>                  <span class="at">data =</span> resp_T1uT2)</span>
+<span id="cb25-32"><a href="#cb25-32" tabindex="-1"></a></span>
+<span id="cb25-33"><a href="#cb25-33" tabindex="-1"></a>resp_lm2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(cum_resp <span class="sc">~</span></span>
+<span id="cb25-34"><a href="#cb25-34" tabindex="-1"></a>                moisture_tx <span class="sc">+</span></span>
+<span id="cb25-35"><a href="#cb25-35" tabindex="-1"></a>                temp_tx <span class="sc">+</span></span>
+<span id="cb25-36"><a href="#cb25-36" tabindex="-1"></a>                destructive_time <span class="sc">+</span></span>
+<span id="cb25-37"><a href="#cb25-37" tabindex="-1"></a>                block_effect,</span>
+<span id="cb25-38"><a href="#cb25-38" tabindex="-1"></a>            <span class="at">data =</span> resp_T1uT2)</span>
+<span id="cb25-39"><a href="#cb25-39" tabindex="-1"></a></span>
+<span id="cb25-40"><a href="#cb25-40" tabindex="-1"></a>resp_assumptions <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">matrix</span>(<span class="at">data =</span> <span class="fu">c</span>(</span>
+<span id="cb25-41"><a href="#cb25-41" tabindex="-1"></a>  <span class="st">&quot;Shapiro-Wilk Test&quot;</span>, </span>
+<span id="cb25-42"><a href="#cb25-42" tabindex="-1"></a>  <span class="fu">paste0</span>(<span class="st">&quot;W = &quot;</span>, <span class="fu">round</span>(<span class="fu">shapiro_test</span>(<span class="fu">residuals</span>(resp_lm2))<span class="sc">$</span>statistic, <span class="dv">3</span>)),</span>
+<span id="cb25-43"><a href="#cb25-43" tabindex="-1"></a>  <span class="fu">paste0</span>(<span class="st">&quot;p = &quot;</span>, <span class="fu">round</span>(<span class="fu">shapiro_test</span>(<span class="fu">residuals</span>(resp_lm2))<span class="sc">$</span>p.value, <span class="dv">3</span>)),</span>
+<span id="cb25-44"><a href="#cb25-44" tabindex="-1"></a>  <span class="st">&quot;Levene&#39;s Test&quot;</span>,</span>
+<span id="cb25-45"><a href="#cb25-45" tabindex="-1"></a>  <span class="fu">paste0</span>(<span class="st">&quot;F&quot;</span>, <span class="fu">sub_digits</span>(</span>
+<span id="cb25-46"><a href="#cb25-46" tabindex="-1"></a>    <span class="fu">levene_test</span>(cum_resp <span class="sc">~</span> (moisture_tx <span class="sc">*</span> temp_tx <span class="sc">*</span> destructive_time), </span>
+<span id="cb25-47"><a href="#cb25-47" tabindex="-1"></a>              <span class="at">data =</span> resp_T1uT2)<span class="sc">$</span>df1), <span class="st">&quot;\u02CC&quot;</span>,</span>
+<span id="cb25-48"><a href="#cb25-48" tabindex="-1"></a>  <span class="fu">sub_digits</span>(<span class="fu">levene_test</span>(cum_resp <span class="sc">~</span> (moisture_tx <span class="sc">*</span> temp_tx <span class="sc">*</span> destructive_time), </span>
+<span id="cb25-49"><a href="#cb25-49" tabindex="-1"></a>              <span class="at">data =</span> resp_T1uT2)<span class="sc">$</span>df2), <span class="st">&quot; = &quot;</span>,</span>
+<span id="cb25-50"><a href="#cb25-50" tabindex="-1"></a>  <span class="fu">round</span>(<span class="fu">levene_test</span>(cum_resp <span class="sc">~</span> (moisture_tx <span class="sc">*</span> temp_tx <span class="sc">*</span> destructive_time), </span>
+<span id="cb25-51"><a href="#cb25-51" tabindex="-1"></a>              <span class="at">data =</span> resp_T1uT2)<span class="sc">$</span>statistic, <span class="dv">3</span>)),</span>
+<span id="cb25-52"><a href="#cb25-52" tabindex="-1"></a>  <span class="fu">paste0</span>(<span class="st">&quot;p = &quot;</span>, <span class="fu">round</span>(</span>
+<span id="cb25-53"><a href="#cb25-53" tabindex="-1"></a>    <span class="fu">levene_test</span>(cum_resp <span class="sc">~</span> (moisture_tx <span class="sc">*</span> temp_tx <span class="sc">*</span> destructive_time), </span>
+<span id="cb25-54"><a href="#cb25-54" tabindex="-1"></a>              <span class="at">data =</span> resp_T1uT2)<span class="sc">$</span>p, <span class="dv">3</span>))</span>
+<span id="cb25-55"><a href="#cb25-55" tabindex="-1"></a>), <span class="at">ncol =</span> <span class="dv">3</span>, <span class="at">byrow =</span> T))</span>
+<span id="cb25-56"><a href="#cb25-56" tabindex="-1"></a></span>
+<span id="cb25-57"><a href="#cb25-57" tabindex="-1"></a><span class="fu">colnames</span>(resp_assumptions) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Test&quot;</span>, <span class="st">&quot;Statistic&quot;</span>, <span class="st">&quot;P-Value&quot;</span>)</span>
+<span id="cb25-58"><a href="#cb25-58" tabindex="-1"></a></span>
+<span id="cb25-59"><a href="#cb25-59" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(resp_assumptions)</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">
 <th align="left">Test</th>
-<th align="left">df1</th>
-<th align="left">df2</th>
 <th align="left">Statistic</th>
 <th align="left">P-Value</th>
 </tr>
@@ -4498,17 +4508,13 @@ linear model are given in <a href="#appendix-f">Appendix F</a>.</p>
 <tbody>
 <tr class="odd">
 <td align="left">Shapiro-Wilk Test</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">0.983</td>
-<td align="left">0.794</td>
+<td align="left">W = 0.983</td>
+<td align="left">p = 0.794</td>
 </tr>
 <tr class="even">
 <td align="left">Levene’s Test</td>
-<td align="left">7</td>
-<td align="left">31</td>
-<td align="left">0.519</td>
-<td align="left">0.813</td>
+<td align="left">F₇ˌ₃₁ = 0.519</td>
+<td align="left">p = 0.813</td>
 </tr>
 </tbody>
 </table>
@@ -4517,21 +4523,106 @@ linear model are given in <a href="#appendix-f">Appendix F</a>.</p>
 <span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a>  <span class="fu">Anova</span>(resp_lm, <span class="at">type =</span> <span class="st">&#39;III&#39;</span>)</span>
 <span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a></span>
 <span id="cb26-4"><a href="#cb26-4" tabindex="-1"></a>resp_aov2 <span class="ot">&lt;-</span> </span>
-<span id="cb26-5"><a href="#cb26-5" tabindex="-1"></a>  <span class="fu">Anova</span>(resp_lm2, <span class="at">type =</span> <span class="st">&#39;III&#39;</span>)</span>
-<span id="cb26-6"><a href="#cb26-6" tabindex="-1"></a></span>
-<span id="cb26-7"><a href="#cb26-7" tabindex="-1"></a>resp_aov2</span></code></pre></div>
-<pre><code>## Anova Table (Type III tests)
-## 
-## Response: cum_resp
-##                  Sum Sq Df  F value Pr(&gt;F)    
-## (Intercept)      327.42  1 448.9595 &lt;2e-16 ***
-## moisture_tx        1.30  1   1.7773 0.1913    
-## temp_tx            2.08  1   2.8485 0.1006    
-## destructive_time   0.00  1   0.0039 0.9503    
-## block_effect       0.16  1   0.2158 0.6452    
-## Residuals         24.80 34                    
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<span id="cb26-5"><a href="#cb26-5" tabindex="-1"></a>  <span class="fu">Anova</span>(resp_lm2, <span class="at">type =</span> <span class="st">&#39;III&#39;</span>)</span></code></pre></div>
+<p><br></p>
+<p>Heterotrophic respiration was transformed on natural log, (ln) scale
+to conform to the assumption of normality. Log-transformed soil
+heterotrophic respiration satisfied the assumptions of normality and
+homodescacity, as per a Shapiro-Wilk (W = 0.983, p = 0.794) and Levene’s
+test (F₇ˌ₃₁ = 0.519, p = 0.813). Log-transformed heterotrophic
+respiration, estimated for each mesocosm (<a href="#figure-3.1">Figure
+3.1</a>), was not significantly affected by soil moisture (F₁ˌ₃₄ =
+1.777, p = 0.191), nor temperature (F₁ˌ₃₄ = 2.848, p = 0.101);
+heterotrophic respiration tended to be greater in mesocosms assigned to
+20 °C vs. 12 °C. Neither destructive sampling time (F₁ˌ₃₄ = 0.004, p =
+0.950) nor block effects (F₁ˌ₃₄ = 0.216, p = 0.645) used to account for
+differences in field sampling location significantly affected
+log-transformed respiration. There were no significant interaction
+effects between soil moisture, temperature, and destructive sampling
+time (<a href="#appendix-e">Appendix E</a>). Mean soil heterotrophic
+respiration (± SE) under each treatment is presented in <a href="#appendix-d">Appendix D</a>. Estimates of effect size based on a
+linear model are given in <a href="#appendix-f">Appendix F</a>. <br></p>
+</div>
+<div id="supplemental-table-3.4" class="section level3">
+<h3>Supplemental Table 3.4</h3>
+<p>Log-transformed heterotrophic respiration ANOVA results.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a>resp_aov_tbl <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">matrix</span>(<span class="at">data =</span> <span class="fu">c</span>(</span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>  <span class="st">&quot;Intercept&quot;</span>,</span>
+<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a>  <span class="fu">paste0</span>(<span class="st">&quot;F&quot;</span>, <span class="fu">sub_digits</span>(resp_aov2[<span class="st">&quot;(Intercept)&quot;</span>, <span class="st">&quot;Df&quot;</span>]), </span>
+<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a>         <span class="st">&quot;\u02CC&quot;</span>, <span class="fu">sub_digits</span>(resp_aov2[<span class="st">&quot;Residuals&quot;</span>, <span class="st">&quot;Df&quot;</span>]), </span>
+<span id="cb27-5"><a href="#cb27-5" tabindex="-1"></a>         <span class="st">&quot; = &quot;</span>, <span class="fu">format</span>(<span class="fu">round</span>(resp_aov2[<span class="st">&quot;(Intercept)&quot;</span>, <span class="st">&quot;F value&quot;</span>], <span class="dv">3</span>), </span>
+<span id="cb27-6"><a href="#cb27-6" tabindex="-1"></a>                       <span class="at">nsmall =</span> <span class="dv">3</span>)),</span>
+<span id="cb27-7"><a href="#cb27-7" tabindex="-1"></a>  <span class="fu">paste0</span>(<span class="st">&quot;p = &quot;</span>, <span class="fu">format</span>(<span class="fu">round</span>(resp_aov2[<span class="st">&quot;(Intercept)&quot;</span>, <span class="st">&quot;Pr(&gt;F)&quot;</span>], <span class="dv">3</span>), </span>
+<span id="cb27-8"><a href="#cb27-8" tabindex="-1"></a>                       <span class="at">nsmall =</span> <span class="dv">3</span>)),</span>
+<span id="cb27-9"><a href="#cb27-9" tabindex="-1"></a>  <span class="st">&quot;Soil Moisture Treatment&quot;</span>,</span>
+<span id="cb27-10"><a href="#cb27-10" tabindex="-1"></a>  <span class="fu">paste0</span>(<span class="st">&quot;F&quot;</span>, <span class="fu">sub_digits</span>(resp_aov2[<span class="st">&quot;moisture_tx&quot;</span>, <span class="st">&quot;Df&quot;</span>]), </span>
+<span id="cb27-11"><a href="#cb27-11" tabindex="-1"></a>         <span class="st">&quot;\u02CC&quot;</span>, <span class="fu">sub_digits</span>(resp_aov2[<span class="st">&quot;Residuals&quot;</span>, <span class="st">&quot;Df&quot;</span>]), </span>
+<span id="cb27-12"><a href="#cb27-12" tabindex="-1"></a>         <span class="st">&quot; = &quot;</span>, <span class="fu">format</span>(<span class="fu">round</span>(resp_aov2[<span class="st">&quot;moisture_tx&quot;</span>, <span class="st">&quot;F value&quot;</span>], <span class="dv">3</span>), </span>
+<span id="cb27-13"><a href="#cb27-13" tabindex="-1"></a>                       <span class="at">nsmall =</span> <span class="dv">3</span>)),</span>
+<span id="cb27-14"><a href="#cb27-14" tabindex="-1"></a>  <span class="fu">paste0</span>(<span class="st">&quot;p = &quot;</span>, <span class="fu">format</span>(<span class="fu">round</span>(resp_aov2[<span class="st">&quot;moisture_tx&quot;</span>, <span class="st">&quot;Pr(&gt;F)&quot;</span>], <span class="dv">3</span>), </span>
+<span id="cb27-15"><a href="#cb27-15" tabindex="-1"></a>                       <span class="at">nsmall =</span> <span class="dv">3</span>)),</span>
+<span id="cb27-16"><a href="#cb27-16" tabindex="-1"></a>  <span class="st">&quot;Temperature Treatment&quot;</span>,</span>
+<span id="cb27-17"><a href="#cb27-17" tabindex="-1"></a>  <span class="fu">paste0</span>(<span class="st">&quot;F&quot;</span>, <span class="fu">sub_digits</span>(resp_aov2[<span class="st">&quot;temp_tx&quot;</span>, <span class="st">&quot;Df&quot;</span>]), </span>
+<span id="cb27-18"><a href="#cb27-18" tabindex="-1"></a>         <span class="st">&quot;\u02CC&quot;</span>, <span class="fu">sub_digits</span>(resp_aov2[<span class="st">&quot;Residuals&quot;</span>, <span class="st">&quot;Df&quot;</span>]), </span>
+<span id="cb27-19"><a href="#cb27-19" tabindex="-1"></a>         <span class="st">&quot; = &quot;</span>, <span class="fu">format</span>(<span class="fu">round</span>(resp_aov2[<span class="st">&quot;temp_tx&quot;</span>, <span class="st">&quot;F value&quot;</span>], <span class="dv">3</span>), </span>
+<span id="cb27-20"><a href="#cb27-20" tabindex="-1"></a>                       <span class="at">nsmall =</span> <span class="dv">3</span>)),</span>
+<span id="cb27-21"><a href="#cb27-21" tabindex="-1"></a>  <span class="fu">paste0</span>(<span class="st">&quot;p = &quot;</span>, <span class="fu">format</span>(<span class="fu">round</span>(resp_aov2[<span class="st">&quot;temp_tx&quot;</span>, <span class="st">&quot;Pr(&gt;F)&quot;</span>], <span class="dv">3</span>), </span>
+<span id="cb27-22"><a href="#cb27-22" tabindex="-1"></a>                       <span class="at">nsmall =</span> <span class="dv">3</span>)),</span>
+<span id="cb27-23"><a href="#cb27-23" tabindex="-1"></a>  <span class="st">&quot;Destructive Sampling Treatment&quot;</span>,</span>
+<span id="cb27-24"><a href="#cb27-24" tabindex="-1"></a>  <span class="fu">paste0</span>(<span class="st">&quot;F&quot;</span>, <span class="fu">sub_digits</span>(resp_aov2[<span class="st">&quot;destructive_time&quot;</span>, <span class="st">&quot;Df&quot;</span>]), </span>
+<span id="cb27-25"><a href="#cb27-25" tabindex="-1"></a>         <span class="st">&quot;\u02CC&quot;</span>, <span class="fu">sub_digits</span>(resp_aov2[<span class="st">&quot;Residuals&quot;</span>, <span class="st">&quot;Df&quot;</span>]), </span>
+<span id="cb27-26"><a href="#cb27-26" tabindex="-1"></a>         <span class="st">&quot; = &quot;</span>, <span class="fu">format</span>(<span class="fu">round</span>(resp_aov2[<span class="st">&quot;destructive_time&quot;</span>, <span class="st">&quot;F value&quot;</span>], <span class="dv">3</span>), </span>
+<span id="cb27-27"><a href="#cb27-27" tabindex="-1"></a>                       <span class="at">nsmall =</span> <span class="dv">3</span>)),</span>
+<span id="cb27-28"><a href="#cb27-28" tabindex="-1"></a>  <span class="fu">paste0</span>(<span class="st">&quot;p = &quot;</span>, <span class="fu">format</span>(<span class="fu">round</span>(resp_aov2[<span class="st">&quot;destructive_time&quot;</span>, <span class="st">&quot;Pr(&gt;F)&quot;</span>], <span class="dv">3</span>), </span>
+<span id="cb27-29"><a href="#cb27-29" tabindex="-1"></a>                       <span class="at">nsmall =</span> <span class="dv">3</span>)),</span>
+<span id="cb27-30"><a href="#cb27-30" tabindex="-1"></a>  <span class="st">&quot;Block Effect&quot;</span>,</span>
+<span id="cb27-31"><a href="#cb27-31" tabindex="-1"></a>  <span class="fu">paste0</span>(<span class="st">&quot;F&quot;</span>, <span class="fu">sub_digits</span>(resp_aov2[<span class="st">&quot;block_effect&quot;</span>, <span class="st">&quot;Df&quot;</span>]), </span>
+<span id="cb27-32"><a href="#cb27-32" tabindex="-1"></a>         <span class="st">&quot;\u02CC&quot;</span>, <span class="fu">sub_digits</span>(resp_aov2[<span class="st">&quot;Residuals&quot;</span>, <span class="st">&quot;Df&quot;</span>]), </span>
+<span id="cb27-33"><a href="#cb27-33" tabindex="-1"></a>         <span class="st">&quot; = &quot;</span>, <span class="fu">format</span>(<span class="fu">round</span>(resp_aov2[<span class="st">&quot;block_effect&quot;</span>, <span class="st">&quot;F value&quot;</span>], <span class="dv">3</span>), </span>
+<span id="cb27-34"><a href="#cb27-34" tabindex="-1"></a>                       <span class="at">nsmall =</span> <span class="dv">3</span>)),</span>
+<span id="cb27-35"><a href="#cb27-35" tabindex="-1"></a>  <span class="fu">paste0</span>(<span class="st">&quot;p = &quot;</span>, <span class="fu">format</span>(<span class="fu">round</span>(resp_aov2[<span class="st">&quot;block_effect&quot;</span>, <span class="st">&quot;Pr(&gt;F)&quot;</span>], <span class="dv">3</span>), </span>
+<span id="cb27-36"><a href="#cb27-36" tabindex="-1"></a>                       <span class="at">nsmall =</span> <span class="dv">3</span>))</span>
+<span id="cb27-37"><a href="#cb27-37" tabindex="-1"></a>), <span class="at">ncol =</span> <span class="dv">3</span>, <span class="at">byrow =</span> T))</span>
+<span id="cb27-38"><a href="#cb27-38" tabindex="-1"></a></span>
+<span id="cb27-39"><a href="#cb27-39" tabindex="-1"></a><span class="fu">colnames</span>(resp_aov_tbl) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Parameter&quot;</span>, <span class="st">&quot;Statistic&quot;</span>, <span class="st">&quot;P-Value&quot;</span>)</span>
+<span id="cb27-40"><a href="#cb27-40" tabindex="-1"></a></span>
+<span id="cb27-41"><a href="#cb27-41" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(resp_aov_tbl)</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Parameter</th>
+<th align="left">Statistic</th>
+<th align="left">P-Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Intercept</td>
+<td align="left">F₁ˌ₃₄ = 448.960</td>
+<td align="left">p = 0.000</td>
+</tr>
+<tr class="even">
+<td align="left">Soil Moisture Treatment</td>
+<td align="left">F₁ˌ₃₄ = 1.777</td>
+<td align="left">p = 0.191</td>
+</tr>
+<tr class="odd">
+<td align="left">Temperature Treatment</td>
+<td align="left">F₁ˌ₃₄ = 2.848</td>
+<td align="left">p = 0.101</td>
+</tr>
+<tr class="even">
+<td align="left">Destructive Sampling Treatment</td>
+<td align="left">F₁ˌ₃₄ = 0.004</td>
+<td align="left">p = 0.950</td>
+</tr>
+<tr class="odd">
+<td align="left">Block Effect</td>
+<td align="left">F₁ˌ₃₄ = 0.216</td>
+<td align="left">p = 0.645</td>
+</tr>
+</tbody>
+</table>
 <p><br></p>
 </div>
 </div>

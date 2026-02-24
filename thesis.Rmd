@@ -1627,17 +1627,21 @@ abundance_T0 <- abundance_data %>% filter(destructive_time == "T0")
 <br>
 
 Five experimental mesocosms were destructively sampled following a three-week recovery period but prior to deployment of the experimental treatments (T~0~). The following conditions were recorded for these five control mesocosms and were assumed to be representative of field values. The mean heterotrophic respiration (&plusmn; SE) prior to implementing experimental soil moisture and temperature conditions at T~0~ was `r format(round(mean(resp_T0$cum_resp), digits = get_round_digit(signif(sd(resp_T0$cum_resp)/sqrt(length(resp_T0$cum_resp)), digits = 1))), nsmall = 1)` &plusmn; `r signif(sd(resp_T0$cum_resp)/sqrt(length(resp_T0$cum_resp)), digits = 1)` ln(g of C per m^2^ per year), which equates to ~`r comma(round(mean(exp(resp_T0$cum_resp)), digits = get_round_digit(signif(sd(exp(resp_T0$cum_resp))/sqrt(length(resp_T0$cum_resp)), digits = 1))))` &plusmn; `r signif(sd(exp(resp_T0$cum_resp))/sqrt(length(resp_T0$cum_resp)), digits = 1)` g of C per m^2^ per year. The mean soil moisture (&plusmn; SE) was `r round(mean(soil_T0$pct_moisture), digits = get_round_digit(signif(sd(soil_T0$pct_moisture)/sqrt(length(soil_T0$pct_moisture)), digits = 1)))` &plusmn; `r signif(sd(soil_T0$pct_moisture)/sqrt(length(soil_T0$pct_moisture)), digits = 1)`% based on a dry weight gravimetric measurement, while the average soil pH (&plusmn; SE) was `r round(mean(soil_T0$pH), digits = get_round_digit(signif(sd(soil_T0$pH)/sqrt(length(soil_T0$pH)), digits = 1)))` &plusmn; `r signif(sd(soil_T0$pH)/sqrt(length(soil_T0$pH)), digits = 1)`. Mean C:N ratio (&plusmn; SE) was `r round(mean(soil_T0$C_N_ratio), digits = get_round_digit(signif(sd(soil_T0$C_N_ratio)/sqrt(length(soil_T0$C_N_ratio)), digits = 1)))` &plusmn; `r signif(sd(soil_T0$C_N_ratio)/sqrt(length(soil_T0$C_N_ratio)), digits = 1)`, while mean microbial enzymatic activity (&plusmn; SE) was `r round(mean(soil_T0$Phenox), digits = get_round_digit(signif(sd(soil_T0$Phenox)/sqrt(length(soil_T0$Phenox)), digits = 1)))` &plusmn; `r signif(sd(soil_T0$Phenox)/sqrt(length(soil_T0$Phenox)), digits = 1)` &mu;mol substrate per g soil per hour for phenol oxidase and `r round(mean(soil_T0$Perox), digits = get_round_digit(signif(sd(soil_T0$Perox)/sqrt(length(soil_T0$Perox)), digits = 1)))` &plusmn; `r signif(sd(soil_T0$Perox)/sqrt(length(soil_T0$Perox)), digits = 1)` &mu;mol substrate per g soil per hour for peroxidase concentration. The mean total microfauna, mesofauna, and total fauna abundances (&plusmn; SE) were: `r comma(round(mean(abundance_T0$total_micro_ab_standardized), digits = get_round_digit(signif(sd(abundance_T0$total_micro_ab_standardized)/sqrt(length(abundance_T0$total_micro_ab_standardized)), digits = 1))))` (&plusmn; `r comma(signif(sd(abundance_T0$total_micro_ab_standardized)/sqrt(length(abundance_T0$total_micro_ab_standardized)), digits = 1))`), `r comma(round(mean(abundance_T0$total_meso_ab_standardized), digits = get_round_digit(signif(sd(abundance_T0$total_meso_ab_standardized)/sqrt(length(abundance_T0$total_meso_ab_standardized)), digits = 1))))` (&plusmn; `r comma(signif(sd(abundance_T0$total_meso_ab_standardized)/sqrt(length(abundance_T0$total_meso_ab_standardized)), digits = 1))`), and `r comma(round(mean(abundance_T0$total_ab_standardized), digits = get_round_digit(signif(sd(abundance_T0$total_ab_standardized)/sqrt(length(abundance_T0$total_ab_standardized)), digits = 1))))` (&plusmn; `r comma(signif(sd(abundance_T0$total_ab_standardized)/sqrt(length(abundance_T0$total_ab_standardized)), digits = 1))`) individuals per m^2^, respectively.
+<br>
+
+### Supplemental Table 3.1
+Summary table of mean (&plusmn; SE) heterotrophic respiration, soil moisture, pH, C:N ratio, phenol oxidase concentration, peroxidase concentration, total microfauna abundance, total mesofauna abundance, and total fauna abundance prior to deployment of the experimental treatments (T~0~). Units for each parameter are displayed in the table.
 ```{r T0 Results 2, warning=F}
 T0_df1 <- as.data.frame(matrix(data = c(
   "Heterotrophic Respiration", 
-  comma(round(mean(exp(resp_T0$cum_resp)), 
+  format(round(mean(resp_T0$cum_resp), 
                  digits = get_round_digit(
-                   signif(sd(exp(resp_T0$cum_resp))/
+                   signif(sd(resp_T0$cum_resp)/
                    sqrt(length(resp_T0$cum_resp)), digits = 1)
-                 ))),
-  signif(sd(exp(resp_T0$cum_resp))/
+                 )), nsmall = 1),
+  signif(sd(resp_T0$cum_resp)/
                    sqrt(length(resp_T0$cum_resp)), digits = 1),
-  "g of C / m^2^ / year",
+  "ln(g of C / m^2^ / year)",
   
   "Soil Moisture",
   round(mean(soil_T0$pct_moisture), 
@@ -1740,6 +1744,10 @@ flux_T0 <- flux_data %>% filter(destructive_time == "T0")
 <br>
 
 Converting faunal abundance to biomass estimates, I calculated mean microfauna, mesofauna and total fauna biomass (&plusmn; SE) as `r round(mean(biomass_T0$micro_biomass), digits = get_round_digit(signif(sd(biomass_T0$micro_biomass)/sqrt(length(biomass_T0$micro_biomass)), digits = 1)))` (&plusmn; `r signif(sd(biomass_T0$micro_biomass)/sqrt(length(biomass_T0$micro_biomass)), digits = 1)`), `r round(mean(biomass_T0$meso_biomass), digits = get_round_digit(signif(sd(biomass_T0$meso_biomass)/sqrt(length(biomass_T0$meso_biomass)), digits = 1)))` (&plusmn; `r signif(sd(biomass_T0$meso_biomass)/sqrt(length(biomass_T0$meso_biomass)), digits = 1)`), and `r round(mean(biomass_T0$total_biomass), digits = get_round_digit(signif(sd(biomass_T0$total_biomass)/sqrt(length(biomass_T0$total_biomass)), digits = 1)))` (&plusmn; `r signif(sd(biomass_T0$total_biomass)/sqrt(length(biomass_T0$total_biomass)), digits = 1)`) g of C per m^2^, respectively. Mean total consumptive flux (&plusmn; SE) based on the energetic model was `r comma(round(mean(flux_T0$total_consumption), digits = get_round_digit(signif(sd(flux_T0$total_consumption)/sqrt(length(flux_T0$total_consumption)), digits = 1))))` &plusmn; `r signif(sd(flux_T0$total_consumption)/sqrt(length(flux_T0$total_consumption)), digits = 1)` g of C per m^2^ per year, while the mean total C mineralization (&plusmn; SE) was `r round(mean(flux_T0$total_Cmin), digits = get_round_digit(signif(sd(flux_T0$total_Cmin)/sqrt(length(flux_T0$total_Cmin)), digits = 1)))` &plusmn; `r signif(sd(flux_T0$total_Cmin)/sqrt(length(flux_T0$total_Cmin)), digits = 1)` g of C per m^2^ per year, and the mean total N mineralization (&plusmn; SE) was `r format(round(mean(flux_T0$total_Nmin), digits = get_round_digit(signif(sd(flux_T0$total_Nmin)/sqrt(length(flux_T0$total_Nmin)), digits = 1))), nsmall = 1)` &plusmn; `r signif(sd(flux_T0$total_Nmin)/sqrt(length(flux_T0$total_Nmin)), digits = 1)` g of N per m^2^ per year. Mean values are presented in [Appendix D].
+<br>
+
+### Supplemental Table 3.2
+Summary table of mean (&plusmn; SE) microfauna biomass, mesofauna biomass, total biomass, total consumption, total C mineralization, and total N mineralization prior to deployment of the experimental treatments (T~0~). Units for each parameter are displayed in the table.
 ```{r T0 Results 4, warning=F}
 T0_df2 <- as.data.frame(matrix(data = c(
   "Microfauna Biomass", 
@@ -1853,8 +1861,15 @@ resp_plot
 ```
 <br>
 
-Heterotrophic respiration was transformed on natural log, (ln) scale to conform to the assumption of normality. Log-transformed soil heterotrophic respiration satisfied the assumptions of normality and homodescacity, as per a Shapiro-Wilk (W = 0.983, p = 0.794) and Levene’s test (F~7,31~ = 0.519, p = 0.813). Log-transformed heterotrophic respiration, estimated for each mesocosm ([Figure 3.1]), was not significantly affected by soil moisture (F~1,34~ = 1.777, p = 0.191), nor temperature (F~1,34~ = 2.849, p = 0.101); heterotrophic respiration tended to be greater in mesocosms assigned to 20 &deg;C vs. 12 &deg;C. Neither destructive sampling time (F~1,34~ = 0.004, p = 0.950) nor block effects (F~1,34~ = 0.216, p = 0.645) used to account for differences in field sampling location significantly affected log-transformed respiration. There were no significant interaction effects between soil moisture, temperature, and destructive sampling time ([Appendix E]). Mean soil heterotrophic respiration (&plusmn; SE) under each treatment is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
+### Supplemental Table 3.3
+Shapiro-Wilk and Levene's Tests constructed to test whether heterotrophic soil respiration (ln transformed) conforms to the assumptions of normality and homodescacity, respectively. 
 ```{r Resp Results 1, warning=F}
+sub_digits <- function(x) {
+  subs <- c("₀","₁","₂","₃","₄","₅","₆","₇","₈","₉")
+  digits <- strsplit(as.character(x), "")[[1]]
+  paste0(subs[as.integer(digits) + 1], collapse = "")
+}
+
 resp_T1uT2 <- resp.data %>% filter(!destructive_time=="T0")
 
 resp_T1uT2$destructive_time <- 
@@ -1890,22 +1905,22 @@ resp_lm2 <- lm(cum_resp ~
 
 resp_assumptions <- as.data.frame(matrix(data = c(
   "Shapiro-Wilk Test", 
-  NA,
-  NA,
-  round(shapiro_test(residuals(resp_lm2))$statistic, 3),
-  round(shapiro_test(residuals(resp_lm2))$p.value, 3),
+  paste0("W = ", round(shapiro_test(residuals(resp_lm2))$statistic, 3)),
+  paste0("p = ", round(shapiro_test(residuals(resp_lm2))$p.value, 3)),
   "Levene's Test",
-  levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), 
-              data = resp_T1uT2)$df1,
-  levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), 
-              data = resp_T1uT2)$df2,
+  paste0("F", sub_digits(
+    levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), 
+              data = resp_T1uT2)$df1), "\u02CC",
+  sub_digits(levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), 
+              data = resp_T1uT2)$df2), " = ",
   round(levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), 
-              data = resp_T1uT2)$statistic, 3),
-  round(levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), 
-              data = resp_T1uT2)$p, 3)
-), ncol = 5, byrow = T))
+              data = resp_T1uT2)$statistic, 3)),
+  paste0("p = ", round(
+    levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), 
+              data = resp_T1uT2)$p, 3))
+), ncol = 3, byrow = T))
 
-colnames(resp_assumptions) <- c("Test", "df1", "df2", "Statistic", "P-Value")
+colnames(resp_assumptions) <- c("Test", "Statistic", "P-Value")
 
 knitr::kable(resp_assumptions)
 ```
@@ -1917,8 +1932,56 @@ resp_aov <-
 
 resp_aov2 <- 
   Anova(resp_lm2, type = 'III')
+```
+<br>
 
-resp_aov2
+Heterotrophic respiration was transformed on natural log, (ln) scale to conform to the assumption of normality. Log-transformed soil heterotrophic respiration satisfied the assumptions of normality and homodescacity, as per a Shapiro-Wilk (`r paste0("W = ", round(shapiro_test(residuals(resp_lm2))$statistic, 3))`, `r paste0("p = ", round(shapiro_test(residuals(resp_lm2))$p.value, 3))`) and Levene’s test (`r paste0("F", sub_digits(levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), data = resp_T1uT2)$df1), "\u02CC", sub_digits(levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), data = resp_T1uT2)$df2), " = ", round(levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), data = resp_T1uT2)$statistic, 3))`, `r paste0("p = ", round(levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), data = resp_T1uT2)$p, 3))`). Log-transformed heterotrophic respiration, estimated for each mesocosm ([Figure 3.1]), was not significantly affected by soil moisture (`r paste0("F", sub_digits(resp_aov2["moisture_tx", "Df"]), "\u02CC", sub_digits(resp_aov2["Residuals", "Df"]), " = ", format(round(resp_aov2["moisture_tx", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(resp_aov2["moisture_tx", "Pr(>F)"], 3), nsmall = 3))`), nor temperature (`r paste0("F", sub_digits(resp_aov2["temp_tx", "Df"]), "\u02CC", sub_digits(resp_aov2["Residuals", "Df"]), " = ", format(round(resp_aov2["temp_tx", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(resp_aov2["temp_tx", "Pr(>F)"], 3), nsmall = 3))`); heterotrophic respiration tended to be greater in mesocosms assigned to 20 &deg;C vs. 12 &deg;C. Neither destructive sampling time (`r paste0("F", sub_digits(resp_aov2["destructive_time", "Df"]), "\u02CC", sub_digits(resp_aov2["Residuals", "Df"]), " = ", format(round(resp_aov2["destructive_time", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(resp_aov2["destructive_time", "Pr(>F)"], 3), nsmall = 3))`) nor block effects (`r paste0("F", sub_digits(resp_aov2["block_effect", "Df"]), "\u02CC", sub_digits(resp_aov2["Residuals", "Df"]), " = ", format(round(resp_aov2["block_effect", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(resp_aov2["block_effect", "Pr(>F)"], 3), nsmall = 3))`) used to account for differences in field sampling location significantly affected log-transformed respiration. There were no significant interaction effects between soil moisture, temperature, and destructive sampling time ([Appendix E]). Mean soil heterotrophic respiration (&plusmn; SE) under each treatment is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
+<br>
+  
+### Supplemental Table 3.4
+Log-transformed heterotrophic respiration ANOVA results.
+```{r Resp Results 3}
+resp_aov_tbl <- as.data.frame(matrix(data = c(
+  "Intercept",
+  paste0("F", sub_digits(resp_aov2["(Intercept)", "Df"]), 
+         "\u02CC", sub_digits(resp_aov2["Residuals", "Df"]), 
+         " = ", format(round(resp_aov2["(Intercept)", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(resp_aov2["(Intercept)", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Soil Moisture Treatment",
+  paste0("F", sub_digits(resp_aov2["moisture_tx", "Df"]), 
+         "\u02CC", sub_digits(resp_aov2["Residuals", "Df"]), 
+         " = ", format(round(resp_aov2["moisture_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(resp_aov2["moisture_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Temperature Treatment",
+  paste0("F", sub_digits(resp_aov2["temp_tx", "Df"]), 
+         "\u02CC", sub_digits(resp_aov2["Residuals", "Df"]), 
+         " = ", format(round(resp_aov2["temp_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(resp_aov2["temp_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Destructive Sampling Treatment",
+  paste0("F", sub_digits(resp_aov2["destructive_time", "Df"]), 
+         "\u02CC", sub_digits(resp_aov2["Residuals", "Df"]), 
+         " = ", format(round(resp_aov2["destructive_time", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(resp_aov2["destructive_time", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Block Effect",
+  paste0("F", sub_digits(resp_aov2["block_effect", "Df"]), 
+         "\u02CC", sub_digits(resp_aov2["Residuals", "Df"]), 
+         " = ", format(round(resp_aov2["block_effect", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(resp_aov2["block_effect", "Pr(>F)"], 3), 
+                       nsmall = 3))
+), ncol = 3, byrow = T))
+
+colnames(resp_aov_tbl) <- c("Parameter", "Statistic", "P-Value")
+
+knitr::kable(resp_aov_tbl)
 ```
 <br>
 
