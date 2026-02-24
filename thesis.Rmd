@@ -56,6 +56,7 @@ library(vegan)
 library(soilfoodwebs)
 library(tibble) # rownames_to_column
 library(scales) # comma
+library(patchwork) # plot_layout
 
 RNGkind(sample.kind = "Rounding") 
 ```
@@ -2054,8 +2055,23 @@ CN_plot <-
   ylab(expression("Soil C:N Ratio")) +
   labs(fill = "Sampling Time", pch = "Sampling Time")
 
+place_tag <- function(g, label = "A", x_left = 0.58, y_top = Inf,
+                      size = 4, face = "bold", left_margin = 28) {
+  g +
+    annotate("text",
+             x = x_left, y = y_top, label = label,
+             hjust = 0, vjust = 1, fontface = face, size = size) +
+    coord_cartesian(clip = "off") +
+    theme(plot.margin = margin(5, 6, 5, left_margin))
+}
 
-soil_moisture_plot; pH_plot; CN_plot
+g1 <- place_tag(soil_moisture_plot, "A", x_left = 0.58)
+g2 <- place_tag(pH_plot,            "B", x_left = 0.58)
+g3 <- place_tag(CN_plot,            "C", x_left = 0.58)
+
+(g1 / g2 / g3) +
+  plot_layout(ncol = 1, guides = "collect") &
+  theme(legend.position = "bottom")
 ```
 <br>
 
