@@ -1863,7 +1863,7 @@ resp_plot
 <br>
 
 ### Supplemental Table 3.3
-Shapiro-Wilk and Levene's Tests constructed to test whether heterotrophic soil respiration (ln transformed) conforms to the assumptions of normality and homodescacity, respectively. 
+Shapiro-Wilk and Levene's Tests constructed to test whether log-transformed heterotrophic soil respiration conforms to the assumptions of normality and homodescacity, respectively. 
 ```{r Resp Results 1, warning=F}
 sub_digits <- function(x) {
   subs <- c("₀","₁","₂","₃","₄","₅","₆","₇","₈","₉")
@@ -2075,7 +2075,6 @@ g3 <- place_tag(CN_plot,            "C", x_left = 0.58)
 ```
 <br>
 
-Soil moisture and pH were transformed on natural log, (ln) scale to conform to the assumption of normality. Soil moisture and pH were measured across 37 experimental mesocosms; in addition to sample ExRes 5, one large positive outlier (point estimates: 7.10 ln(%), 1.55 ln(pH)) and one large negative outlier (point estimates: 6.34 ln(%), 1.28 ln(pH)) were removed to help conform to the assumptions of normality. Soil C:N ratio was compared across 36 mesocosms, as three samples could not be processed due to the mass and packing of the sample and size limitations of the CNSH autosampler. Log-transformed soil moisture (Shapiro-Wilk’s test: W = 0.960, p = 0.259; Levene’s test: F~7,25~ = 0.096, p = 0.998), log-transformed pH (Shapiro-Wilk’s test: W = 0.975, p = 0.640; Levene’s test: F~7,25~ = 1.816, p = 0.128), and C:N ratio (Shapiro-Wilk’s test: W = 0.983, p = 0.853; Levene’s test: F~7,27~ = 1.092, p = 0.396) each satisfied the assumptions of normality and homogeneity of variance.
 ```{r Soil Results 1, warning=F}
 soil_T1uT2$pH[soil_T1uT2$Sample_ID == "ExRes 17"] <- NA # positive outlier
 soil_T1uT2$pct_moisture[soil_T1uT2$Sample_ID == "ExRes 17"] <- NA # positive outlier
@@ -2143,94 +2142,264 @@ CN_lm2 <- lm(C_N_ratio ~
               destructive_time +
               block_effect,
           data = soil_T1uT2)
+```
+<br>
 
+Soil moisture and pH were transformed on natural log, (ln) scale to conform to the assumption of normality. Soil moisture and pH were measured across 37 experimental mesocosms; in addition to sample ExRes 5, one large positive outlier (point estimates: 7.10 ln(%), 1.55 ln(pH)) and one large negative outlier (point estimates: 6.34 ln(%), 1.28 ln(pH)) were removed to help conform to the assumptions of normality. Soil C:N ratio was compared across 36 mesocosms, as three samples could not be processed due to the mass and packing of the sample and size limitations of the CNSH autosampler. Log-transformed soil moisture (Shapiro-Wilk’s test: `r paste0("W= ", format(round(shapiro_test(residuals(soil_moisture_lm2))$statistic, 3), nsmall = 3))`, `r paste0("p = ", format(round(shapiro_test(residuals(soil_moisture_lm2))$p.value, 3), nsmasll = 3))`; Levene’s test: `r paste0("F", sub_digits(levene_test(log(pct_moisture) ~ (moisture_tx * temp_tx * destructive_time), data = soil_T1uT2)$df1), "\u02CC", sub_digits(levene_test(log(pct_moisture) ~ (moisture_tx * temp_tx * destructive_time), data = soil_T1uT2)$df2), " = ", format(round(levene_test(log(pct_moisture) ~ (moisture_tx * temp_tx * destructive_time), data = soil_T1uT2)$statistic, 3), nsmall = 3))`, `r paste0("p = ", format(round(levene_test(log(pct_moisture) ~ (moisture_tx * temp_tx * destructive_time), data = soil_T1uT2)$p, 3), nsmall = 3))`), log-transformed pH (Shapiro-Wilk’s test: `r paste0("W= ", format(round(shapiro_test(residuals(pH_lm2))$statistic, 3), nsmall = 3))`, `r paste0("p = ", format(round(shapiro_test(residuals(pH_lm2))$p.value, 3), nsmasll = 3))`; Levene’s test: `r paste0("F", sub_digits(levene_test(log(pH) ~ (moisture_tx * temp_tx * destructive_time), data = soil_T1uT2)$df1), "\u02CC", sub_digits(levene_test(log(pH) ~ (moisture_tx * temp_tx * destructive_time), data = soil_T1uT2)$df2), " = ", format(round(levene_test(log(pH) ~ (moisture_tx * temp_tx * destructive_time), data = soil_T1uT2)$statistic, 3), nsmall = 3))`, `r paste0("p = ", format(round(levene_test(log(pH) ~ (moisture_tx * temp_tx * destructive_time), data = soil_T1uT2)$p, 3), nsmall = 3))`), and C:N ratio (Shapiro-Wilk’s test: `r paste0("W= ", format(round(shapiro_test(residuals(CN_lm2))$statistic, 3), nsmall = 3))`, `r paste0("p = ", format(round(shapiro_test(residuals(CN_lm2))$p.value, 3), nsmasll = 3))`; Levene’s test: `r paste0("F", sub_digits(levene_test(C_N_ratio ~ (moisture_tx * temp_tx * destructive_time), data = soil_T1uT2)$df1), "\u02CC", sub_digits(levene_test(C_N_ratio ~ (moisture_tx * temp_tx * destructive_time), data = soil_T1uT2)$df2), " = ", format(round(levene_test(C_N_ratio ~ (moisture_tx * temp_tx * destructive_time), data = soil_T1uT2)$statistic, 3), nsmall = 3))`, `r paste0("p = ", format(round(levene_test(C_N_ratio ~ (moisture_tx * temp_tx * destructive_time), data = soil_T1uT2)$p, 3), nsmall = 3))`) each satisfied the assumptions of normality and homogeneity of variance.
+<br>
+  
+### Supplemental Table 3.5
+Shapiro-Wilk and Levene's Tests constructed to test whether log-transformed soil moisture, log-transformed pH, and C:N ratio conform to the assumptions of normality and homodescacity.
+```{r Soil Results 2, warning=F}
 soil_df1 <- as.data.frame(matrix(data = c(
   "Soil Moisture",
   "Shapiro-Wilk Test", 
-  NA,
-  NA,
-  format(round(shapiro_test(residuals(soil_moisture_lm2))$statistic, 3), 
-         nsmall = 3),
-  format(round(shapiro_test(residuals(soil_moisture_lm2))$p.value, 3),
-         nsmasll = 3),
+  paste0("W= ", 
+         format(round(shapiro_test(residuals(soil_moisture_lm2))$statistic, 3), 
+         nsmall = 3)),
+  paste0("p = ", 
+         format(round(shapiro_test(residuals(soil_moisture_lm2))$p.value, 3),
+         nsmasll = 3)),
   "Soil Moisture",
   "Levene's Test",
-  levene_test(log(pct_moisture) ~ (moisture_tx * temp_tx * destructive_time), 
-              data = soil_T1uT2)$df1,
-  levene_test(log(pct_moisture) ~ (moisture_tx * temp_tx * destructive_time), 
-              data = soil_T1uT2)$df2,
+  paste0("F", sub_digits(
+    levene_test(log(pct_moisture) ~ (moisture_tx * temp_tx * destructive_time), 
+              data = soil_T1uT2)$df1), "\u02CC",
+  sub_digits(
+    levene_test(log(pct_moisture) ~ (moisture_tx * temp_tx * destructive_time), 
+              data = soil_T1uT2)$df2), " = ",
   format(round(levene_test(log(pct_moisture) ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = soil_T1uT2)$statistic, 3), nsmall = 3),
-  format(round(levene_test(log(pct_moisture) ~ 
+              data = soil_T1uT2)$statistic, 3), nsmall = 3)),
+  paste0("p = ", 
+         format(round(levene_test(log(pct_moisture) ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = soil_T1uT2)$p, 3), nsmall = 3),
+              data = soil_T1uT2)$p, 3), nsmall = 3)),
   "Soil pH",
   "Shapiro-Wilk Test", 
-  NA,
-  NA,
-  format(round(shapiro_test(residuals(pH_lm2))$statistic, 3), nsmall = 3),
-  format(round(shapiro_test(residuals(pH_lm2))$p.value, 3), nsmall = 3),
+  paste0("W= ", 
+         format(round(shapiro_test(residuals(pH_lm2))$statistic, 3), 
+         nsmall = 3)),
+  paste0("p = ", 
+         format(round(shapiro_test(residuals(pH_lm2))$p.value, 3),
+         nsmasll = 3)),
   "Soil pH",
   "Levene's Test",
-  levene_test(log(pH) ~ (moisture_tx * temp_tx * destructive_time), 
-              data = soil_T1uT2)$df1,
-  levene_test(log(pH) ~ (moisture_tx * temp_tx * destructive_time), 
-              data = soil_T1uT2)$df2,
+  paste0("F", sub_digits(
+    levene_test(log(pH) ~ (moisture_tx * temp_tx * destructive_time), 
+              data = soil_T1uT2)$df1), "\u02CC",
+  sub_digits(
+    levene_test(log(pH) ~ (moisture_tx * temp_tx * destructive_time), 
+              data = soil_T1uT2)$df2), " = ",
   format(round(levene_test(log(pH) ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = soil_T1uT2)$statistic, 3), nsmall = 3),
-  format(round(levene_test(log(pH) ~ 
+              data = soil_T1uT2)$statistic, 3), nsmall = 3)),
+  paste0("p = ", 
+         format(round(levene_test(log(pH) ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = soil_T1uT2)$p, 3), nsmall = 3),
+              data = soil_T1uT2)$p, 3), nsmall = 3)),
   "Soil C:N Ratio",
   "Shapiro-Wilk Test", 
-  NA,
-  NA,
-  round(shapiro_test(residuals(CN_lm2))$statistic, 3),
-  round(shapiro_test(residuals(CN_lm2))$p.value, 3),
+  paste0("W= ", 
+         format(round(shapiro_test(residuals(CN_lm2))$statistic, 3), 
+         nsmall = 3)),
+  paste0("p = ", 
+         format(round(shapiro_test(residuals(CN_lm2))$p.value, 3),
+         nsmasll = 3)),
   "Soil C:N Ratio",
   "Levene's Test",
-  levene_test(C_N_ratio ~ (moisture_tx * temp_tx * destructive_time), 
-              data = soil_T1uT2)$df1,
-  levene_test(C_N_ratio ~ (moisture_tx * temp_tx * destructive_time), 
-              data = soil_T1uT2)$df2,
-  round(levene_test(C_N_ratio ~ (moisture_tx * temp_tx * destructive_time), 
-              data = soil_T1uT2)$statistic, 3),
-  round(levene_test(C_N_ratio ~ (moisture_tx * temp_tx * destructive_time), 
-              data = soil_T1uT2)$p, 3)
-  ), ncol = 6, byrow = T))
+  paste0("F", sub_digits(
+    levene_test(C_N_ratio ~ (moisture_tx * temp_tx * destructive_time), 
+              data = soil_T1uT2)$df1), "\u02CC",
+  sub_digits(
+    levene_test(C_N_ratio ~ (moisture_tx * temp_tx * destructive_time), 
+              data = soil_T1uT2)$df2), " = ",
+  format(round(levene_test(C_N_ratio ~ 
+                             (moisture_tx * temp_tx * destructive_time), 
+              data = soil_T1uT2)$statistic, 3), nsmall = 3)),
+  paste0("p = ", 
+         format(round(levene_test(C_N_ratio ~ 
+                             (moisture_tx * temp_tx * destructive_time), 
+              data = soil_T1uT2)$p, 3), nsmall = 3))
+  ), ncol = 4, byrow = T))
 
-colnames(soil_df1) <- c("Parameter", "Test", "df1", "df2", "Statistic", "P-Value")
+colnames(soil_df1) <- c("Parameter", "Test", "Statistic", "P-Value")
 
 knitr::kable(soil_df1, linesep = "\\hline")
 ```
 <br>
-
-Mean soil moisture ([Figure 3.2]A) was significantly related to the induced soil moisture treatments and significantly greater in saturated vs. field-moist treatments (F~1,28~ = 16.723, p < 0.001) and was significantly greater in 20 &deg;C vs. 12 &deg;C treatments (F~1,28~ = 5.073, p = 0.032). Soil moisture was not affected by destructive sampling time (F~1,28~ = 2.748, p = 0.108) nor block effects (F~1,28~ = 0.052, p = 0.822). There were no significant interaction effects between soil moisture, temperature, and destructive sampling time ([Appendix E]). Mean soil moisture is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
-```{r Soil Results 2}
-soil_moisture_aov2 <- Anova(soil_moisture_lm2, type = 'III')
-
-soil_moisture_aov2
-```
-<br>
-
-Mean soil pH ([Figure 3.2]B) was not significantly influenced by soil moisture (F~1,28~ = 2.636, p = 0.116) nor temperature (F~1,28~ = 1.676, p = 0.206) treatments. Destructive sampling time exhibited a significant effect on pH (F~1,28~ = 7.513, p = 0.011) and pH tended to be greater in mesocosms sampled at T~2~ vs. T~1~, but block effects did not explain differences in pH between treatments (F~1,28~ = 0.040, p = 0.843). There were no significant interaction effects between soil moisture, temperature, and destructive sampling time ([Appendix E]). Mean soil pH is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
+  
 ```{r Soil Results 3}
+soil_moisture_aov2 <- Anova(soil_moisture_lm2, type = 'III')
+```  
+<br>
+  
+Mean soil moisture ([Figure 3.2]A) was significantly related to the induced soil moisture treatments and significantly greater in saturated vs. field-moist treatments (`r paste0("F", sub_digits(soil_moisture_aov2["moisture_tx", "Df"]), "\u02CC", sub_digits(soil_moisture_aov2["Residuals", "Df"]), " = ", format(round(soil_moisture_aov2["moisture_tx", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(soil_moisture_aov2["moisture_tx", "Pr(>F)"], 3), nsmall = 3))`) and was significantly greater in 20 &deg;C vs. 12 &deg;C treatments (`r paste0("F", sub_digits(soil_moisture_aov2["temp_tx", "Df"]), "\u02CC", sub_digits(soil_moisture_aov2["Residuals", "Df"]), " = ", format(round(soil_moisture_aov2["temp_tx", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(soil_moisture_aov2["temp_tx", "Pr(>F)"], 3), nsmall = 3))`). Soil moisture was not affected by destructive sampling time (`r paste0("F", sub_digits(soil_moisture_aov2["destructive_time", "Df"]), "\u02CC", sub_digits(soil_moisture_aov2["Residuals", "Df"]), " = ", format(round(soil_moisture_aov2["destructive_time", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(soil_moisture_aov2["destructive_time", "Pr(>F)"], 3), nsmall = 3))`) nor block effects (`r paste0("F", sub_digits(soil_moisture_aov2["block_effect", "Df"]), "\u02CC", sub_digits(soil_moisture_aov2["Residuals", "Df"]), " = ", format(round(soil_moisture_aov2["block_effect", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(soil_moisture_aov2["block_effect", "Pr(>F)"], 3), nsmall = 3))`). There were no significant interaction effects between soil moisture, temperature, and destructive sampling time ([Appendix E]). Mean soil moisture is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
+<br>
+  
+### Supplemental Table 3.6
+Log-transformed soil moisture ANOVA results.
+```{r Soil Results 4}
+soil_moisture_aov_tbl <- as.data.frame(matrix(data = c(
+  "Intercept",
+  paste0("F", sub_digits(soil_moisture_aov2["(Intercept)", "Df"]), 
+         "\u02CC", sub_digits(soil_moisture_aov2["Residuals", "Df"]), 
+         " = ", format(round(soil_moisture_aov2["(Intercept)", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(soil_moisture_aov2["(Intercept)", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Soil Moisture Treatment",
+  paste0("F", sub_digits(soil_moisture_aov2["moisture_tx", "Df"]), 
+         "\u02CC", sub_digits(soil_moisture_aov2["Residuals", "Df"]), 
+         " = ", format(round(soil_moisture_aov2["moisture_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(soil_moisture_aov2["moisture_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Temperature Treatment",
+  paste0("F", sub_digits(soil_moisture_aov2["temp_tx", "Df"]), 
+         "\u02CC", sub_digits(soil_moisture_aov2["Residuals", "Df"]), 
+         " = ", format(round(soil_moisture_aov2["temp_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(soil_moisture_aov2["temp_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Destructive Sampling Treatment",
+  paste0("F", sub_digits(soil_moisture_aov2["destructive_time", "Df"]), 
+         "\u02CC", sub_digits(soil_moisture_aov2["Residuals", "Df"]), 
+         " = ", format(round(soil_moisture_aov2["destructive_time", "F value"], 
+                             3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(soil_moisture_aov2["destructive_time", "Pr(>F)"], 
+                              3), 
+                       nsmall = 3)),
+  "Block Effect",
+  paste0("F", sub_digits(soil_moisture_aov2["block_effect", "Df"]), 
+         "\u02CC", sub_digits(soil_moisture_aov2["Residuals", "Df"]), 
+         " = ", format(round(soil_moisture_aov2["block_effect", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(soil_moisture_aov2["block_effect", "Pr(>F)"], 3), 
+                       nsmall = 3))
+), ncol = 3, byrow = T))
+
+colnames(soil_moisture_aov_tbl) <- c("Parameter", "Statistic", "P-Value")
+
+knitr::kable(soil_moisture_aov_tbl)
+```
+<br>
+
+```{r Soil Results 5}
 pH_aov2 <- Anova(pH_lm2, type = 'III')
-
-pH_aov2
 ```
 <br>
 
-Soil C:N ([Figure 3.2]C) did not show any clear trends across treatments. Neither soil moisture (F~1,30~ = 0.340, p = 0.564), temperature (F~1,30~ = 1.370, p = 0.251), nor destructive sampling time (F~1,30~ = 0.490, p = 0.490) had a significant effect on soil C:N ratio. There was no significant difference in C:N ratio between treatments corresponding to block effects (F~1,30~ = 0.944, p = 0.339) and there were no significant interaction effects between soil moisture, temperature, and destructive sampling time ([Appendix E]). Mean C:N (&plusmn; SE) under each treatment is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
-``` {r Soil Results 4}
+Mean soil pH ([Figure 3.2]B) was not significantly influenced by soil moisture (`r paste0("F", sub_digits(pH_aov2["moisture_tx", "Df"]), "\u02CC", sub_digits(pH_aov2["Residuals", "Df"]), " = ", format(round(pH_aov2["moisture_tx", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(pH_aov2["moisture_tx", "Pr(>F)"], 3), nsmall = 3))`) nor temperature (`r paste0("F", sub_digits(pH_aov2["temp_tx", "Df"]), "\u02CC", sub_digits(pH_aov2["Residuals", "Df"]), " = ", format(round(pH_aov2["temp_tx", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(pH_aov2["temp_tx", "Pr(>F)"], 3), nsmall = 3))`) treatments. Destructive sampling time exhibited a significant effect on pH (`r paste0("F", sub_digits(pH_aov2["destructive_time", "Df"]), "\u02CC", sub_digits(pH_aov2["Residuals", "Df"]), " = ", format(round(pH_aov2["destructive_time", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(pH_aov2["destructive_time", "Pr(>F)"], 3), nsmall = 3))`) and pH tended to be greater in mesocosms sampled at T~2~ vs. T~1~, but block effects did not explain differences in pH between treatments (`r paste0("F", sub_digits(pH_aov2["block_effect", "Df"]), "\u02CC", sub_digits(pH_aov2["Residuals", "Df"]), " = ", format(round(pH_aov2["block_effect", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(pH_aov2["block_effect", "Pr(>F)"], 3), nsmall = 3))`). There were no significant interaction effects between soil moisture, temperature, and destructive sampling time ([Appendix E]). Mean soil pH is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
+<br>
+  
+### Supplemental Table 3.7
+Log-transformed soil pH ANOVA results.
+```{r Soil Results 6}
+pH_aov_tbl <- as.data.frame(matrix(data = c(
+  "Intercept",
+  paste0("F", sub_digits(pH_aov2["(Intercept)", "Df"]), 
+         "\u02CC", sub_digits(pH_aov2["Residuals", "Df"]), 
+         " = ", format(round(pH_aov2["(Intercept)", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(pH_aov2["(Intercept)", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Soil Moisture Treatment",
+  paste0("F", sub_digits(pH_aov2["moisture_tx", "Df"]), 
+         "\u02CC", sub_digits(pH_aov2["Residuals", "Df"]), 
+         " = ", format(round(pH_aov2["moisture_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(pH_aov2["moisture_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Temperature Treatment",
+  paste0("F", sub_digits(pH_aov2["temp_tx", "Df"]), 
+         "\u02CC", sub_digits(pH_aov2["Residuals", "Df"]), 
+         " = ", format(round(pH_aov2["temp_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(pH_aov2["temp_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Destructive Sampling Treatment",
+  paste0("F", sub_digits(pH_aov2["destructive_time", "Df"]), 
+         "\u02CC", sub_digits(pH_aov2["Residuals", "Df"]), 
+         " = ", format(round(pH_aov2["destructive_time", "F value"], 
+                             3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(pH_aov2["destructive_time", "Pr(>F)"], 
+                              3), 
+                       nsmall = 3)),
+  "Block Effect",
+  paste0("F", sub_digits(pH_aov2["block_effect", "Df"]), 
+         "\u02CC", sub_digits(pH_aov2["Residuals", "Df"]), 
+         " = ", format(round(pH_aov2["block_effect", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(pH_aov2["block_effect", "Pr(>F)"], 3), 
+                       nsmall = 3))
+), ncol = 3, byrow = T))
+
+colnames(pH_aov_tbl) <- c("Parameter", "Statistic", "P-Value")
+
+knitr::kable(pH_aov_tbl)
+```
+<br>
+  
+``` {r Soil Results 7}
 CN_aov2 <- Anova(CN_lm2, type = 'III')
-
-CN_aov2
 ```
 <br>
+  
+Soil C:N ([Figure 3.2]C) did not show any clear trends across treatments. Neither soil moisture (`r paste0("F", sub_digits(CN_aov2["moisture_tx", "Df"]), "\u02CC", sub_digits(CN_aov2["Residuals", "Df"]), " = ", format(round(CN_aov2["moisture_tx", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(CN_aov2["moisture_tx", "Pr(>F)"], 3), nsmall = 3))`), temperature (`r paste0("F", sub_digits(CN_aov2["temp_tx", "Df"]), "\u02CC", sub_digits(CN_aov2["Residuals", "Df"]), " = ", format(round(CN_aov2["temp_tx", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(CN_aov2["temp_tx", "Pr(>F)"], 3), nsmall = 3))`), nor destructive sampling time (`r paste0("F", sub_digits(CN_aov2["destructive_time", "Df"]), "\u02CC", sub_digits(CN_aov2["Residuals", "Df"]), " = ", format(round(CN_aov2["destructive_time", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(CN_aov2["destructive_time", "Pr(>F)"], 3), nsmall = 3))`) had a significant effect on soil C:N ratio. There was no significant difference in C:N ratio between treatments corresponding to block effects (`r paste0("F", sub_digits(CN_aov2["block_effect", "Df"]), "\u02CC", sub_digits(CN_aov2["Residuals", "Df"]), " = ", format(round(CN_aov2["block_effect", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(CN_aov2["block_effect", "Pr(>F)"], 3), nsmall = 3))`) and there were no significant interaction effects between soil moisture, temperature, and destructive sampling time ([Appendix E]). Mean C:N (&plusmn; SE) under each treatment is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
+<br>
+  
+### Supplemental Table 3.8
+Soil C:N ratio ANOVA results.
+```{r Soil Results 8}
+CN_aov_tbl <- as.data.frame(matrix(data = c(
+  "Intercept",
+  paste0("F", sub_digits(CN_aov2["(Intercept)", "Df"]), 
+         "\u02CC", sub_digits(CN_aov2["Residuals", "Df"]), 
+         " = ", format(round(CN_aov2["(Intercept)", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(CN_aov2["(Intercept)", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Soil Moisture Treatment",
+  paste0("F", sub_digits(CN_aov2["moisture_tx", "Df"]), 
+         "\u02CC", sub_digits(CN_aov2["Residuals", "Df"]), 
+         " = ", format(round(CN_aov2["moisture_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(CN_aov2["moisture_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Temperature Treatment",
+  paste0("F", sub_digits(CN_aov2["temp_tx", "Df"]), 
+         "\u02CC", sub_digits(CN_aov2["Residuals", "Df"]), 
+         " = ", format(round(CN_aov2["temp_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(CN_aov2["temp_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Destructive Sampling Treatment",
+  paste0("F", sub_digits(CN_aov2["destructive_time", "Df"]), 
+         "\u02CC", sub_digits(CN_aov2["Residuals", "Df"]), 
+         " = ", format(round(CN_aov2["destructive_time", "F value"], 
+                             3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(CN_aov2["destructive_time", "Pr(>F)"], 
+                              3), 
+                       nsmall = 3)),
+  "Block Effect",
+  paste0("F", sub_digits(CN_aov2["block_effect", "Df"]), 
+         "\u02CC", sub_digits(CN_aov2["Residuals", "Df"]), 
+         " = ", format(round(CN_aov2["block_effect", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(CN_aov2["block_effect", "Pr(>F)"], 3), 
+                       nsmall = 3))
+), ncol = 3, byrow = T))
 
+colnames(CN_aov_tbl) <- c("Parameter", "Statistic", "P-Value")
+
+knitr::kable(CN_aov_tbl)
+```
+<br>
+  
 ## 3.4 Enzyme Activity
 ### Figure 3.3 
 Boxplots of mean phenol oxidase (A) and peroxidase (B) concentration.
