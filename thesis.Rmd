@@ -57,6 +57,7 @@ library(soilfoodwebs)
 library(tibble) # rownames_to_column
 library(scales) # comma
 library(patchwork) # plot_layout
+library(ggtext) # element_textbox
 
 RNGkind(sample.kind = "Rounding") 
 ```
@@ -2404,42 +2405,59 @@ knitr::kable(CN_aov_tbl)
 ### Figure 3.3 
 Boxplots of mean phenol oxidase (A) and peroxidase (B) concentration.
 ```{r Figure 3-3, warning=F, fig.cap="Measurements were taken across experimental treatments of temperature (12 &deg;C, 20 &deg;C) and soil moisture (field-moist, saturated) destructively sampled after three-weeks (T~1~) or following three-week recovery period (T~2~). Letters denote significant differences between groups, as per Tukey’s HSD test.", out.width = '100%'}
-phenox_plot <- ggplot(soil_T1uT2, aes(x=tx, 
-                                          y=Phenox, 
-                                          fill = as.factor(destructive_time))) + 
-  geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
-  geom_jitter(aes(pch = as.factor(destructive_time)), 
-              position=position_jitter(width=.1, height=0), size = 3) +
-  theme(panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank(), 
-        axis.line = element_line(colour = "black")) +
-  scale_fill_brewer(palette = "Greys") +
-  xlab("Environmental Treatment Condition") + 
-  ylab(expression("Phenol Oxidase Concentration ("*mu*"mol substrate / g soil / hour)")) +
-  labs(fill = "Sampling Time", pch = "Sampling Time")
 
-perox_plot <- 
-  ggplot(soil_T1uT2, 
-         aes(x=tx, 
-             y=Perox, fill = as.factor(destructive_time))) + 
-  geom_boxplot(outlier.shape=NA) + #avoid plotting outliers twice
-  geom_jitter(aes(pch = as.factor(destructive_time)), 
-              position=position_jitter(width=.1, height=0), size = 3) +
-  theme(panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank(), 
-        axis.line = element_line(colour = "black")) +
-  scale_fill_brewer(palette = "Greys") +
-  xlab("Environmental Treatment Condition") + 
-  ylab(expression("Peroxidase Concentration ("*mu*"mol substrate / g soil / hour)")) +
-  labs(fill = "Sampling Time", pch = "Sampling Time")
+ylab_phenox <- "<span style='font-size:10pt'>Phenol Oxidase Concentration (µmol substrate / g soil / hour)</span>"
+ylab_perox  <- "<span style='font-size:10pt'>Peroxidase Concentration (µmol substrate /<br>g soil / hour)</span>"
 
-phenox_plot; perox_plot
+left_pad <- theme(plot.margin = margin(5, 6, 5, 70))
+
+phenox_plot <-
+  ggplot(soil_T1uT2, aes(x = tx, y = Phenox, fill = as.factor(destructive_time))) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(aes(pch = as.factor(destructive_time)),
+              position = position_jitter(width=.1, height=0),
+              size=3) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour="black"),
+        axis.title.y = element_textbox_simple(orientation="left-rotated", 
+                                              halign = 0.5,
+                                              margin = margin(b = 15))) +
+  scale_fill_brewer(palette = "Greys") +
+  xlab("Environmental Treatment Condition") +
+  ylab(ylab_phenox) +
+  labs(fill = "Sampling Time", pch = "Sampling Time") +
+  left_pad
+
+perox_plot <-
+  ggplot(soil_T1uT2, aes(x = tx, y = Perox, fill = as.factor(destructive_time))) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(aes(pch = as.factor(destructive_time)),
+              position = position_jitter(width=.1, height=0),
+              size=3) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour="black"),
+        axis.title.y = element_textbox_simple(orientation="left-rotated",
+                                              halign = 0.5,
+                                              margin = margin(b = 15))) +
+  scale_fill_brewer(palette = "Greys") +
+  xlab("Environmental Treatment Condition") +
+  ylab(ylab_perox) +
+  labs(fill = "Sampling Time", pch = "Sampling Time") +
+  left_pad
+
+e1 <- place_tag(phenox_plot, "A", x_left = 0.58)
+e2 <- place_tag(perox_plot, "B", x_left = 0.58)
+
+(e1 / e2) +
+  plot_layout(ncol = 1, guides = "collect") &
+  theme(legend.position = "bottom")
 ```
 <br>
 
-Mean phenol oxidase activity was measured across 38 mesocosms. One anomalous negative reading indicating an issue with instrumental background noise was excluded from both phenol oxidase and peroxidase comparisons. Peroxidase activity was compared across 37 mesocosms, as one large positive outlier (point estimate = 323 &mu;mol substrate per g soil per hour) was additionally omitted. Mean phenol oxidase (Shapiro-Wilk: W = 0.969, p = 0.428; Levene: F~7,27~ = 2.488, p = 0.041) and peroxidase (Shapiro-Wilk: W = 0.934, p = 0.040; Levene: F~7,26~ = 0.520, p = 0.811) activity satisfied the assumptions of normality and homogeneity of variance, as per a Shapiro-Wilk test and Levene’s test, respectively.
 ```{r Enzyme Results 1, warning=F}
 phenox_lm <- lm(Phenox ~ (moisture_tx * temp_tx * destructive_time) + block_effect, 
                 data = soil_T1uT2)
@@ -2484,67 +2502,201 @@ perox_lm2 <- lm(Perox ~
                   destructive_time +
                   block_effect,
              data = soil_T1uT2)
-
+```
+<br>
+  
+Mean phenol oxidase activity was measured across 38 mesocosms. One anomalous negative reading indicating an issue with instrumental background noise was excluded from both phenol oxidase and peroxidase comparisons. Peroxidase activity was compared across 37 mesocosms, as one large positive outlier (point estimate = 323 &mu;mol substrate per g soil per hour) was additionally omitted. Mean phenol oxidase (Shapiro-Wilk: `r paste0("W = ", format(round(shapiro_test(residuals(phenox_lm2))$statistic, 3), nsmall = 3))`, `r paste0("p = ", format(round(shapiro_test(residuals(phenox_lm2))$p.value, 3), nsmasll = 3))`; Levene: `r paste0("F", sub_digits(levene_test(Phenox ~ (moisture_tx * temp_tx * destructive_time), data = soil_T1uT2)$df1), "\u02CC", sub_digits(levene_test(Phenox ~ (moisture_tx * temp_tx * destructive_time), data = soil_T1uT2)$df2), " = ", format(round(levene_test(Phenox ~ (moisture_tx * temp_tx * destructive_time), data = soil_T1uT2)$statistic, 3), nsmall = 3))`, `r paste0("p = ", format(round(levene_test(Phenox ~ (moisture_tx * temp_tx * destructive_time), data = soil_T1uT2)$p, 3), nsmall = 3))`) and peroxidase (Shapiro-Wilk: `r paste0("W = ", format(round(shapiro_test(residuals(perox_lm2))$statistic, 3), nsmall = 3))`, `r paste0("p = ", format(round(shapiro_test(residuals(perox_lm2))$p.value, 3), nsmasll = 3))`; Levene: `r paste0("F", sub_digits(levene_test(Perox ~ (moisture_tx * temp_tx * destructive_time), data = soil_T1uT2)$df1), "\u02CC", sub_digits(levene_test(Perox ~ (moisture_tx * temp_tx * destructive_time), data = soil_T1uT2)$df2), " = ", format(round(levene_test(Perox ~ (moisture_tx * temp_tx * destructive_time), data = soil_T1uT2)$statistic, 3), nsmall = 3))`, `r paste0("p = ", format(round(levene_test(Perox ~ (moisture_tx * temp_tx * destructive_time), data = soil_T1uT2)$p, 3), nsmall = 3))`) activity satisfied the assumptions of normality and homogeneity of variance, as per a Shapiro-Wilk test and Levene’s test, respectively.
+<br>
+  
+### Supplemental Table 3.9
+Shapiro-Wilk and Levene’s Tests constructed to test whether phenol oxidase and peroxidase activity conform to the assumptions of normality and homodescacity.
+```{r Enzyme Results 2, warning=F}
 enzymes_df1 <- as.data.frame(matrix(data = c(
   "Phenol Oxidase Concentration",
   "Shapiro-Wilk Test", 
-  NA,
-  NA,
-  format(round(shapiro_test(residuals(phenox_lm2))$statistic, 3), 
-         nsmall = 3),
-  format(round(shapiro_test(residuals(phenox_lm2))$p.value, 3),
-         nsmasll = 3),
+  paste0("W = ", 
+         format(round(shapiro_test(residuals(phenox_lm2))$statistic, 3), 
+         nsmall = 3)),
+  paste0("p = ", 
+         format(round(shapiro_test(residuals(phenox_lm2))$p.value, 3),
+         nsmasll = 3)),
   "Phenol Oxidase Concentration",
   "Levene's Test",
-  levene_test(Phenox ~ (moisture_tx * temp_tx * destructive_time), 
-              data = soil_T1uT2)$df1,
-  levene_test(Phenox ~ (moisture_tx * temp_tx * destructive_time), 
-              data = soil_T1uT2)$df2,
+  paste0("F", sub_digits(
+    levene_test(Phenox ~ (moisture_tx * temp_tx * destructive_time), 
+              data = soil_T1uT2)$df1), "\u02CC",
+  sub_digits(
+    levene_test(Phenox ~ (moisture_tx * temp_tx * destructive_time), 
+              data = soil_T1uT2)$df2), " = ",
   format(round(levene_test(Phenox ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = soil_T1uT2)$statistic, 3), nsmall = 3),
-  format(round(levene_test(Phenox ~ 
+              data = soil_T1uT2)$statistic, 3), nsmall = 3)),
+  paste0("p = ", format(round(levene_test(Phenox ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = soil_T1uT2)$p, 3), nsmall = 3),
+              data = soil_T1uT2)$p, 3), nsmall = 3)),
   "Peroxidase Concentration",
   "Shapiro-Wilk Test", 
-  NA,
-  NA,
-  format(round(shapiro_test(residuals(perox_lm2))$statistic, 3), nsmall = 3),
-  format(round(shapiro_test(residuals(perox_lm2))$p.value, 3), nsmall = 3),
+  paste0("W = ", 
+         format(round(shapiro_test(residuals(perox_lm2))$statistic, 3), 
+         nsmall = 3)),
+  paste0("p = ", 
+         format(round(shapiro_test(residuals(perox_lm2))$p.value, 3),
+         nsmasll = 3)),
   "Peroxidase Concentration",
   "Levene's Test",
-  levene_test(Perox ~ (moisture_tx * temp_tx * destructive_time), 
-              data = soil_T1uT2)$df1,
-  levene_test(Perox ~ (moisture_tx * temp_tx * destructive_time), 
-              data = soil_T1uT2)$df2,
+  paste0("F", sub_digits(
+    levene_test(Perox ~ (moisture_tx * temp_tx * destructive_time), 
+              data = soil_T1uT2)$df1), "\u02CC",
+  sub_digits(
+    levene_test(Perox ~ (moisture_tx * temp_tx * destructive_time), 
+              data = soil_T1uT2)$df2), " = ",
   format(round(levene_test(Perox ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = soil_T1uT2)$statistic, 3), nsmall = 3),
-  format(round(levene_test(Perox ~ 
+              data = soil_T1uT2)$statistic, 3), nsmall = 3)),
+  paste0("p = ", format(round(levene_test(Perox ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = soil_T1uT2)$p, 3), nsmall = 3)
-  ), ncol = 6, byrow = T))
+              data = soil_T1uT2)$p, 3), nsmall = 3))
+  ), ncol = 4, byrow = T))
 
-colnames(enzymes_df1) <- c("Parameter", "Test", "df1", "df2", "Statistic", "P-Value")
+colnames(enzymes_df1) <- c("Parameter", "Test", "Statistic", "P-Value")
 
 knitr::kable(enzymes_df1, linesep = "\\hline")
 ```
 <br>
-
-Mean phenol oxidase activity ([Figure 3.3]A) was not significantly affected by soil moisture treatments (F~1,29~ = 0.739, p = 0.397), but was strongly driven by temperature conditions (F~1,29~ = 13.780, p < 0.001). Mean phenol oxidase activity increased in mesocosms assigned to 20 &deg;C vs. 12 &deg;C conditions. Destructive sampling treatments also significantly affected phenol oxidase activity (F~1,29~ = 4.937, p = 0.034) and was greater at T~2~ vs. T~1~. This was driven by a significant temperature by destructive sampling time interaction (F~1,29~ = 6.997, p = 0.013), which suggests that phenol oxidase activity decreased in mesocosms assigned to 20 &deg;C from T~1~ to T~2~ following a three-week return to initial 12 &deg;C conditions. Block effects constructed corresponding to differences in total abundance by original sampling location (F~1,29~ = 1.088, p = 0.306) did not have a significant effect on phenol oxidase activity. There were no other significant interaction effects between soil moisture, temperature, and destructive sampling time ([Appendix E]). Overall, mean phenol oxidase activity (&plusmn; SE) was greatest (199 &plusmn; 24 &mu;mol substrate per g soil per hour) in mesocosms assigned to 20 &deg;C field-moist conditions, sampled at T~1~ and was least (90 &plusmn; 19 &mu;mol substrate per g soil per hour) in those assigned to 12 &deg;C saturated conditions, sampled at T~1~ (see [Appendix D]). Estimates of effect size based on a linear model are given in [Appendix F].
-```{r Enzyme Results 2}
+  
+```{r Enzyme Results 3}
 phenox_aov2 <- Anova(phenox_lm2, type = 'III')
-
-phenox_aov2
 ```
 <br>
+  
+Mean phenol oxidase activity ([Figure 3.3]A) was not significantly affected by soil moisture treatments (`r paste0("F", sub_digits(phenox_aov2["moisture_tx", "Df"]), "\u02CC", sub_digits(phenox_aov2["Residuals", "Df"]), " = ", format(round(phenox_aov2["moisture_tx", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(phenox_aov2["moisture_tx", "Pr(>F)"], 3), nsmall = 3))`), but was strongly driven by temperature conditions (`r paste0("F", sub_digits(phenox_aov2["temp_tx", "Df"]), "\u02CC", sub_digits(phenox_aov2["Residuals", "Df"]), " = ", format(round(phenox_aov2["temp_tx", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(phenox_aov2["temp_tx", "Pr(>F)"], 3), nsmall = 3))`). Mean phenol oxidase activity increased in mesocosms assigned to 20 &deg;C vs. 12 &deg;C conditions. Destructive sampling treatments also significantly affected phenol oxidase activity (`r paste0("F", sub_digits(phenox_aov2["destructive_time", "Df"]), "\u02CC", sub_digits(phenox_aov2["Residuals", "Df"]), " = ", format(round(phenox_aov2["destructive_time", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(phenox_aov2["destructive_time", "Pr(>F)"], 3), nsmall = 3))`) and was greater at T~2~ vs. T~1~. This was driven by a significant temperature by destructive sampling time interaction (`r paste0("F", sub_digits(phenox_aov2["temp_tx:destructive_time", "Df"]), "\u02CC", sub_digits(phenox_aov2["Residuals", "Df"]), " = ", format(round(phenox_aov2["temp_tx:destructive_time", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(phenox_aov2["temp_tx:destructive_time", "Pr(>F)"], 3), nsmall = 3))`), which suggests that phenol oxidase activity decreased in mesocosms assigned to 20 &deg;C from T~1~ to T~2~ following a three-week return to initial 12 &deg;C conditions. Block effects constructed corresponding to differences in total abundance by original sampling location (`r paste0("F", sub_digits(phenox_aov2["block_effect", "Df"]), "\u02CC", sub_digits(phenox_aov2["Residuals", "Df"]), " = ", format(round(phenox_aov2["block_effect", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(phenox_aov2["block_effect", "Pr(>F)"], 3), nsmall = 3))`) did not have a significant effect on phenol oxidase activity. There were no other significant interaction effects between soil moisture, temperature, and destructive sampling time ([Appendix E]). Overall, mean phenol oxidase activity (&plusmn; SE) was greatest (199 &plusmn; 24 &mu;mol substrate per g soil per hour) in mesocosms assigned to 20 &deg;C field-moist conditions, sampled at T~1~ and was least (90 &plusmn; 19 &mu;mol substrate per g soil per hour) in those assigned to 12 &deg;C saturated conditions, sampled at T~1~ (see [Appendix D]). Estimates of effect size based on a linear model are given in [Appendix F].
+<br>
+  
+### Supplemental Table 3.10
+Phenol oxidase activity ANOVA results.
+```{r Enzyme Results 4}
+phenox_aov_tbl <- as.data.frame(matrix(data = c(
+  "Intercept",
+  paste0("F", sub_digits(phenox_aov2["(Intercept)", "Df"]), 
+         "\u02CC", sub_digits(phenox_aov2["Residuals", "Df"]), 
+         " = ", format(round(phenox_aov2["(Intercept)", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(phenox_aov2["(Intercept)", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Soil Moisture Treatment",
+  paste0("F", sub_digits(phenox_aov2["moisture_tx", "Df"]), 
+         "\u02CC", sub_digits(phenox_aov2["Residuals", "Df"]), 
+         " = ", format(round(phenox_aov2["moisture_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(phenox_aov2["moisture_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Temperature Treatment",
+  paste0("F", sub_digits(phenox_aov2["temp_tx", "Df"]), 
+         "\u02CC", sub_digits(phenox_aov2["Residuals", "Df"]), 
+         " = ", format(round(phenox_aov2["temp_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(phenox_aov2["temp_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Destructive Sampling Treatment",
+  paste0("F", sub_digits(phenox_aov2["destructive_time", "Df"]), 
+         "\u02CC", sub_digits(phenox_aov2["Residuals", "Df"]), 
+         " = ", format(round(phenox_aov2["destructive_time", "F value"], 
+                             3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(phenox_aov2["destructive_time", "Pr(>F)"], 
+                              3), 
+                       nsmall = 3)),
+  "Block Effect",
+  paste0("F", sub_digits(phenox_aov2["block_effect", "Df"]), 
+         "\u02CC", sub_digits(phenox_aov2["Residuals", "Df"]), 
+         " = ", format(round(phenox_aov2["block_effect", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(phenox_aov2["block_effect", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Temperature x Destructive Sampling Interaction",
+  paste0("F", sub_digits(phenox_aov2["temp_tx:destructive_time", "Df"]), 
+         "\u02CC", sub_digits(phenox_aov2["Residuals", "Df"]), 
+         " = ", format(round(phenox_aov2["temp_tx:destructive_time", 
+                                         "F value"], 
+                             3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(phenox_aov2["temp_tx:destructive_time", 
+                                          "Pr(>F)"], 
+                              3), 
+                       nsmall = 3))
+), ncol = 3, byrow = T))
 
-Mean peroxidase activity ([Figure 3.3]B) was not influenced by soil moisture (F~1,28~ = 0.001, p = 0.973), but was significantly affected by temperature (F~1,28~ = 5.167, p = 0.031) and increased at 20 &deg;C vs 12 &deg;C. Mean peroxidase activity was also significantly affected by destructive sampling treatments (F~1,28~ = 19.698, p < 0.001) and was greater in mesocosms sampled at T~2~ vs. T~1~. This was driven by a significant temperature by destructive sampling time interaction (F~1,28~ = 3.672, p = 0.066), which suggests that peroxidase activity also decreased in mesocosms assigned to 20 &deg;C from T~1~ to T~2~ following a three-week return to initial 12 &deg;C conditions. Block effects also significantly influenced mean peroxidase activity (F~1,28~ = 6.023, p = 0.021); peroxidase activity tended to decrease in blocks characterized by especially high soil fauna abundances. There were no other significant interaction effects between soil moisture, temperature, and destructive sampling time ([Appendix E]). Mean peroxidase concentration (&plusmn; SE) under each treatment is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
-```{r Enzyme Results 3}
+colnames(phenox_aov_tbl) <- c("Parameter", "Statistic", "P-Value")
+
+knitr::kable(phenox_aov_tbl)
+```
+<br>
+  
+```{r Enzyme Results 5}
 perox_aov2 <- Anova(perox_lm2, type = 'III')
+```
+<br>
+  
+Mean peroxidase activity ([Figure 3.3]B) was not influenced by soil moisture (`r paste0("F", sub_digits(perox_aov2["moisture_tx", "Df"]), "\u02CC", sub_digits(perox_aov2["Residuals", "Df"]), " = ", format(round(perox_aov2["moisture_tx", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(perox_aov2["moisture_tx", "Pr(>F)"], 3), nsmall = 3))`), but was significantly affected by temperature (`r paste0("F", sub_digits(perox_aov2["temp_tx", "Df"]), "\u02CC", sub_digits(perox_aov2["Residuals", "Df"]), " = ", format(round(perox_aov2["temp_tx", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(perox_aov2["temp_tx", "Pr(>F)"], 3), nsmall = 3))`) and increased at 20 &deg;C vs 12 &deg;C. Mean peroxidase activity was also significantly affected by destructive sampling treatments (`r paste0("F", sub_digits(perox_aov2["destructive_time", "Df"]), "\u02CC", sub_digits(perox_aov2["Residuals", "Df"]), " = ", format(round(perox_aov2["destructive_time", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(perox_aov2["destructive_time", "Pr(>F)"], 3), nsmall = 3))`) and was greater in mesocosms sampled at T~2~ vs. T~1~. This was driven by a significant temperature by destructive sampling time interaction (`r paste0("F", sub_digits(perox_aov2["temp_tx:destructive_time", "Df"]), "\u02CC", sub_digits(perox_aov2["Residuals", "Df"]), " = ", format(round(perox_aov2["temp_tx:destructive_time", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(perox_aov2["temp_tx:destructive_time", "Pr(>F)"], 3), nsmall = 3))`), which suggests that peroxidase activity also decreased in mesocosms assigned to 20 &deg;C from T~1~ to T~2~ following a three-week return to initial 12 &deg;C conditions. Block effects also significantly influenced mean peroxidase activity (`r paste0("F", sub_digits(perox_aov2["block_effect", "Df"]), "\u02CC", sub_digits(perox_aov2["Residuals", "Df"]), " = ", format(round(perox_aov2["block_effect", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(perox_aov2["block_effect", "Pr(>F)"], 3), nsmall = 3))`); peroxidase activity tended to decrease in blocks characterized by especially high soil fauna abundances. There were no other significant interaction effects between soil moisture, temperature, and destructive sampling time ([Appendix E]). Mean peroxidase concentration (&plusmn; SE) under each treatment is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
+<br>
+  
+### Supplemental Table 3.11
+Peroxidase activity ANOVA results.
+```{r Enzyme Results 6}
+perox_aov_tbl <- as.data.frame(matrix(data = c(
+  "Intercept",
+  paste0("F", sub_digits(perox_aov2["(Intercept)", "Df"]), 
+         "\u02CC", sub_digits(perox_aov2["Residuals", "Df"]), 
+         " = ", format(round(perox_aov2["(Intercept)", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(perox_aov2["(Intercept)", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Soil Moisture Treatment",
+  paste0("F", sub_digits(perox_aov2["moisture_tx", "Df"]), 
+         "\u02CC", sub_digits(perox_aov2["Residuals", "Df"]), 
+         " = ", format(round(perox_aov2["moisture_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(perox_aov2["moisture_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Temperature Treatment",
+  paste0("F", sub_digits(perox_aov2["temp_tx", "Df"]), 
+         "\u02CC", sub_digits(perox_aov2["Residuals", "Df"]), 
+         " = ", format(round(perox_aov2["temp_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(perox_aov2["temp_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Destructive Sampling Treatment",
+  paste0("F", sub_digits(perox_aov2["destructive_time", "Df"]), 
+         "\u02CC", sub_digits(perox_aov2["Residuals", "Df"]), 
+         " = ", format(round(perox_aov2["destructive_time", "F value"], 
+                             3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(perox_aov2["destructive_time", "Pr(>F)"], 
+                              3), 
+                       nsmall = 3)),
+  "Block Effect",
+  paste0("F", sub_digits(perox_aov2["block_effect", "Df"]), 
+         "\u02CC", sub_digits(perox_aov2["Residuals", "Df"]), 
+         " = ", format(round(perox_aov2["block_effect", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(perox_aov2["block_effect", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Temperature x Destructive Sampling Interaction",
+  paste0("F", sub_digits(perox_aov2["temp_tx:destructive_time", "Df"]), 
+         "\u02CC", sub_digits(perox_aov2["Residuals", "Df"]), 
+         " = ", format(round(perox_aov2["temp_tx:destructive_time", 
+                                         "F value"], 
+                             3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(perox_aov2["temp_tx:destructive_time", 
+                                          "Pr(>F)"], 
+                              3), 
+                       nsmall = 3))
+), ncol = 3, byrow = T))
 
-perox_aov2
+colnames(perox_aov_tbl) <- c("Parameter", "Statistic", "P-Value")
+
+knitr::kable(perox_aov_tbl)
 ```
 <br>
 
