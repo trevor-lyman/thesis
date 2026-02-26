@@ -3193,6 +3193,13 @@ flux_data_T1uT2 <- flux_data_T1uT2 %>%
     "20\u00B0 Saturated"   = "20.High"
   ))
 
+ylab_consumption <- 
+  "<span style='font-size:10pt'>Carbon<br>Flux<br>(g C / m<sup>2</sup> / yr)</span>"
+ylab_Cmin  <- 
+  "<span style='font-size:10pt'>Carbon Mineralization (g C / m<sup>2</sup> / yr)</span>"
+ylab_Nmin  <- "
+<span style='font-size:10pt'>Nitrogen Mineralization (g C / m<sup>2</sup> / yr)</span>"
+
 consumption_plot <- 
   ggplot(flux_data_T1uT2, aes(x=tx, y=total_consumption, 
                             fill = as.factor(destructive_time))) + 
@@ -3202,10 +3209,13 @@ consumption_plot <-
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.background = element_blank(), 
-        axis.line = element_line(colour = "black")) +
+        axis.line = element_line(colour = "black"),
+        axis.title.y = element_textbox_simple(orientation="left-rotated",
+                                              halign = 0.5,
+                                              margin = margin(b = 15))) +
   scale_fill_brewer(palette = "Greys") +
   xlab("Environmental Treatment Condition") + 
-  ylab(expression("Total consumptive flux (g C / m"^2*" / yr)")) +
+  ylab(ylab_consumption) +
   labs(fill = "Sampling Time", pch = "Sampling Time")
 
 Cmin_plot <- 
@@ -3217,10 +3227,13 @@ Cmin_plot <-
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.background = element_blank(), 
-        axis.line = element_line(colour = "black")) +
+        axis.line = element_line(colour = "black"),
+        axis.title.y = element_textbox_simple(orientation="left-rotated",
+                                              halign = 0.5,
+                                              margin = margin(b = 15))) +
   scale_fill_brewer(palette = "Greys") +
   xlab("Environmental Treatment Condition") + 
-  ylab(expression("Carbon mineralization (g C / m"^2*" / yr)")) +
+  ylab(ylab_Cmin) +
   labs(fill = "Sampling Time", pch = "Sampling Time")
 
 Nmin_plot <- 
@@ -3232,17 +3245,25 @@ Nmin_plot <-
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.background = element_blank(), 
-        axis.line = element_line(colour = "black")) +
+        axis.line = element_line(colour = "black"),
+        axis.title.y = element_textbox_simple(orientation="left-rotated",
+                                              halign = 0.5,
+                                              margin = margin(b = 15))) +
   scale_fill_brewer(palette = "Greys") +
   xlab("Environmental Treatment Condition") + 
-  ylab(expression("Nitrogen mineralization (g N / m"^2*" / yr)")) +
+  ylab(ylab_Nmin) +
   labs(fill = "Sampling Time", pch = "Sampling Time")
 
-consumption_plot; Cmin_plot; Nmin_plot
+f1 <- place_tag(consumption_plot, "A", x_left = 0.58)
+f2 <- place_tag(Cmin_plot,            "B", x_left = 0.58)
+f3 <- place_tag(Nmin_plot,            "C", x_left = 0.58)
+
+(f1 / f2 / f3) +
+  plot_layout(ncol = 1, guides = "collect") &
+  theme(legend.position = "bottom")
 ```
 <br>
-
-Mean total consumptive flux, C mineralization, and N mineralization were compared across 39 mesocosms. Mean total consumptive flux (W = 0.988, p = 0.944), C mineralization (W = 0.987, p = 0.933), and N mineralization (W = 0.981, p = 0.751) met the assumption of normality, per a Shapiro-Wilk test. Mean total consumptive flux (F~7,31~ = 0.719, p = 0.657), C mineralization (F~7,31~ = 0.747, p = 0.635), and N mineralization (F~7,31~ = 0.847, p = 0.558) also met the assumption of homogeneity of variance, per Levene’s test.
+  
 ```{r Flux Results 1, warning = F}
 consumption_lm <- lm(total_consumption ~
                           moisture_tx * temp_tx * destructive_time + 
@@ -3309,105 +3330,293 @@ Nmin_lm2 <- lm(total_Nmin ~
                 destructive_time +
                 block_effect,
                data = flux_data_T1uT2)
-
+```
+<br>
+  
+Mean total consumptive flux, C mineralization, and N mineralization were compared across 39 mesocosms. Mean total consumptive flux (`r paste0("W = ", format(round(shapiro_test(residuals(consumption_lm2))$statistic, 3), nsmall = 3))`, `r paste0("p = ", format(round(shapiro_test(residuals(consumption_lm2))$p.value, 3), nsmasll = 3))`), C mineralization (`r paste0("W = ", format(round(shapiro_test(residuals(Cmin_lm2))$statistic, 3), nsmall = 3))`, `r paste0("p = ", format(round(shapiro_test(residuals(Cmin_lm2))$p.value, 3), nsmasll = 3))`), and N mineralization (`r paste0("W = ", format(round(shapiro_test(residuals(Nmin_lm2))$statistic, 3), nsmall = 3))`, `r paste0("p = ", format(round(shapiro_test(residuals(Nmin_lm2))$p.value, 3), nsmasll = 3))`) met the assumption of normality, per a Shapiro-Wilk test. Mean total consumptive flux (`r paste0("F", sub_digits(levene_test(total_consumption ~ (moisture_tx * temp_tx * destructive_time), data = flux_data_T1uT2)$df1), "\u02CC", sub_digits(levene_test(total_consumption ~ (moisture_tx * temp_tx * destructive_time), data = flux_data_T1uT2)$df2), " = ", format(round(levene_test(total_consumption ~ (moisture_tx * temp_tx * destructive_time), data = flux_data_T1uT2)$statistic, 3), nsmall = 3))`, `r paste0("p = ", format(round(levene_test(total_consumption ~ (moisture_tx * temp_tx * destructive_time), data = flux_data_T1uT2)$p, 3), nsmall = 3))`), C mineralization (`r paste0("F", sub_digits(levene_test(total_Cmin ~ (moisture_tx * temp_tx * destructive_time), data = flux_data_T1uT2)$df1), "\u02CC", sub_digits(levene_test(total_Cmin ~ (moisture_tx * temp_tx * destructive_time), data = flux_data_T1uT2)$df2), " = ", format(round(levene_test(total_Cmin ~ (moisture_tx * temp_tx * destructive_time), data = flux_data_T1uT2)$statistic, 3), nsmall = 3))`, `r paste0("p = ", format(round(levene_test(total_Cmin ~ (moisture_tx * temp_tx * destructive_time), data = flux_data_T1uT2)$p, 3), nsmall = 3))`), and N mineralization (`r paste0("F", sub_digits(levene_test(total_Nmin ~ (moisture_tx * temp_tx * destructive_time), data = flux_data_T1uT2)$df1), "\u02CC", sub_digits(levene_test(total_Nmin ~ (moisture_tx * temp_tx * destructive_time), data = flux_data_T1uT2)$df2), " = ", format(round(levene_test(total_Nmin ~ (moisture_tx * temp_tx * destructive_time), data = flux_data_T1uT2)$statistic, 3), nsmall = 3))`, `r paste0("p = ", format(round(levene_test(total_Nmin ~ (moisture_tx * temp_tx * destructive_time), data = flux_data_T1uT2)$p, 3), nsmall = 3))`) also met the assumption of homogeneity of variance, per Levene’s test.
+<br>
+  
+### Supplemental Table 3.N
+Shapiro-Wilk and Levene’s Tests constructed to test whether total consumptive flux, C mineralization, and N mineralization conform to the assumptions of normality and homodescacity.
+```{r Flux Results 2, warning = F}
 flux_df1 <- as.data.frame(matrix(data = c(
   "Total Consumptive Flux",
   "Shapiro-Wilk Test", 
-  NA,
-  NA,
-  format(round(shapiro_test(residuals(consumption_lm2))$statistic, 3), 
-         nsmall = 3),
-  format(round(shapiro_test(residuals(consumption_lm2))$p.value, 3),
-         nsmasll = 3),
+  paste0("W = ", 
+         format(round(shapiro_test(residuals(consumption_lm2))$statistic, 3), 
+         nsmall = 3)),
+  paste0("p = ", 
+         format(round(shapiro_test(residuals(consumption_lm2))$p.value, 3),
+         nsmasll = 3)),
   "Total Consumptive Flux",
   "Levene's Test",
-  levene_test(total_consumption ~ 
-                (moisture_tx * temp_tx * destructive_time), 
-              data = flux_data_T1uT2)$df1,
-  levene_test(total_consumption ~ 
-                (moisture_tx * temp_tx * destructive_time), 
-              data = flux_data_T1uT2)$df2,
+  paste0("F", sub_digits(
+    levene_test(total_consumption ~ (moisture_tx * temp_tx * destructive_time), 
+              data = flux_data_T1uT2)$df1), "\u02CC",
+  sub_digits(
+    levene_test(total_consumption ~ (moisture_tx * temp_tx * destructive_time), 
+              data = flux_data_T1uT2)$df2), " = ",
   format(round(levene_test(total_consumption ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = flux_data_T1uT2)$statistic, 3), nsmall = 3),
-  format(round(levene_test(total_consumption ~ 
+              data = flux_data_T1uT2)$statistic, 3), nsmall = 3)),
+  paste0("p = ", format(round(levene_test(total_consumption ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = flux_data_T1uT2)$p, 3), nsmall = 3),
+              data = flux_data_T1uT2)$p, 3), nsmall = 3)),
   "Carbon Minderalization",
   "Shapiro-Wilk Test", 
-  NA,
-  NA,
-  format(round(shapiro_test(residuals(Cmin_lm2))$statistic, 3), 
-         nsmall = 3),
-  format(round(shapiro_test(residuals(Cmin_lm2))$p.value, 3),
-         nsmasll = 3),
+  paste0("W = ", 
+         format(round(shapiro_test(residuals(Cmin_lm2))$statistic, 3), 
+         nsmall = 3)),
+  paste0("p = ", 
+         format(round(shapiro_test(residuals(Cmin_lm2))$p.value, 3),
+         nsmasll = 3)),
   "Carbon Minderalization",
   "Levene's Test",
-  levene_test(total_Cmin ~ 
-                (moisture_tx * temp_tx * destructive_time), 
-              data = flux_data_T1uT2)$df1,
-  levene_test(total_Cmin ~ 
-                (moisture_tx * temp_tx * destructive_time), 
-              data = flux_data_T1uT2)$df2,
+  paste0("F", sub_digits(
+    levene_test(total_Cmin ~ (moisture_tx * temp_tx * destructive_time), 
+              data = flux_data_T1uT2)$df1), "\u02CC",
+  sub_digits(
+    levene_test(total_Cmin ~ (moisture_tx * temp_tx * destructive_time), 
+              data = flux_data_T1uT2)$df2), " = ",
   format(round(levene_test(total_Cmin ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = flux_data_T1uT2)$statistic, 3), nsmall = 3),
-  format(round(levene_test(total_Cmin ~ 
+              data = flux_data_T1uT2)$statistic, 3), nsmall = 3)),
+  paste0("p = ", format(round(levene_test(total_Cmin ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = flux_data_T1uT2)$p, 3), nsmall = 3),
+              data = flux_data_T1uT2)$p, 3), nsmall = 3)),
   "Nitrogen Minderalization",
   "Shapiro-Wilk Test", 
-  NA,
-  NA,
-  format(round(shapiro_test(residuals(Nmin_lm2))$statistic, 3), 
-         nsmall = 3),
-  format(round(shapiro_test(residuals(Nmin_lm2))$p.value, 3),
-         nsmasll = 3),
+  paste0("W = ", 
+         format(round(shapiro_test(residuals(Nmin_lm2))$statistic, 3), 
+         nsmall = 3)),
+  paste0("p = ", 
+         format(round(shapiro_test(residuals(Nmin_lm2))$p.value, 3),
+         nsmasll = 3)),
   "Nitrogen Minderalization",
   "Levene's Test",
-  levene_test(total_Nmin ~ 
-                (moisture_tx * temp_tx * destructive_time), 
-              data = flux_data_T1uT2)$df1,
-  levene_test(total_Nmin ~ 
-                (moisture_tx * temp_tx * destructive_time), 
-              data = flux_data_T1uT2)$df2,
+  paste0("F", sub_digits(
+    levene_test(total_Nmin ~ (moisture_tx * temp_tx * destructive_time), 
+              data = flux_data_T1uT2)$df1), "\u02CC",
+  sub_digits(
+    levene_test(total_Nmin ~ (moisture_tx * temp_tx * destructive_time), 
+              data = flux_data_T1uT2)$df2), " = ",
   format(round(levene_test(total_Nmin ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = flux_data_T1uT2)$statistic, 3), nsmall = 3),
-  format(round(levene_test(total_Nmin ~ 
+              data = flux_data_T1uT2)$statistic, 3), nsmall = 3)),
+  paste0("p = ", format(round(levene_test(total_Nmin ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = flux_data_T1uT2)$p, 3), nsmall = 3)
-  ), ncol = 6, byrow = T))
+              data = flux_data_T1uT2)$p, 3), nsmall = 3))
+  ), ncol = 4, byrow = T))
 
 colnames(flux_df1) <- 
-  c("Parameter", "Test", "df1", "df2", "Statistic", "P-Value")
+  c("Parameter", "Test", "Statistic", "P-Value")
 
 knitr::kable(flux_df1, linesep = "\\hline")
 ```
 <br>
-
-Mean total consumptive flux of C through the soil fauna food web ([Figure 3.7]A) was significantly related to block effects (F~1,33~ = 6.267, p = 0.017), and was greater in blocks characterized by especially high soil fauna abundances. Total C flux also significantly decreased under saturation (F~1,33~ = 8.653, p = 0.006), but significantly increased at 20 &deg;C vs. 12 &deg;C (F~1,33~ = 214.881, p < 0.001). This was driven by a significant temperature-by-sampling time interaction effect (F~1,33~ = 94.744, p < 0.001), which highlights that mean total flux in mesocosms assigned to 20 &deg;C decreased at T~2~ following a three-week return to 12 &deg;C field-moist conditions. Destructive sampling treatments alone did not significantly affect C flux (F~1,33~ = 0.748, p = 0.393). No other interaction effects significantly affected C flux ([Appendix E]). Mean total flux (&plusmn; SE) under each treatment is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
-```{r Flux Results 2}
+  
+```{r Flux Results 3}
 consumption_aov2 <- Anova(consumption_lm2, type = 'III')
-
-consumption_aov2
 ```
 <br>
+  
+Mean total consumptive flux of C through the soil fauna food web ([Figure 3.7]A) was significantly related to block effects (F~1,33~ = 6.267, p = 0.017), and was greater in blocks characterized by especially high soil fauna abundances. Total C flux also significantly decreased under saturation (F~1,33~ = 8.653, p = 0.006), but significantly increased at 20 &deg;C vs. 12 &deg;C (F~1,33~ = 214.881, p < 0.001). This was driven by a significant temperature-by-sampling time interaction effect (F~1,33~ = 94.744, p < 0.001), which highlights that mean total flux in mesocosms assigned to 20 &deg;C decreased at T~2~ following a three-week return to 12 &deg;C field-moist conditions. Destructive sampling treatments alone did not significantly affect C flux (F~1,33~ = 0.748, p = 0.393). No other interaction effects significantly affected C flux ([Appendix E]). Mean total flux (&plusmn; SE) under each treatment is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
+<br>
+  
+### Supplemental Table N+1
+Total consumptive flux ANOVA results.
+```{r Flux Results 4, warning = F}
+total_consumption_aov_tbl <- as.data.frame(matrix(data = c(
+  "Intercept",
+  paste0("F", sub_digits(consumption_aov2["(Intercept)", "Df"]), 
+         "\u02CC", sub_digits(consumption_aov2["Residuals", "Df"]), 
+         " = ", format(round(consumption_aov2["(Intercept)", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(consumption_aov2["(Intercept)", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Soil Moisture Treatment",
+  paste0("F", sub_digits(consumption_aov2["moisture_tx", "Df"]), 
+         "\u02CC", sub_digits(consumption_aov2["Residuals", "Df"]), 
+         " = ", format(round(consumption_aov2["moisture_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(consumption_aov2["moisture_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Temperature Treatment",
+  paste0("F", sub_digits(consumption_aov2["temp_tx", "Df"]), 
+         "\u02CC", sub_digits(consumption_aov2["Residuals", "Df"]), 
+         " = ", format(round(consumption_aov2["temp_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(consumption_aov2["temp_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Destructive Sampling Treatment",
+  paste0("F", sub_digits(consumption_aov2["destructive_time", "Df"]), 
+         "\u02CC", sub_digits(consumption_aov2["Residuals", "Df"]), 
+         " = ", format(round(consumption_aov2["destructive_time", "F value"], 
+                             3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(consumption_aov2["destructive_time", "Pr(>F)"], 
+                              3), 
+                       nsmall = 3)),
+  "Block Effect",
+  paste0("F", sub_digits(consumption_aov2["block_effect", "Df"]), 
+         "\u02CC", sub_digits(consumption_aov2["Residuals", "Df"]), 
+         " = ", format(round(consumption_aov2["block_effect", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(consumption_aov2["block_effect", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Temperature x Destructive Sampling Interaction",
+  paste0("F", sub_digits(consumption_aov2["temp_tx:destructive_time", "Df"]), 
+         "\u02CC", sub_digits(consumption_aov2["Residuals", "Df"]), 
+         " = ", format(round(consumption_aov2["temp_tx:destructive_time", 
+                                         "F value"], 
+                             3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(consumption_aov2["temp_tx:destructive_time", 
+                                          "Pr(>F)"], 
+                              3), 
+                       nsmall = 3))
+), ncol = 3, byrow = T))
 
+colnames(total_consumption_aov_tbl) <- c("Parameter", "Statistic", "P-Value")
+
+knitr::kable(total_consumption_aov_tbl)
+```
+<br>
+  
+```{r Flux Results 5}
+Cmin_aov2 <- Anova(Cmin_lm2, type = 'III')
+```
+<br>
+  
 Total C mineralization of the soil food web ([Figure 3.7]B) followed similar trends to total C flux whereby experimental block effects were significant (F~1,33~ = 6.173, p = 0.018). Total C mineralization increased at 20 &deg;C vs. 12 &deg;C (F~1,33~ = 236.901, p < 0.001), but decreased under saturated vs. field-moist soil moisture conditions (F~1,33~ = 8.725, p = 0.006). Destructive sampling treatments alone did not affect C mineralization (F~1,33~ = 0.739, p = 0.396), but C mineralization was influenced by a significant temperature by destructive sampling time interaction effect (F~1,33~
 = 105.313, p < 0.001), highlighting that total C mineralization in mesocosms assigned to 20 &deg;C decreased at T~2~ following a three-week return to 12 &deg;C field-moist conditions. No other interaction effects significantly influenced C mineralization ([Appendix E]). Following three weeks of assigned experimental soil moisture and temperature conditions at T~1~ destructive sampling, C mineralization represented ~41% of total flux in mesocosms assigned to 12 &deg;C conditions, and 42% of total flux in mesocosms assigned to 20 &deg;C conditions. For all mesocosms, during the three weeks of recovery under field (12 &deg;C field-moist) conditions (i.e., T~2~ destructive sampling), C mineralization remained at ~41% of the total flux. Mean total C mineralization (&plusmn; SE) under each treatment is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
-```{r Flux Results 3}
-Cmin_aov2 <- Anova(Cmin_lm2, type = 'III')
+<br>
+  
+### Supplemental Table N+2
+Carbon mineralization ANOVA results.
+```{r Flux Results 6, warning = F}
+Cmin_aov_tbl <- as.data.frame(matrix(data = c(
+  "Intercept",
+  paste0("F", sub_digits(Cmin_aov2["(Intercept)", "Df"]), 
+         "\u02CC", sub_digits(Cmin_aov2["Residuals", "Df"]), 
+         " = ", format(round(Cmin_aov2["(Intercept)", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(Cmin_aov2["(Intercept)", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Soil Moisture Treatment",
+  paste0("F", sub_digits(Cmin_aov2["moisture_tx", "Df"]), 
+         "\u02CC", sub_digits(Cmin_aov2["Residuals", "Df"]), 
+         " = ", format(round(Cmin_aov2["moisture_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(Cmin_aov2["moisture_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Temperature Treatment",
+  paste0("F", sub_digits(Cmin_aov2["temp_tx", "Df"]), 
+         "\u02CC", sub_digits(Cmin_aov2["Residuals", "Df"]), 
+         " = ", format(round(Cmin_aov2["temp_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(Cmin_aov2["temp_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Destructive Sampling Treatment",
+  paste0("F", sub_digits(Cmin_aov2["destructive_time", "Df"]), 
+         "\u02CC", sub_digits(Cmin_aov2["Residuals", "Df"]), 
+         " = ", format(round(Cmin_aov2["destructive_time", "F value"], 
+                             3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(Cmin_aov2["destructive_time", "Pr(>F)"], 
+                              3), 
+                       nsmall = 3)),
+  "Block Effect",
+  paste0("F", sub_digits(Cmin_aov2["block_effect", "Df"]), 
+         "\u02CC", sub_digits(Cmin_aov2["Residuals", "Df"]), 
+         " = ", format(round(Cmin_aov2["block_effect", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(Cmin_aov2["block_effect", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Temperature x Destructive Sampling Interaction",
+  paste0("F", sub_digits(Cmin_aov2["temp_tx:destructive_time", "Df"]), 
+         "\u02CC", sub_digits(Cmin_aov2["Residuals", "Df"]), 
+         " = ", format(round(Cmin_aov2["temp_tx:destructive_time", 
+                                         "F value"], 
+                             3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(Cmin_aov2["temp_tx:destructive_time", 
+                                          "Pr(>F)"], 
+                              3), 
+                       nsmall = 3))
+), ncol = 3, byrow = T))
 
-Cmin_aov2
+colnames(Cmin_aov_tbl) <- c("Parameter", "Statistic", "P-Value")
+
+knitr::kable(Cmin_aov_tbl)
 ```
 <br>
-
-Mean total N mineralization ([Figure 3.7]C) was significantly influenced by both soil moisture (F~1,33~ = 13.061, p = 0.001) and temperature (F~1,33~ = 78.383, p < 0.001) conditions; mean total N mineralization decreased under saturated field-moist vs. conditions and increased at 20 &deg;C vs. 12 &deg;C. Furthermore, a significant temperature by destructive sampling time interaction effect (F~1,33~ = 54.875, p < 0.001) demonstrates that mean total N mineralization in mesocosms assigned to 20 &deg;C decreased at T~2~ following a three-week return to 12 &deg;C field-moist conditions. There were no significant block effects (F~1,33~ = 0.002, p = 0.965) and destructive sampling treatments did not affect N mineralization (F~1,33~ = 2.387, p = 0.132). No other interaction effects significantly affected N mineralization ([Appendix E]). Mean total N mineralization (&plusmn; SE) under each treatment is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
-```{r Flux Results 4}
+  
+```{r Flux Results 7}
 Nmin_aov2 <- Anova(Nmin_lm2, type = 'III')
+```
+<br>
+  
+Mean total N mineralization ([Figure 3.7]C) was significantly influenced by both soil moisture (F~1,33~ = 13.061, p = 0.001) and temperature (F~1,33~ = 78.383, p < 0.001) conditions; mean total N mineralization decreased under saturated field-moist vs. conditions and increased at 20 &deg;C vs. 12 &deg;C. Furthermore, a significant temperature by destructive sampling time interaction effect (F~1,33~ = 54.875, p < 0.001) demonstrates that mean total N mineralization in mesocosms assigned to 20 &deg;C decreased at T~2~ following a three-week return to 12 &deg;C field-moist conditions. There were no significant block effects (F~1,33~ = 0.002, p = 0.965) and destructive sampling treatments did not affect N mineralization (F~1,33~ = 2.387, p = 0.132). No other interaction effects significantly affected N mineralization ([Appendix E]). Mean total N mineralization (&plusmn; SE) under each treatment is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
+<br>
+  
+### Supplemental Table N+3
+Nitrogen mineralization ANOVA results.
+```{r Flux Results 8, warning = F}
+Nmin_aov_tbl <- as.data.frame(matrix(data = c(
+  "Intercept",
+  paste0("F", sub_digits(Nmin_aov2["(Intercept)", "Df"]), 
+         "\u02CC", sub_digits(Nmin_aov2["Residuals", "Df"]), 
+         " = ", format(round(Nmin_aov2["(Intercept)", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(Nmin_aov2["(Intercept)", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Soil Moisture Treatment",
+  paste0("F", sub_digits(Nmin_aov2["moisture_tx", "Df"]), 
+         "\u02CC", sub_digits(Nmin_aov2["Residuals", "Df"]), 
+         " = ", format(round(Nmin_aov2["moisture_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(Nmin_aov2["moisture_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Temperature Treatment",
+  paste0("F", sub_digits(Nmin_aov2["temp_tx", "Df"]), 
+         "\u02CC", sub_digits(Nmin_aov2["Residuals", "Df"]), 
+         " = ", format(round(Nmin_aov2["temp_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(Nmin_aov2["temp_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Destructive Sampling Treatment",
+  paste0("F", sub_digits(Nmin_aov2["destructive_time", "Df"]), 
+         "\u02CC", sub_digits(Nmin_aov2["Residuals", "Df"]), 
+         " = ", format(round(Nmin_aov2["destructive_time", "F value"], 
+                             3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(Nmin_aov2["destructive_time", "Pr(>F)"], 
+                              3), 
+                       nsmall = 3)),
+  "Block Effect",
+  paste0("F", sub_digits(Nmin_aov2["block_effect", "Df"]), 
+         "\u02CC", sub_digits(Nmin_aov2["Residuals", "Df"]), 
+         " = ", format(round(Nmin_aov2["block_effect", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(Nmin_aov2["block_effect", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Temperature x Destructive Sampling Interaction",
+  paste0("F", sub_digits(Nmin_aov2["temp_tx:destructive_time", "Df"]), 
+         "\u02CC", sub_digits(Nmin_aov2["Residuals", "Df"]), 
+         " = ", format(round(Nmin_aov2["temp_tx:destructive_time", 
+                                         "F value"], 
+                             3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(Nmin_aov2["temp_tx:destructive_time", 
+                                          "Pr(>F)"], 
+                              3), 
+                       nsmall = 3))
+), ncol = 3, byrow = T))
 
-Nmin_aov2
+colnames(Nmin_aov_tbl) <- c("Parameter", "Statistic", "P-Value")
+
+knitr::kable(Nmin_aov_tbl)
 ```
 <br>
 
