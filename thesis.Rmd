@@ -2729,6 +2729,11 @@ biomass_T1uT2 <- biomass_T1uT2 %>%
     "20\u00B0 Saturated"   = "20.High"
   ))
 
+ylab_abundance <- "<span style='font-size:10pt'>Total fauna abundance<br>(# × 100,000 / m<sup>2</sup>)</span>"
+ylab_biomass  <- "<span style='font-size:10pt'>Total fauna biomass<br>(# × 100,000 / m<sup>2</sup>)</span>"
+
+left_pad <- theme(plot.margin = margin(5, 6, 5, 70))
+
 abundance_plot <- 
   ggplot(abundance_T1uT2, 
          aes(x=tx, 
@@ -2739,10 +2744,13 @@ abundance_plot <-
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.background = element_blank(), 
-        axis.line = element_line(colour = "black")) +
+        axis.line = element_line(colour = "black"),
+        axis.title.y = element_textbox_simple(orientation="left-rotated",
+                                              halign = 0.5,
+                                              margin = margin(b = 15))) +
   scale_fill_brewer(palette = "Greys") +
   xlab("Environmental Treatment Condition") + 
-  ylab(expression("Total fauna abundance (# x 100,000 / m"^2*")")) +
+  ylab(ylab_abundance) +
   labs(fill = "Sampling Time", pch = "Sampling Time")
 
 biomass_plot <- ggplot(biomass_T1uT2, aes(x=tx, 
@@ -2754,16 +2762,24 @@ biomass_plot <- ggplot(biomass_T1uT2, aes(x=tx,
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.background = element_blank(), 
-        axis.line = element_line(colour = "black")) +
+        axis.line = element_line(colour = "black"),
+        axis.title.y = element_textbox_simple(orientation="left-rotated",
+                                              halign = 0.5,
+                                              margin = margin(b = 15))) +
   scale_fill_brewer(palette = "Greys") +
   xlab("Environmental Treatment Condition") + 
-  ylab(expression("Total fauna biomass (g C / m"^2*")")) +
+  ylab(ylab_biomass) +
   labs(fill = "Sampling Time", pch = "Sampling Time")
 
-abundance_plot; biomass_plot
+g1 <- place_tag(abundance_plot, "A", x_left = 0.58)
+g2 <- place_tag(biomass_plot,            "B", x_left = 0.58)
+
+(g1 / g2) +
+  plot_layout(ncol = 1, guides = "collect") &
+  theme(legend.position = "bottom")
 ```
 <br>
-Mean total soil fauna abundance (Shapiro-Wilk’s test: W = 0.980, p = 0.701; Levene’s test: F~7,31~ = 0.435, p = 0.872) and total soil microfauna abundance (Shapiro-Wilk’s test: W = 0.980, p = 0.704; Levene’s test: F~7,31~ = 0.955, p = 0.480) each satisfied the assumptions of normality and homogeneity of variance, as per a Shapiro-Wilk’s test and Levene’s test. Total soil mesofauna abundance was transformed on natural log, (ln) scale to conform to the assumption of normality (Shapiro-Wilk’s test: W = 0.976, p = 0.564; Levene’s test: F~7,31~ = 0.389, p = 0.901). Total biomass (Shapiro-Wilk’s test: W = 0.953, p = 0.107; Levene’s test: F~7,31~ = 0.317, p = 0.940), total soil microfauna biomass (Shapiro-Wilk’s test: W = 0.980, p = 0.704; Levene’s test: F~7,31~ = 0.955, p = 0.480), and total soil mesofauna biomass (Shapiro-Wilk’s test: W = 0.953, p = 0.105; Levene’s test: F~7,31~ = 0.313, p = 0.943) each met the assumptions of normality and homogeneity of variance.
+  
 ```{r Abundance and Biomass Results 1, warning=F}
 total_ab_lm <- lm(total_ab_standardized ~
                           moisture_tx * temp_tx * destructive_time + 
@@ -2875,150 +2891,170 @@ meso_biom_lm2 <- lm(meso_biomass ~
                       destructive_time +
                       block_effect,
                  data = biomass_T1uT2)
-
+```
+<br>
+  
+Mean total soil fauna abundance (Shapiro-Wilk’s test: W = 0.980, p = 0.701; Levene’s test: F~7,31~ = 0.435, p = 0.872) and total soil microfauna abundance (Shapiro-Wilk’s test: W = 0.980, p = 0.704; Levene’s test: F~7,31~ = 0.955, p = 0.480) each satisfied the assumptions of normality and homogeneity of variance, as per a Shapiro-Wilk’s test and Levene’s test. Total soil mesofauna abundance was transformed on natural log, (ln) scale to conform to the assumption of normality (Shapiro-Wilk’s test: W = 0.976, p = 0.564; Levene’s test: F~7,31~ = 0.389, p = 0.901). Total biomass (Shapiro-Wilk’s test: W = 0.953, p = 0.107; Levene’s test: F~7,31~ = 0.317, p = 0.940), total soil microfauna biomass (Shapiro-Wilk’s test: W = 0.980, p = 0.704; Levene’s test: F~7,31~ = 0.955, p = 0.480), and total soil mesofauna biomass (Shapiro-Wilk’s test: W = 0.953, p = 0.105; Levene’s test: F~7,31~ = 0.313, p = 0.943) each met the assumptions of normality and homogeneity of variance.
+<br>
+  
+### Supplemental Table 3.12
+Shapiro-Wilk and Levene’s Tests constructed to test whether mean total soil fauna abundance, total soil microfauna abundance, log-tranformed total soil mesofauna abundance, total biomass, total soil microfauna biomass, and total soil mesofauna biomass conform to the assumptions of normality and homodescacity.
+```{r Abundance and Biomass Results 2, warning=F}
 ab_biom_df1 <- as.data.frame(matrix(data = c(
   "Total Fauna Abundance",
   "Shapiro-Wilk Test", 
-  NA,
-  NA,
-  format(round(shapiro_test(residuals(total_ab_lm2))$statistic, 3), 
-         nsmall = 3),
-  format(round(shapiro_test(residuals(total_ab_lm2))$p.value, 3),
-         nsmasll = 3),
+  paste0("W = ", 
+         format(round(shapiro_test(residuals(total_ab_lm2))$statistic, 3), 
+         nsmall = 3)),
+  paste0("p = ", 
+         format(round(shapiro_test(residuals(total_ab_lm2))$p.value, 3),
+         nsmasll = 3)),
   "Total Fauna Abundance",
   "Levene's Test",
-  levene_test(total_ab_standardized ~ 
-                (moisture_tx * temp_tx * destructive_time), 
-              data = abundance_T1uT2)$df1,
-  levene_test(total_ab_standardized ~ 
-                (moisture_tx * temp_tx * destructive_time), 
-              data = abundance_T1uT2)$df2,
+  paste0("F", sub_digits(
+    levene_test(total_ab_standardized ~ 
+                  (moisture_tx * temp_tx * destructive_time), 
+              data = abundance_T1uT2)$df1), "\u02CC",
+  sub_digits(
+    levene_test(total_ab_standardized ~ 
+                  (moisture_tx * temp_tx * destructive_time), 
+              data = abundance_T1uT2)$df2), " = ",
   format(round(levene_test(total_ab_standardized ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = abundance_T1uT2)$statistic, 3), nsmall = 3),
-  format(round(levene_test(total_ab_standardized ~ 
+              data = abundance_T1uT2)$statistic, 3), nsmall = 3)),
+  paste0("p = ", format(round(levene_test(total_ab_standardized ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = abundance_T1uT2)$p, 3), nsmall = 3),
+              data = abundance_T1uT2)$p, 3), nsmall = 3)),
   "Total Microfauna Abundance",
   "Shapiro-Wilk Test", 
-  NA,
-  NA,
-  format(round(shapiro_test(residuals(micro_ab_lm2))$statistic, 3), 
-         nsmall = 3),
-  format(round(shapiro_test(residuals(micro_ab_lm2))$p.value, 3),
-         nsmasll = 3),
+  paste0("W = ", 
+         format(round(shapiro_test(residuals(micro_ab_lm2))$statistic, 3), 
+         nsmall = 3)),
+  paste0("p = ", 
+         format(round(shapiro_test(residuals(micro_ab_lm2))$p.value, 3),
+         nsmasll = 3)),
   "Total Microfauna Abundance",
   "Levene's Test",
-  levene_test(total_micro_ab_standardized ~ 
-                (moisture_tx * temp_tx * destructive_time), 
-              data = abundance_T1uT2)$df1,
-  levene_test(total_micro_ab_standardized ~ 
-                (moisture_tx * temp_tx * destructive_time), 
-              data = abundance_T1uT2)$df2,
+  paste0("F", sub_digits(
+    levene_test(total_micro_ab_standardized ~ 
+                  (moisture_tx * temp_tx * destructive_time), 
+              data = abundance_T1uT2)$df1), "\u02CC",
+  sub_digits(
+    levene_test(total_micro_ab_standardized ~ 
+                  (moisture_tx * temp_tx * destructive_time), 
+              data = abundance_T1uT2)$df2), " = ",
   format(round(levene_test(total_micro_ab_standardized ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = abundance_T1uT2)$statistic, 3), nsmall = 3),
-  format(round(levene_test(total_micro_ab_standardized ~ 
+              data = abundance_T1uT2)$statistic, 3), nsmall = 3)),
+  paste0("p = ", format(round(levene_test(total_micro_ab_standardized ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = abundance_T1uT2)$p, 3), nsmall = 3),
+              data = abundance_T1uT2)$p, 3), nsmall = 3)),
   "Total Mesofauna Abundance",
   "Shapiro-Wilk Test", 
-  NA,
-  NA,
-  format(round(shapiro_test(residuals(meso_ab_lm2))$statistic, 3), 
-         nsmall = 3),
-  format(round(shapiro_test(residuals(meso_ab_lm2))$p.value, 3),
-         nsmasll = 3),
+  paste0("W = ", 
+         format(round(shapiro_test(residuals(meso_ab_lm2))$statistic, 3), 
+         nsmall = 3)),
+  paste0("p = ", 
+         format(round(shapiro_test(residuals(meso_ab_lm2))$p.value, 3),
+         nsmasll = 3)),
   "Total Mesofauna Abundance",
   "Levene's Test",
-  levene_test(log(total_meso_ab_standardized) ~ 
-                (moisture_tx * temp_tx * destructive_time), 
-              data = abundance_T1uT2)$df1,
-  levene_test(log(total_meso_ab_standardized) ~ 
-                (moisture_tx * temp_tx * destructive_time), 
-              data = abundance_T1uT2)$df2,
+  paste0("F", sub_digits(
+    levene_test(log(total_meso_ab_standardized) ~ 
+                  (moisture_tx * temp_tx * destructive_time), 
+              data = abundance_T1uT2)$df1), "\u02CC",
+  sub_digits(
+    levene_test(log(total_meso_ab_standardized) ~ 
+                  (moisture_tx * temp_tx * destructive_time), 
+              data = abundance_T1uT2)$df2), " = ",
   format(round(levene_test(log(total_meso_ab_standardized) ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = abundance_T1uT2)$statistic, 3), nsmall = 3),
-  format(round(levene_test(log(total_meso_ab_standardized) ~ 
+              data = abundance_T1uT2)$statistic, 3), nsmall = 3)),
+  paste0("p = ", format(round(levene_test(log(total_meso_ab_standardized) ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = abundance_T1uT2)$p, 3), nsmall = 3),
+              data = abundance_T1uT2)$p, 3), nsmall = 3)),
   "Total Fauna Biomass",
   "Shapiro-Wilk Test", 
-  NA,
-  NA,
-  format(round(shapiro_test(residuals(total_biom_lm2))$statistic, 3), 
-         nsmall = 3),
-  format(round(shapiro_test(residuals(total_biom_lm2))$p.value, 3),
-         nsmasll = 3),
+  paste0("W = ", 
+         format(round(shapiro_test(residuals(total_biom_lm2))$statistic, 3), 
+         nsmall = 3)),
+  paste0("p = ", 
+         format(round(shapiro_test(residuals(total_biom_lm2))$p.value, 3),
+         nsmasll = 3)),
   "Total Fauna Biomass",
   "Levene's Test",
-  levene_test(total_biomass ~ 
-                (moisture_tx * temp_tx * destructive_time), 
-              data = biomass_T1uT2)$df1,
-  levene_test(total_biomass ~ 
-                (moisture_tx * temp_tx * destructive_time), 
-              data = biomass_T1uT2)$df2,
+  paste0("F", sub_digits(
+    levene_test(total_biomass ~ 
+                  (moisture_tx * temp_tx * destructive_time), 
+              data = biomass_T1uT2)$df1), "\u02CC",
+  sub_digits(
+    levene_test(total_biomass ~ 
+                  (moisture_tx * temp_tx * destructive_time), 
+              data = biomass_T1uT2)$df2), " = ",
   format(round(levene_test(total_biomass ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = biomass_T1uT2)$statistic, 3), nsmall = 3),
-  format(round(levene_test(total_biomass ~ 
+              data = biomass_T1uT2)$statistic, 3), nsmall = 3)),
+  paste0("p = ", format(round(levene_test(total_biomass ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = biomass_T1uT2)$p, 3), nsmall = 3),
+              data = biomass_T1uT2)$p, 3), nsmall = 3)),
   "Total Microfauna Biomass",
   "Shapiro-Wilk Test", 
-  NA,
-  NA,
-  format(round(shapiro_test(residuals(micro_biom_lm2))$statistic, 3), 
-         nsmall = 3),
-  format(round(shapiro_test(residuals(micro_biom_lm2))$p.value, 3),
-         nsmasll = 3),
+  paste0("W = ", 
+         format(round(shapiro_test(residuals(micro_biom_lm2))$statistic, 3), 
+         nsmall = 3)),
+  paste0("p = ", 
+         format(round(shapiro_test(residuals(micro_biom_lm2))$p.value, 3),
+         nsmasll = 3)),
   "Total Microfauna Biomass",
   "Levene's Test",
-  levene_test(micro_biomass ~ 
-                (moisture_tx * temp_tx * destructive_time), 
-              data = biomass_T1uT2)$df1,
-  levene_test(micro_biomass ~ 
-                (moisture_tx * temp_tx * destructive_time), 
-              data = biomass_T1uT2)$df2,
+  paste0("F", sub_digits(
+    levene_test(micro_biomass ~ 
+                  (moisture_tx * temp_tx * destructive_time), 
+              data = biomass_T1uT2)$df1), "\u02CC",
+  sub_digits(
+    levene_test(micro_biomass ~ 
+                  (moisture_tx * temp_tx * destructive_time), 
+              data = biomass_T1uT2)$df2), " = ",
   format(round(levene_test(micro_biomass ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = biomass_T1uT2)$statistic, 3), nsmall = 3),
-  format(round(levene_test(micro_biomass ~ 
+              data = biomass_T1uT2)$statistic, 3), nsmall = 3)),
+  paste0("p = ", format(round(levene_test(micro_biomass ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = biomass_T1uT2)$p, 3), nsmall = 3),
+              data = biomass_T1uT2)$p, 3), nsmall = 3)),
   "Total Mesofauna Biomass",
   "Shapiro-Wilk Test", 
-  NA,
-  NA,
-  format(round(shapiro_test(residuals(meso_biom_lm2))$statistic, 3), 
-         nsmall = 3),
-  format(round(shapiro_test(residuals(meso_biom_lm2))$p.value, 3),
-         nsmasll = 3),
+  paste0("W = ", 
+         format(round(shapiro_test(residuals(meso_biom_lm2))$statistic, 3), 
+         nsmall = 3)),
+  paste0("p = ", 
+         format(round(shapiro_test(residuals(meso_biom_lm2))$p.value, 3),
+         nsmasll = 3)),
   "Total Mesofauna Abundance",
   "Levene's Test",
-  levene_test(meso_biomass ~ 
-                (moisture_tx * temp_tx * destructive_time), 
-              data = biomass_T1uT2)$df1,
-  levene_test(meso_biomass ~ 
-                (moisture_tx * temp_tx * destructive_time), 
-              data = biomass_T1uT2)$df2,
+  paste0("F", sub_digits(
+    levene_test(meso_biomass ~ 
+                  (moisture_tx * temp_tx * destructive_time), 
+              data = biomass_T1uT2)$df1), "\u02CC",
+  sub_digits(
+    levene_test(meso_biomass ~ 
+                  (moisture_tx * temp_tx * destructive_time), 
+              data = biomass_T1uT2)$df2), " = ",
   format(round(levene_test(meso_biomass ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = biomass_T1uT2)$statistic, 3), nsmall = 3),
-  format(round(levene_test(meso_biomass ~ 
+              data = biomass_T1uT2)$statistic, 3), nsmall = 3)),
+  paste0("p = ", format(round(levene_test(meso_biomass ~ 
                              (moisture_tx * temp_tx * destructive_time), 
-              data = biomass_T1uT2)$p, 3), nsmall = 3)
-  ), ncol = 6, byrow = T))
+              data = biomass_T1uT2)$p, 3), nsmall = 3))
+  ), ncol = 4, byrow = T))
 
 colnames(ab_biom_df1) <- 
-  c("Parameter", "Test", "df1", "df2", "Statistic", "P-Value")
+  c("Parameter", "Test", "Statistic", "P-Value")
 
 knitr::kable(ab_biom_df1, linesep = "\\hline")
 ```
 <br>
-Total soil microfauna and mesofauna abundances were significantly correlated (R~42~ = 0.467, p = 0.001); similarly, soil microfauna (R~42~ = 0.834, p < 0.001) and mesofauna (R~42~ = 0.877, p < 0.001) total abundances were each significantly and positively correlated with total fauna abundance. Mean total soil fauna abundance ([Figure 3.4]A) was strongly influenced by the original sampling location (i.e., significant block effects (F~1,34~ = 22.953, p < 0.001)) with a high abundance of both microfauna and mesofauna observed in a single block that contained one sample replicate from each treatment. Total abundance of soil fauna was significantly reduced under saturated vs. field-moist conditions (F~1,34~ = 19.104, p < 0.001). This was driven by decreased microfauna (F~1,34~ = 21.152, p < 0.001) and mesofauna (F~1,33~ = 6.143, p = 0.018) abundances. Destructive sampling did not affect total fauna abundance (F~1,34~ = 0.466, p = 0.499), soil microfauna abundance (F~1,34~ = 0.966, p = 0.33), nor soil mesofauna abundance (F~1,33~ = 1.968, p = 0.170). Neither total soil fauna abundance nor soil microfauna abundance was significantly affected by interaction effects ([Appendix E]), but soil mesofauna exhibited a significant temperature by destructive sampling time interaction effect (F~1,33~ = 4.276, p = 0.047). This suggests that soil mesofauna abundances in mesocosms assigned to 20 &deg;C decreased from T~1~ to T~2~ following a three-week return to initial 12 &deg;C conditions. Overall, mean total abundance (&plusmn; SE) was greatest (360,000 &plusmn; 70,000 individuals per m^2^) in mesocosms assigned to 20 &deg;C field-moist conditions, sampled at T~1~ and was lowest (150,000 &plusmn; 30,000 individuals per m^2^) in those assigned to 12 &deg;C saturated conditions, sampled at T~1~ (see [Appendix D]). Estimates of effect size based on a linear model are given in [Appendix F].
-```{r Abundance and Biomass Results 2, warning=F}
+  
+```{r Abundance and Biomass Results 3, warning=F}
 cor_micro_meso_ab <- 
   cor.test(abundance_T1uT2$total_micro_ab_standardized,
          abundance_T1uT2$total_meso_ab_standardized, method = "pearson")
@@ -3036,22 +3072,210 @@ total_ab_aov2 <- Anova(total_ab_lm2, type = 'III')
 micro_ab_aov2 <- Anova(micro_ab_lm2, type = 'III')
 
 meso_ab_aov2 <- Anova(meso_ab_lm2, type = 'III')
+``` 
+<br>
+  
+Total soil microfauna and mesofauna abundances were significantly correlated (R~42~ = 0.467, p = 0.001); similarly, soil microfauna (R~42~ = 0.834, p < 0.001) and mesofauna (R~42~ = 0.877, p < 0.001) total abundances were each significantly and positively correlated with total fauna abundance. Mean total soil fauna abundance ([Figure 3.4]A) was strongly influenced by the original sampling location (i.e., significant block effects (F~1,34~ = 22.953, p < 0.001)) with a high abundance of both microfauna and mesofauna observed in a single block that contained one sample replicate from each treatment. Total abundance of soil fauna was significantly reduced under saturated vs. field-moist conditions (F~1,34~ = 19.104, p < 0.001). This was driven by decreased microfauna (F~1,34~ = 21.152, p < 0.001) and mesofauna (F~1,33~ = 6.143, p = 0.018) abundances. Destructive sampling did not affect total fauna abundance (F~1,34~ = 0.466, p = 0.499), soil microfauna abundance (F~1,34~ = 0.966, p = 0.33), nor soil mesofauna abundance (F~1,33~ = 1.968, p = 0.170). Neither total soil fauna abundance nor soil microfauna abundance was significantly affected by interaction effects ([Appendix E]), but soil mesofauna exhibited a significant temperature by destructive sampling time interaction effect (F~1,33~ = 4.276, p = 0.047). This suggests that soil mesofauna abundances in mesocosms assigned to 20 &deg;C decreased from T~1~ to T~2~ following a three-week return to initial 12 &deg;C conditions. Overall, mean total abundance (&plusmn; SE) was greatest (360,000 &plusmn; 70,000 individuals per m^2^) in mesocosms assigned to 20 &deg;C field-moist conditions, sampled at T~1~ and was lowest (150,000 &plusmn; 30,000 individuals per m^2^) in those assigned to 12 &deg;C saturated conditions, sampled at T~1~ (see [Appendix D]). Estimates of effect size based on a linear model are given in [Appendix F].
+<br>
+  
+### Supplemental Table 3.13
+Total soil fauna, microfauna, and mesofauna abundance Pearson's Test results.
+```{r Abundance and Biomass Results 4, warning=F}
+ab_cor_df <- as.data.frame(matrix(data = c(
+  "Total Soil Microfauna Abundance",
+  "Total Soil Mesofauna Abundance",
+  paste0("R", sub_digits(cor_micro_meso_ab$parameter), " = ", 
+         format(round(cor_micro_meso_ab$estimate, 3), 
+         nsmall = 3)),
+  paste0("p = ", 
+         format(round(cor_micro_meso_ab$p.value, 3),
+         nsmall = 3)),
+  "Total Soil Microfauna Abundance",
+  "Total Soil Fauna Abundance",
+  paste0("R", sub_digits(cor_micro_total_ab$parameter), " = ", 
+         format(round(cor_micro_total_ab$estimate, 3), 
+         nsmall = 3)),
+  paste0("p = ", 
+         format(round(cor_micro_total_ab$p.value, 3),
+         nsmall = 3)),
+  "Total Soil Mesofauna Abundance",
+  "Total Soil Fauna Abundance",
+  paste0("R", sub_digits(cor_meso_total_ab$parameter), " = ", 
+         format(round(cor_meso_total_ab$estimate, 3), 
+         nsmall = 3)),
+  paste0("p = ", 
+         format(round(cor_meso_total_ab$p.value, 3),
+         nsmall = 3))
+  ), ncol = 4, byrow = T))
 
-cor_micro_meso_ab; cor_micro_total_ab; cor_meso_total_ab; total_ab_aov2; micro_ab_aov2; meso_ab_aov2
+colnames(ab_cor_df) <- 
+  c("Variable 1", "Variable 2", "Statistic", "P-Value")
+
+knitr::kable(ab_cor_df, linesep = "\\hline")
 ```
 <br>
+  
+### Supplemental Table 3.14
+Total soil fauna, microfauna, and mesofauna abunance ANOVA results.
+```{r Abundance and Biomass Results 5, warning=F}
+abundance_aov_tbl <- as.data.frame(matrix(data = c(
+  "Total Soil Fauna Abundance",
+  "Intercept",
+  paste0("F", sub_digits(total_ab_aov2["(Intercept)", "Df"]), 
+         "\u02CC", sub_digits(total_ab_aov2["Residuals", "Df"]), 
+         " = ", format(round(total_ab_aov2["(Intercept)", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(total_ab_aov2["(Intercept)", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Total Soil Fauna Abundance",
+  "Soil Moisture Treatment",
+  paste0("F", sub_digits(total_ab_aov2["moisture_tx", "Df"]), 
+         "\u02CC", sub_digits(total_ab_aov2["Residuals", "Df"]), 
+         " = ", format(round(total_ab_aov2["moisture_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(total_ab_aov2["moisture_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Total Soil Fauna Abundance",
+  "Temperature Treatment",
+  paste0("F", sub_digits(total_ab_aov2["temp_tx", "Df"]), 
+         "\u02CC", sub_digits(total_ab_aov2["Residuals", "Df"]), 
+         " = ", format(round(total_ab_aov2["temp_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(total_ab_aov2["temp_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Total Soil Fauna Abundance",
+  "Destructive Sampling Treatment",
+  paste0("F", sub_digits(total_ab_aov2["destructive_time", "Df"]), 
+         "\u02CC", sub_digits(total_ab_aov2["Residuals", "Df"]), 
+         " = ", format(round(total_ab_aov2["destructive_time", "F value"], 
+                             3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(total_ab_aov2["destructive_time", "Pr(>F)"], 
+                              3), 
+                       nsmall = 3)),
+  "Total Soil Fauna Abundance",
+  "Block Effect",
+  paste0("F", sub_digits(total_ab_aov2["block_effect", "Df"]), 
+         "\u02CC", sub_digits(total_ab_aov2["Residuals", "Df"]), 
+         " = ", format(round(total_ab_aov2["block_effect", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(total_ab_aov2["block_effect", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Total Soil Microfauna Abundance",
+  "Intercept",
+  paste0("F", sub_digits(micro_ab_aov2["(Intercept)", "Df"]), 
+         "\u02CC", sub_digits(micro_ab_aov2["Residuals", "Df"]), 
+         " = ", format(round(micro_ab_aov2["(Intercept)", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(micro_ab_aov2["(Intercept)", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Total Soil Microfauna Abundance",
+  "Soil Moisture Treatment",
+  paste0("F", sub_digits(micro_ab_aov2["moisture_tx", "Df"]), 
+         "\u02CC", sub_digits(micro_ab_aov2["Residuals", "Df"]), 
+         " = ", format(round(micro_ab_aov2["moisture_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(micro_ab_aov2["moisture_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Total Soil Microfauna Abundance",
+  "Temperature Treatment",
+  paste0("F", sub_digits(micro_ab_aov2["temp_tx", "Df"]), 
+         "\u02CC", sub_digits(micro_ab_aov2["Residuals", "Df"]), 
+         " = ", format(round(micro_ab_aov2["temp_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(micro_ab_aov2["temp_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Total Soil Microfauna Abundance",
+  "Destructive Sampling Treatment",
+  paste0("F", sub_digits(micro_ab_aov2["destructive_time", "Df"]), 
+         "\u02CC", sub_digits(micro_ab_aov2["Residuals", "Df"]), 
+         " = ", format(round(micro_ab_aov2["destructive_time", "F value"], 
+                             3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(micro_ab_aov2["destructive_time", "Pr(>F)"], 
+                              3), 
+                       nsmall = 3)),
+  "Total Soil Microfauna Abundance",
+  "Block Effect",
+  paste0("F", sub_digits(micro_ab_aov2["block_effect", "Df"]), 
+         "\u02CC", sub_digits(micro_ab_aov2["Residuals", "Df"]), 
+         " = ", format(round(micro_ab_aov2["block_effect", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(micro_ab_aov2["block_effect", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Total Soil Mesofauna Abundance",
+  "Intercept",
+  paste0("F", sub_digits(meso_ab_aov2["(Intercept)", "Df"]), 
+         "\u02CC", sub_digits(meso_ab_aov2["Residuals", "Df"]), 
+         " = ", format(round(meso_ab_aov2["(Intercept)", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(meso_ab_aov2["(Intercept)", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Total Soil Mesofauna Abundance",
+  "Soil Moisture Treatment",
+  paste0("F", sub_digits(meso_ab_aov2["moisture_tx", "Df"]), 
+         "\u02CC", sub_digits(meso_ab_aov2["Residuals", "Df"]), 
+         " = ", format(round(meso_ab_aov2["moisture_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(meso_ab_aov2["moisture_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Total Soil Mesofauna Abundance",
+  "Temperature Treatment",
+  paste0("F", sub_digits(meso_ab_aov2["temp_tx", "Df"]), 
+         "\u02CC", sub_digits(meso_ab_aov2["Residuals", "Df"]), 
+         " = ", format(round(meso_ab_aov2["temp_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(meso_ab_aov2["temp_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Total Soil Mesofauna Abundance",
+  "Destructive Sampling Treatment",
+  paste0("F", sub_digits(meso_ab_aov2["destructive_time", "Df"]), 
+         "\u02CC", sub_digits(meso_ab_aov2["Residuals", "Df"]), 
+         " = ", format(round(meso_ab_aov2["destructive_time", "F value"], 
+                             3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(meso_ab_aov2["destructive_time", "Pr(>F)"], 
+                              3), 
+                       nsmall = 3)),
+  "Total Soil Mesofauna Abundance",
+  "Block Effect",
+  paste0("F", sub_digits(meso_ab_aov2["block_effect", "Df"]), 
+         "\u02CC", sub_digits(meso_ab_aov2["Residuals", "Df"]), 
+         " = ", format(round(meso_ab_aov2["block_effect", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(meso_ab_aov2["block_effect", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Total Soil Mesofauna Abundance",
+  "Temperature x Destructive Sampling Interaction",
+  paste0("F", sub_digits(meso_ab_aov2["temp_tx:destructive_time", "Df"]), 
+         "\u02CC", sub_digits(meso_ab_aov2["Residuals", "Df"]), 
+         " = ", format(round(meso_ab_aov2["temp_tx:destructive_time", 
+                                         "F value"], 
+                             3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(meso_ab_aov2["temp_tx:destructive_time", 
+                                          "Pr(>F)"], 
+                              3), 
+                       nsmall = 3))
+), ncol = 4, byrow = T))
 
-Following trends in soil fauna abundance, total soil microfauna and mesofauna biomasses were significantly correlated (R~42~ = 0.460, p = 0.002) as was total soil microfauna (R~42~ = 0.478, p = 0.001) and mesofauna (R~42~ = 0.999, p < 0.001) biomasses with total faunal biomass. Mean total biomass ([Figure 3.4]B) was strongly related to the original sampling location (F~1,33~ = 17.288, p < 0.001). Total biomass was significantly reduced saturated conditions (F~1,33~ = 8.631, p = 0.006). This was driven by a significant decrease in both soil microfauna (F~1,34~ = 21.152, p < 0.001) and mesofauna (F~1,33~ = 8.266, p = 0.007). Total biomass was not influenced by temperature conditions (F~1,33~ = 0.076, p = 0.784) nor the timing of destructive sampling (F~1,33~ = 1.375, p = 0.249). Soil microfauna biomass was not influenced by significant interaction effects ([Appendix E]), but total fauna (F~1,33~ = 3.386, p = 0.075) and soil mesofauna (F~1,33~ = 3.439, p = 0.073) biomasses exhibited weak soil moisture by destructive sampling time interaction effects. This suggests that the biomasses of total fauna and soil mesofauna in mesocosms assigned to saturated conditions tended to increase from T~1~ to T~2~ following a three-week return to initial field-moist conditions. Overall, mean total biomass (&plusmn; SE) was greatest (0.49 &plusmn; 0.10 g of C per m^2^ per year) in mesocosms assigned to 12 &deg;C field-moist conditions, sampled at T~1~ and was least (0.25 &plusmn; 0.07 g of C per m^2^ per year) in those assigned to 12 &deg;C saturated conditions, sampled at T~1~ (see [Appendix D]). Estimates of effect size based on a linear model are given in [Appendix F].
-```{r Abundance and Biomass Results 3, warning=F}
+colnames(abundance_aov_tbl) <- c("Experimental Parameter","Test Parameter", 
+                                 "Statistic", "P-Value")
+
+knitr::kable(abundance_aov_tbl)
+```
+<br>
+  
+```{r Abundance and Biomass Results 6, warning=F}
 cor_micro_meso_biom <- 
   cor.test(biomass_T1uT2$micro_biomass,
          biomass_T1uT2$meso_biomass, method = "pearson")
 
-cor_micro_total_ab <- 
+cor_micro_total_biom <- 
   cor.test(biomass_T1uT2$micro_biomass,
          biomass_T1uT2$total_biomass, method = "pearson")
 
-cor_meso_total_ab <- 
+cor_meso_total_biom <- 
   cor.test(biomass_T1uT2$meso_biomass,
          biomass_T1uT2$total_biomass, method = "pearson")
 
@@ -3060,11 +3284,212 @@ total_biom_aov2 <- Anova(total_biom_lm2, type = 'III')
 micro_biom_aov2 <- Anova(micro_biom_lm2, type = 'III')
 
 meso_biom_aov2 <- Anova(meso_biom_lm2, type = 'III')
-
-cor_micro_meso_biom; cor_micro_total_ab; cor_meso_total_ab; total_biom_aov2; micro_biom_aov2; meso_biom_aov2
 ```
 <br>
+  
+Following trends in soil fauna abundance, total soil microfauna and mesofauna biomasses were significantly correlated (R~42~ = 0.460, p = 0.002) as was total soil microfauna (R~42~ = 0.478, p = 0.001) and mesofauna (R~42~ = 0.999, p < 0.001) biomasses with total faunal biomass. Mean total biomass ([Figure 3.4]B) was strongly related to the original sampling location (F~1,33~ = 17.288, p < 0.001). Total biomass was significantly reduced saturated conditions (F~1,33~ = 8.631, p = 0.006). This was driven by a significant decrease in both soil microfauna (F~1,34~ = 21.152, p < 0.001) and mesofauna (F~1,33~ = 8.266, p = 0.007). Total biomass was not influenced by temperature conditions (F~1,33~ = 0.076, p = 0.784) nor the timing of destructive sampling (F~1,33~ = 1.375, p = 0.249). Soil microfauna biomass was not influenced by significant interaction effects ([Appendix E]), but total fauna (F~1,33~ = 3.386, p = 0.075) and soil mesofauna (F~1,33~ = 3.439, p = 0.073) biomasses exhibited weak soil moisture by destructive sampling time interaction effects. This suggests that the biomasses of total fauna and soil mesofauna in mesocosms assigned to saturated conditions tended to increase from T~1~ to T~2~ following a three-week return to initial field-moist conditions. Overall, mean total biomass (&plusmn; SE) was greatest (0.49 &plusmn; 0.10 g of C per m^2^ per year) in mesocosms assigned to 12 &deg;C field-moist conditions, sampled at T~1~ and was least (0.25 &plusmn; 0.07 g of C per m^2^ per year) in those assigned to 12 &deg;C saturated conditions, sampled at T~1~ (see [Appendix D]). Estimates of effect size based on a linear model are given in [Appendix F].
+<br>
+  
+### Supplemental Table 3.15
+Total soil fauna, microfauna, and mesofauna biomass Pearson's Test results.
+```{r Abundance and Biomass Results 7, warning=F}
+biom_cor_df <- as.data.frame(matrix(data = c(
+  "Total Soil Microfauna Biomass",
+  "Total Soil Mesofauna Biomass",
+  paste0("R", sub_digits(cor_micro_meso_biom$parameter), " = ", 
+         format(round(cor_micro_meso_biom$estimate, 3), 
+         nsmall = 3)),
+  paste0("p = ", 
+         format(round(cor_micro_meso_biom$p.value, 3),
+         nsmall = 3)),
+  "Total Soil Microfauna Biomass",
+  "Total Soil Fauna Biomass",
+  paste0("R", sub_digits(cor_micro_total_biom$parameter), " = ", 
+         format(round(cor_micro_total_biom$estimate, 3), 
+         nsmall = 3)),
+  paste0("p = ", 
+         format(round(cor_micro_total_biom$p.value, 3),
+         nsmall = 3)),
+  "Total Soil Mesofauna Biomass",
+  "Total Soil Fauna Biomass",
+  paste0("R", sub_digits(cor_meso_total_biom$parameter), " = ", 
+         format(round(cor_meso_total_biom$estimate, 3), 
+         nsmall = 3)),
+  paste0("p = ", 
+         format(round(cor_meso_total_biom$p.value, 3),
+         nsmall = 3))
+  ), ncol = 4, byrow = T))
 
+colnames(biom_cor_df) <- 
+  c("Variable 1", "Variable 2", "Statistic", "P-Value")
+
+knitr::kable(biom_cor_df, linesep = "\\hline")
+```
+<br>
+  
+### Supplemental Table 3.16
+Total soil fauna, microfauna, and mesofauna biomass ANOVA results.
+```{r Abundance and Biomass Results 8, warning=F}
+biom_aov_tbl <- as.data.frame(matrix(data = c(
+  "Total Soil Fauna Biomass",
+  "Intercept",
+  paste0("F", sub_digits(total_biom_aov2["(Intercept)", "Df"]), 
+         "\u02CC", sub_digits(total_biom_aov2["Residuals", "Df"]), 
+         " = ", format(round(total_biom_aov2["(Intercept)", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(total_biom_aov2["(Intercept)", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Total Soil Fauna Biomass",
+  "Soil Moisture Treatment",
+  paste0("F", sub_digits(total_biom_aov2["moisture_tx", "Df"]), 
+         "\u02CC", sub_digits(total_biom_aov2["Residuals", "Df"]), 
+         " = ", format(round(total_biom_aov2["moisture_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(total_biom_aov2["moisture_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Total Soil Fauna Biomass",
+  "Temperature Treatment",
+  paste0("F", sub_digits(total_biom_aov2["temp_tx", "Df"]), 
+         "\u02CC", sub_digits(total_biom_aov2["Residuals", "Df"]), 
+         " = ", format(round(total_biom_aov2["temp_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(total_biom_aov2["temp_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Total Soil Fauna Biomass",
+  "Destructive Sampling Treatment",
+  paste0("F", sub_digits(total_biom_aov2["destructive_time", "Df"]), 
+         "\u02CC", sub_digits(total_biom_aov2["Residuals", "Df"]), 
+         " = ", format(round(total_biom_aov2["destructive_time", "F value"], 
+                             3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(total_biom_aov2["destructive_time", "Pr(>F)"], 
+                              3), 
+                       nsmall = 3)),
+  "Total Soil Fauna Biomass",
+  "Block Effect",
+  paste0("F", sub_digits(total_biom_aov2["block_effect", "Df"]), 
+         "\u02CC", sub_digits(total_biom_aov2["Residuals", "Df"]), 
+         " = ", format(round(total_biom_aov2["block_effect", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(total_biom_aov2["block_effect", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Total Soil Fauna Biomass",
+  "Soil Moisture x Destructive Sampling Interaction",
+  paste0("F", sub_digits(total_biom_aov2["moisture_tx:destructive_time", "Df"]), 
+         "\u02CC", sub_digits(total_biom_aov2["Residuals", "Df"]), 
+         " = ", format(round(total_biom_aov2["moisture_tx:destructive_time", 
+                                         "F value"], 
+                             3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(total_biom_aov2["moisture_tx:destructive_time", 
+                                          "Pr(>F)"], 
+                              3), 
+                       nsmall = 3)),
+  "Total Soil Microfauna Biomass",
+  "Intercept",
+  paste0("F", sub_digits(micro_biom_aov2["(Intercept)", "Df"]), 
+         "\u02CC", sub_digits(micro_biom_aov2["Residuals", "Df"]), 
+         " = ", format(round(micro_biom_aov2["(Intercept)", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(micro_biom_aov2["(Intercept)", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Total Soil Microfauna Biomass",
+  "Soil Moisture Treatment",
+  paste0("F", sub_digits(micro_biom_aov2["moisture_tx", "Df"]), 
+         "\u02CC", sub_digits(micro_biom_aov2["Residuals", "Df"]), 
+         " = ", format(round(micro_biom_aov2["moisture_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(micro_biom_aov2["moisture_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Total Soil Microfauna Biomass",
+  "Temperature Treatment",
+  paste0("F", sub_digits(micro_biom_aov2["temp_tx", "Df"]), 
+         "\u02CC", sub_digits(micro_biom_aov2["Residuals", "Df"]), 
+         " = ", format(round(micro_biom_aov2["temp_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(micro_biom_aov2["temp_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Total Soil Microfauna Biomass",
+  "Destructive Sampling Treatment",
+  paste0("F", sub_digits(micro_biom_aov2["destructive_time", "Df"]), 
+         "\u02CC", sub_digits(micro_biom_aov2["Residuals", "Df"]), 
+         " = ", format(round(micro_biom_aov2["destructive_time", "F value"], 
+                             3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(micro_biom_aov2["destructive_time", "Pr(>F)"], 
+                              3), 
+                       nsmall = 3)),
+  "Total Soil Microfauna Biomass",
+  "Block Effect",
+  paste0("F", sub_digits(micro_biom_aov2["block_effect", "Df"]), 
+         "\u02CC", sub_digits(micro_biom_aov2["Residuals", "Df"]), 
+         " = ", format(round(micro_biom_aov2["block_effect", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(micro_biom_aov2["block_effect", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Total Soil Mesofauna Biomass",
+  "Intercept",
+  paste0("F", sub_digits(meso_biom_aov2["(Intercept)", "Df"]), 
+         "\u02CC", sub_digits(meso_biom_aov2["Residuals", "Df"]), 
+         " = ", format(round(meso_biom_aov2["(Intercept)", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(meso_biom_aov2["(Intercept)", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Total Soil Mesofauna Biomass",
+  "Soil Moisture Treatment",
+  paste0("F", sub_digits(meso_biom_aov2["moisture_tx", "Df"]), 
+         "\u02CC", sub_digits(meso_biom_aov2["Residuals", "Df"]), 
+         " = ", format(round(meso_biom_aov2["moisture_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(meso_biom_aov2["moisture_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Total Soil Mesofauna Biomass",
+  "Temperature Treatment",
+  paste0("F", sub_digits(meso_biom_aov2["temp_tx", "Df"]), 
+         "\u02CC", sub_digits(meso_biom_aov2["Residuals", "Df"]), 
+         " = ", format(round(meso_biom_aov2["temp_tx", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(meso_biom_aov2["temp_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Total Soil Mesofauna Biomass",
+  "Destructive Sampling Treatment",
+  paste0("F", sub_digits(meso_biom_aov2["destructive_time", "Df"]), 
+         "\u02CC", sub_digits(meso_biom_aov2["Residuals", "Df"]), 
+         " = ", format(round(meso_biom_aov2["destructive_time", "F value"], 
+                             3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(meso_biom_aov2["destructive_time", "Pr(>F)"], 
+                              3), 
+                       nsmall = 3)),
+  "Total Soil Mesofauna Biomass",
+  "Block Effect",
+  paste0("F", sub_digits(meso_biom_aov2["block_effect", "Df"]), 
+         "\u02CC", sub_digits(meso_biom_aov2["Residuals", "Df"]), 
+         " = ", format(round(meso_biom_aov2["block_effect", "F value"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(meso_biom_aov2["block_effect", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Total Soil Mesofauna Biomass",
+  "Soil Moisture x Destructive Sampling Interaction",
+  paste0("F", sub_digits(meso_biom_aov2["moisture_tx:destructive_time", "Df"]), 
+         "\u02CC", sub_digits(meso_biom_aov2["Residuals", "Df"]), 
+         " = ", format(round(meso_biom_aov2["moisture_tx:destructive_time", 
+                                         "F value"], 
+                             3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(meso_biom_aov2["moisture_tx:destructive_time", 
+                                          "Pr(>F)"], 
+                              3), 
+                       nsmall = 3))
+), ncol = 4, byrow = T))
+
+colnames(biom_aov_tbl) <- c("Experimental Parameter","Test Parameter", 
+                                 "Statistic", "P-Value")
+
+knitr::kable(biom_aov_tbl)
+```
+<br>
+  
 ## 3.6 Community Composition and Similarity Among Treatments
 ```{r NMDS T1 Model Building, include = F}
 ab_NMDS_T1 <- ab_NMDS %>%

@@ -3,6 +3,10 @@ Parking Lot Items
 > Verify ANOVA types are correct (Type III if interaction, Type II if no interaction?)
 > Make all fig caps below -- not split above and below
 > Make all fig + table caps italic to improve readability 
+> Verify all warnings silenced
+> Fix/standardize supplemental table titles
+> Resolve experimental parameter vs. test parameter for supplemental tables and make consistent
+> Lines b/w different experimental parameters in tables? to improve visibility
 > Fix all p = 0.000 to p < 0.001
 > Verify appendicies
 > Fix TOC
