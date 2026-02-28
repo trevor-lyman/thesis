@@ -5,10 +5,12 @@ Parking Lot Items
 > Make all fig + table caps italic to improve readability 
 > Verify all warnings silenced
 > Fix/standardize supplemental table titles
+> Make section 3 tables wider
 > Resolve experimental parameter vs. test parameter for supplemental tables and make consistent
 > Lines b/w different experimental parameters in tables? to improve visibility
 > Fix all p = 0.000 to p < 0.001
 > Verify appendicies
+> Make Tables in methods looks nice
 > Fix TOC
 > Add list of tables, list of supplemental tables, list of figs
 > Add about this project

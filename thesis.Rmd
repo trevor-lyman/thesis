@@ -58,6 +58,9 @@ library(tibble) # rownames_to_column
 library(scales) # comma
 library(patchwork) # plot_layout
 library(ggtext) # element_textbox
+library(grid)
+library(gridGraphics) # gird.grabExpr()
+library(cowplot) # plot_grid()
 
 RNGkind(sample.kind = "Rounding") 
 ```
@@ -2894,7 +2897,7 @@ meso_biom_lm2 <- lm(meso_biomass ~
 ```
 <br>
   
-Mean total soil fauna abundance (Shapiro-Wilk’s test: W = 0.980, p = 0.701; Levene’s test: F~7,31~ = 0.435, p = 0.872) and total soil microfauna abundance (Shapiro-Wilk’s test: W = 0.980, p = 0.704; Levene’s test: F~7,31~ = 0.955, p = 0.480) each satisfied the assumptions of normality and homogeneity of variance, as per a Shapiro-Wilk’s test and Levene’s test. Total soil mesofauna abundance was transformed on natural log, (ln) scale to conform to the assumption of normality (Shapiro-Wilk’s test: W = 0.976, p = 0.564; Levene’s test: F~7,31~ = 0.389, p = 0.901). Total biomass (Shapiro-Wilk’s test: W = 0.953, p = 0.107; Levene’s test: F~7,31~ = 0.317, p = 0.940), total soil microfauna biomass (Shapiro-Wilk’s test: W = 0.980, p = 0.704; Levene’s test: F~7,31~ = 0.955, p = 0.480), and total soil mesofauna biomass (Shapiro-Wilk’s test: W = 0.953, p = 0.105; Levene’s test: F~7,31~ = 0.313, p = 0.943) each met the assumptions of normality and homogeneity of variance.
+Mean total soil fauna abundance (Shapiro-Wilk’s test: `r paste0("W = ", format(round(shapiro_test(residuals(total_ab_lm2))$statistic, 3), nsmall = 3))`, `r paste0("p = ", format(round(shapiro_test(residuals(total_ab_lm2))$p.value, 3), nsmasll = 3))`; Levene’s test: `r paste0("F", sub_digits(levene_test(total_ab_standardized ~ (moisture_tx * temp_tx * destructive_time), data = abundance_T1uT2)$df1), "\u02CC", sub_digits(levene_test(total_ab_standardized ~ (moisture_tx * temp_tx * destructive_time), data = abundance_T1uT2)$df2), " = ", format(round(levene_test(total_ab_standardized ~ (moisture_tx * temp_tx * destructive_time), data = abundance_T1uT2)$statistic, 3), nsmall = 3))`, `r paste0("p = ", format(round(levene_test(total_ab_standardized ~ (moisture_tx * temp_tx * destructive_time), data = abundance_T1uT2)$p, 3), nsmall = 3))`) and total soil microfauna abundance (Shapiro-Wilk’s test: `r paste0("W = ", format(round(shapiro_test(residuals(micro_ab_lm2))$statistic, 3), nsmall = 3))`, `r paste0("p = ", format(round(shapiro_test(residuals(micro_ab_lm2))$p.value, 3), nsmasll = 3))`; Levene’s test: `r paste0("F", sub_digits(levene_test(total_micro_ab_standardized ~ (moisture_tx * temp_tx * destructive_time), data = abundance_T1uT2)$df1), "\u02CC", sub_digits(levene_test(total_micro_ab_standardized ~ (moisture_tx * temp_tx * destructive_time), data = abundance_T1uT2)$df2), " = ", format(round(levene_test(total_micro_ab_standardized ~ (moisture_tx * temp_tx * destructive_time), data = abundance_T1uT2)$statistic, 3), nsmall = 3))`, p = 0.480) each satisfied the assumptions of normality and homogeneity of variance, as per a Shapiro-Wilk’s test and Levene’s test. Total soil mesofauna abundance was transformed on natural log, (ln) scale to conform to the assumption of normality (Shapiro-Wilk’s test: W = 0.976, p = 0.564; Levene’s test: F~7,31~ = 0.389, p = 0.901). Total biomass (Shapiro-Wilk’s test: W = 0.953, p = 0.107; Levene’s test: F~7,31~ = 0.317, p = 0.940), total soil microfauna biomass (Shapiro-Wilk’s test: W = 0.980, p = 0.704; Levene’s test: F~7,31~ = 0.955, p = 0.480), and total soil mesofauna biomass (Shapiro-Wilk’s test: W = 0.953, p = 0.105; Levene’s test: F~7,31~ = 0.313, p = 0.943) each met the assumptions of normality and homogeneity of variance.
 <br>
   
 ### Supplemental Table 3.12
@@ -3504,48 +3507,184 @@ metadata_T1 <- sample_metadata %>%
   filter(destructive_time == "T1") %>%
   filter(!row_number() %in% c(2)) # remove ExRes 5
 
+metadata_T1$moisture_tx <- as.character(metadata_T1$moisture_tx)
+metadata_T1$temp_tx <- as.character(metadata_T1$temp_tx)
+metadata_T1$destructive_time <- as.factor(metadata_T1$destructive_time)
+metadata_T1$block_effect <- as.factor(metadata_T1$block_effect)
+
 T1 <- ab_NMDS_T1[order(row.names(ab_NMDS_T1)), ]
+metadata_T1 <- metadata_T1 %>%
+  mutate(temp_tx = fct_recode(temp_tx,
+    "12 \u00B0C" = "12",
+    "20 \u00B0C" = "20"
+  )) %>%
+    mutate(moisture_tx = fct_recode(moisture_tx,
+    "Field-Moist" = "Ambient",
+    "Saturated" = "High"
+  ))
+
 metadata_T1 <- metadata_T1[order(row.names(metadata_T1)), ]
 
 T1.mds <- metaMDS(T1, dist = "bray")
+
+# Create the dynamic caption
+fig3_5_caption <- paste0(
+  "Non-metric multidimensional scaling plot of mesocosm similarity at T~1~. ",
+  "(A) mesocosms show significant dissimilarity in community composition between field-moist and saturated moisture conditions; ",
+  "(B) mesocosms show similarity in community composition between temperature treatments. ",
+  "Stress = ", round(T1.mds$stress, 3), 
+  ". Ellipses represent 95% CI based on similarity between samples."
+)
 ```
 
 ### Figure 3.5
 Non-metric multidimensional scaling plot of mesocosm similarity at T~1~.
-```{r Figure 3-5, warning=F, fig.cap="Non-metric multidimensional scaling plot of mesocosm similarity at T~1~. (A) mesocosms show significant dissimilarity in community composition between field-moist and saturated moisture conditions; (B) mesocosms show similarity in community composition between temperature treatments. Stress = 0.114. Ellipses represent 95% CI based on similarity between samples.", out.width = '100%'}
+```{r Figure 3-5, warning=F, fig.cap=fig3_5_caption, out.width = '100%', fig.height=8}
 # T1 NMDS
-mds.fig_T1 <- ordiplot(T1.mds, type = "none", 
-                       xlab = "NMDS 1", ylab = "NMDS 2", 
-                    xlim = c(-0.8, 0.8), ylim = c(-0.8, 0.8));
-points(mds.fig_T1, "sites", pch = 19, cex = 1.5, col = "green4", 
-       select = metadata_T1$moisture_tx == "Ambient"); 
-points(mds.fig_T1, "sites", pch = 19, cex = 1.5, col = "peru", 
-       select = metadata_T1$moisture_tx == "High");
-ordiellipse(T1.mds, metadata_T1$moisture_tx, conf = 0.95, label = TRUE)
+# build the plot
+make_mds_plotA <- function(ord, metadata) {
 
-mds.fig_T1 <- ordiplot(T1.mds, type = "none", xlab = "NMDS 1", ylab = "NMDS 2", 
-                       xlim = c(-0.8, 0.8), ylim = c(-0.8, 0.8)) 
-points(mds.fig_T1, "sites", pch = 19, cex = 1.5, col = "green4", 
-       select = metadata_T1$temp_tx == 12)
-points(mds.fig_T1, "sites", pch = 19, cex = 1.5, col = "peru", 
-       select = metadata_T1$temp_tx == 20)
-ordiellipse(T1.mds, metadata_T1$temp_tx, conf = 0.95, label = TRUE)
+  plot_fun <- function() {
+
+    op <- ordiplot(ord, type = "none",
+                   xlab = "NMDS 1", ylab = "NMDS 2",
+                   xlim = c(-0.8, 0.8), ylim = c(-0.8, 0.8))
+
+    points(op, "sites", pch = 19, cex = 1.5, col = "green4",
+           select = metadata$moisture_tx == "Field-Moist")
+
+    points(op, "sites", pch = 19, cex = 1.5, col = "blue",
+           select = metadata$moisture_tx == "Saturated")
+
+    ordiellipse(
+      ord,
+      metadata$moisture_tx,
+      conf = 0.95,
+      col = c("green4", "blue"),
+      lwd = 2,
+      label = FALSE,
+      draw = "lines"
+    )
+
+    legend("topright",
+           legend = c("Field-Moist", "Saturated"),
+           pch = 19,
+           col = c("green4", "blue"),
+           pt.cex = 1.5,
+           bty = "n")
+  }
+
+  gridGraphics::echoGrob(plot_fun)
+}
+
+make_mds_plotB <- function(ord, metadata) {
+
+  plot_fun <- function() {
+
+    op <- ordiplot(ord, type = "none",
+                   xlab = "NMDS 1", ylab = "NMDS 2",
+                   xlim = c(-0.8, 0.8), ylim = c(-0.8, 0.8))
+
+    points(op, "sites", pch = 19, cex = 1.5, col = "peru",
+           select = metadata$temp_tx == "12 \u00B0C")
+
+    points(op, "sites", pch = 19, cex = 1.5, col = "red4",
+           select = metadata$temp_tx == "20 \u00B0C")
+
+    ordiellipse(
+      ord,
+      metadata$temp_tx,
+      conf = 0.95,
+      col = c("peru", "red4"),
+      lwd = 2,
+      label = FALSE,
+      draw = "lines"
+    )
+
+    legend("topright",
+           legend = c("12 \u00B0C", "20 \u00B0C"),
+           pch = 19,
+           col = c("peru", "red4"),
+           pt.cex = 1.5,
+           bty = "n")
+  }
+
+  gridGraphics::echoGrob(plot_fun)
+}
+
+mds.fig_T1A <- make_mds_plotA(T1.mds, metadata_T1)
+mds.fig_T1B <- make_mds_plotB(T1.mds, metadata_T1)
+
+plot_grid(
+  mds.fig_T1A,
+  mds.fig_T1B,
+  ncol = 1,
+  align = "v",
+  rel_heights = c(1, 1),  # adjust ratio if needed
+  labels = c("A", "B"),      # labels for each plot
+  label_x = 0.058,
+  label_y = 0.95
+)
 ```
 <br>
-
-Reductions in total fauna abundance under saturated soil moisture conditions were driven by Mesostigmata, Collembola, and juvenile and adult oribatid mites at T~1~ ([Appendix C]). In all cases the reductions under saturated conditions were more pronounced at 12 &deg;C than 20 &deg;C, with Collembola completely absent in 12 &deg;C saturated mesocosms. Warmer temperatures slightly increased juvenile Oribatida. Thus, moisture conditions had a significant effect (PerMANOVA F~1,17~ = 3.23, p= 0.045) on the overall community composition of the fauna ([Figure 3.5]A). Mesocosms were also significant different depending on where they were initially sampled (i.e., block effect PerMANOVA F~1,17~ = 4.35, p= 0.009). Temperature did not significantly affect
-community composition; however, the community was much more homogeneous under warmed (20 &deg;C) conditions ([Figure 3.5]B).
+  
 ```{r NMDS Results 1}
 abundances_T1 <- abundance_data %>% filter(destructive_time == "T1") 
 abundances.divT1 <- adonis2(abundances_T1$total_ab_standardized ~ 
                             (moisture_tx*temp_tx) + 
                               block_effect, data = abundances_T1, 
                             permutations = 999, method="bray")
-
-T1.mds; abundances.divT1
 ```
 <br>
+  
+Reductions in total fauna abundance under saturated soil moisture conditions were driven by Mesostigmata, Collembola, and juvenile and adult oribatid mites at T~1~ ([Appendix C]). In all cases the reductions under saturated conditions were more pronounced at 12 &deg;C than 20 &deg;C, with Collembola completely absent in 12 &deg;C saturated mesocosms. Warmer temperatures slightly increased juvenile Oribatida. Thus, moisture conditions had a significant effect (PerMANOVA F~1,17~ = 3.23, p= 0.045) on the overall community composition of the fauna ([Figure 3.5]A). Mesocosms were also significant different depending on where they were initially sampled (i.e., block effect PerMANOVA F~1,17~ = 4.35, p= 0.009). Temperature did not significantly affect
+community composition; however, the community was much more homogeneous under warmed (20 &deg;C) conditions ([Figure 3.5]B).
 
+### Supplemental Table 3.17
+T1 Community PerMANOVA results.
+```{r NMDS Results 2, warning=F}
+T1_permanova_tbl <- as.data.frame(matrix(data = c(
+  "Soil Moisture Treatment",
+  paste0("F", sub_digits(abundances.divT1["moisture_tx", "Df"]), 
+         "\u02CC", sub_digits(abundances.divT1["Residual", "Df"]), 
+         " = ", format(round(abundances.divT1["moisture_tx", "F"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(abundances.divT1["moisture_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Temperature Treatment",
+  paste0("F", sub_digits(abundances.divT1["temp_tx", "Df"]), 
+         "\u02CC", sub_digits(abundances.divT1["Residual", "Df"]), 
+         " = ", format(round(abundances.divT1["temp_tx", "F"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(abundances.divT1["temp_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Block Effect",
+  paste0("F", sub_digits(abundances.divT1["block_effect", "Df"]), 
+         "\u02CC", sub_digits(abundances.divT1["Residual", "Df"]), 
+         " = ", format(round(abundances.divT1["block_effect", "F"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(abundances.divT1["block_effect", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Soil Moisture x Temperature Interaction",
+  paste0("F", sub_digits(abundances.divT1["moisture_tx:temp_tx", 
+                                          "Df"]), 
+         "\u02CC", sub_digits(abundances.divT1["Residual", "Df"]), 
+         " = ", format(round(abundances.divT1["moisture_tx:temp_tx", 
+                                         "F"], 
+                             3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(abundances.divT1["moisture_tx:temp_tx", 
+                                          "Pr(>F)"], 
+                              3), 
+                       nsmall = 3))
+), ncol = 3, byrow = T))
+
+colnames(T1_permanova_tbl) <- c("Parameter", "Statistic", "P-Value")
+
+knitr::kable(T1_permanova_tbl)
+```
+<br>
+  
 ```{r NMDS T2 Model Building, include = F}
 ab_NMDS_T2 <- ab_NMDS %>%
   filter(destructive_time == "T2") %>%
@@ -3561,44 +3700,105 @@ T2 <- ab_NMDS_T2[order(row.names(ab_NMDS_T2)), ]
 metadata_T2 <- metadata_T2[order(row.names(metadata_T2)), ]
 
 T2.mds <- metaMDS(T2, dist = "bray")
-```
 
-### Figure 3.6
-Non-metric multidimensional scaling plot of mesocosm similarity at T~2~.
-```{r Figure 3-6, warning=F, fig.cap="Non-metric multidimensional scaling plot of mesocosm similarity at T~2~. (A) mesocosms show significant dissimilarity in community composition between field-moist and saturated moisture conditions; (B) mesocosms show similarity in community composition between temperature treatments. Stress = 0.146. Ellipses represent 95% CI based on similarity between samples.", out.width = '100%'}
-# T2 NMDS
-mds.fig_T2 <- ordiplot(T2.mds, type = "none", 
-                       xlab = "NMDS 1", ylab = "NMDS 2", 
-                       xlim = c(-0.8, 0.8), ylim = c(-0.8, 0.8)) 
-points(mds.fig_T2, "sites", pch = 19, cex = 1.5, col = "green4", 
-       select = metadata_T2$moisture_tx == "Ambient") 
-points(mds.fig_T2, "sites", pch = 19, cex = 1.5, col = "peru", 
-       select = metadata_T2$moisture_tx == "High") 
-ordiellipse(T2.mds, metadata_T2$moisture_tx, conf = 0.95, label = TRUE)
+metadata_T2$moisture_tx <- as.character(metadata_T2$moisture_tx)
+metadata_T2$temp_tx <- as.character(metadata_T2$temp_tx)
+metadata_T2$destructive_time <- as.factor(metadata_T2$destructive_time)
+metadata_T2$block_effect <- as.factor(metadata_T2$block_effect)
 
-mds.fig_T2 <- ordiplot(T2.mds, type = "none", 
-                       xlab = "NMDS 1", ylab = "NMDS 2", 
-                       xlim = c(-0.8, 0.8), ylim = c(-0.8, 0.8)) 
-points(mds.fig_T2, "sites", pch = 19, cex = 1.5, col = "green4", 
-       select = metadata_T2$temp_tx == 12) 
-points(mds.fig_T2, "sites", pch = 19, cex = 1.5, col = "peru", 
-       select = metadata_T2$temp_tx == 20) 
-ordiellipse(T2.mds, metadata_T2$temp_tx, conf = 0.95, label = TRUE)
+T2 <- ab_NMDS_T2[order(row.names(ab_NMDS_T2)), ]
+metadata_T2 <- metadata_T2 %>%
+  mutate(temp_tx = fct_recode(temp_tx,
+    "12 \u00B0C" = "12",
+    "20 \u00B0C" = "20"
+  )) %>%
+    mutate(moisture_tx = fct_recode(moisture_tx,
+    "Field-Moist" = "Ambient",
+    "Saturated" = "High"
+  ))
+
+metadata_T2 <- metadata_T1[order(row.names(metadata_T2)), ]
+
+# Create the dynamic caption
+fig3_6_caption <- paste0(
+  "Non-metric multidimensional scaling plot of mesocosm similarity at T~2~. ",
+  "(A) mesocosms show significant dissimilarity in community composition between field-moist and saturated moisture conditions; ",
+  "(B) mesocosms show similarity in community composition between temperature treatments. ",
+  "Stress = ", round(T2.mds$stress, 3), 
+  ". Ellipses represent 95% CI based on similarity between samples."
+)
 ```
 <br>
+  
+### Figure 3.6
+Non-metric multidimensional scaling plot of mesocosm similarity at T~2~.
+```{r Figure 3-6, warning=F, fig.cap=fig3_6_caption, out.width = '100%', fig.height=8}
+mds.fig_T2A <- make_mds_plotA(T2.mds, metadata_T2)
+mds.fig_T2B <- make_mds_plotB(T2.mds, metadata_T2)
 
-The soil food web fauna remained significantly different between the mesocosms that received saturated conditions vs. those under field-moist conditions even after three weeks recovery (T~2~) time (Moisture effect PerMANOVA F~1,18~ = 5.64, p= 0.003; [Figure 3.6]A). The experimental effects of temperature treatment did not significantly affect the soil fauna community composition, and the trend towards homogeneity under increased temperature treatment was not observed following the T~2~ recovery period ([Figure 3.6]B).
-```{r NMDS Results 2}
+plot_grid(
+  mds.fig_T2A,
+  mds.fig_T2B,
+  ncol = 1,
+  align = "v",
+  rel_heights = c(1, 1),  # adjust ratio if needed
+  labels = c("A", "B"),      # labels for each plot
+  label_x = 0.058,
+  label_y = 0.95
+)
+```
+<br>
+  
+```{r NMDS Results 3}
 abundances_T2 <- abundance_data %>% filter(destructive_time == "T2") 
 abundances.divT2 <- adonis2(abundances_T2$total_ab_standardized ~ 
                               (moisture_tx*temp_tx), 
                             data = abundances_T2, permutations = 999, 
                             method="bray")
-
-T2.mds; abundances.divT2
 ```
 <br>
+  
+The soil food web fauna remained significantly different between the mesocosms that received saturated conditions vs. those under field-moist conditions even after three weeks recovery (T~2~) time (Moisture effect PerMANOVA F~1,18~ = 5.64, p= 0.003; [Figure 3.6]A). The experimental effects of temperature treatment did not significantly affect the soil fauna community composition, and the trend towards homogeneity under increased temperature treatment was not observed following the T~2~ recovery period ([Figure 3.6]B).
+<br>
+  
+### Supplemental Table 3.18
+T2 Community PerMANOVA results.
+```{r NMDS Results 4, warning=F}
+T2_permanova_tbl <- as.data.frame(matrix(data = c(
+  "Soil Moisture Treatment",
+  paste0("F", sub_digits(abundances.divT2["moisture_tx", "Df"]), 
+         "\u02CC", sub_digits(abundances.divT2["Residual", "Df"]), 
+         " = ", format(round(abundances.divT2["moisture_tx", "F"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(abundances.divT2["moisture_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Temperature Treatment",
+  paste0("F", sub_digits(abundances.divT2["temp_tx", "Df"]), 
+         "\u02CC", sub_digits(abundances.divT2["Residual", "Df"]), 
+         " = ", format(round(abundances.divT2["temp_tx", "F"], 3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(abundances.divT2["temp_tx", "Pr(>F)"], 3), 
+                       nsmall = 3)),
+  "Soil Moisture x Temperature Interaction",
+  paste0("F", sub_digits(abundances.divT2["moisture_tx:temp_tx", 
+                                          "Df"]), 
+         "\u02CC", sub_digits(abundances.divT2["Residual", "Df"]), 
+         " = ", format(round(abundances.divT2["moisture_tx:temp_tx", 
+                                         "F"], 
+                             3), 
+                       nsmall = 3)),
+  paste0("p = ", format(round(abundances.divT2["moisture_tx:temp_tx", 
+                                          "Pr(>F)"], 
+                              3), 
+                       nsmall = 3))
+), ncol = 3, byrow = T))
 
+colnames(T2_permanova_tbl) <- c("Parameter", "Statistic", "P-Value")
+
+knitr::kable(T2_permanova_tbl)
+```
+<br>
+  
 ## 3.7 Soil Food Web Carbon and Nitrogen Flux
 ### Figure 3.7 
 Modeled rates of (A) carbon flux (consumption), (B) carbon mineralization (respiration), and (C) nitrogen mineralization.
