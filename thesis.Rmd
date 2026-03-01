@@ -43,6 +43,8 @@ header-includes:
 
 # About this Project
 
+WORK IN PROGRESS. LAST UPDATED `r Sys.Date()`
+
 ```{r Libraries, message=F, warning=F}
 library(ggplot2)
 library(ggtext) # expression()
@@ -62,6 +64,7 @@ library(grid)
 library(gridGraphics) # gird.grabExpr()
 library(cowplot) # plot_grid()
 library(kableExtra) # row_spec()
+library(rsconnect)
 
 RNGkind(sample.kind = "Rounding") 
 ```
@@ -80,7 +83,7 @@ Carbon (C) makes up the substrate, habitat, and diet of soil-dwelling organisms.
 <br>
 
 # Co-Authorship Statement
-In the following thesis, the soil fauna abundance, biomass, and food web modelling following three-week perturbation (i.e., T1 data) was published in a Special Issue on soil food web (Pettit et al. 2023):
+In the following thesis, the soil fauna abundance, biomass, and food web modelling following three-week perturbation (i.e., T~1~ data) was published in a Special Issue on soil food web (Pettit et al. 2023):
  
 ::: {.refbox}
 >Pettit, T., Faulkner, K.J., Buchkowski, R.W., Kamath, D., and Lindo, Z. (2023) *Changes in peatland soil fauna biomass alter food web structure and function under warming and hydrological changes. European Journal of Soil Biology* 117: 103509. <https://doi.org/10.1016/j.ejsobi.2023.103509>
@@ -2347,7 +2350,7 @@ Soil moisture and pH were transformed on natural log, (ln) scale to conform to t
 <br>
   
 ### Supplemental Table 3.5
-Shapiro-Wilk and Levene's Tests constructed to test whether log-transformed soil moisture, log-transformed pH, and C:N ratio conform to the assumptions of normality and homodescacity.
+*Shapiro-Wilk and Levene's Tests constructed to test whether log-transformed soil moisture, log-transformed pH, and C:N ratio conform to the assumptions of normality and homodescacity.*
 ```{r Soil Results 2, warning=F}
 soil_df1 <- as.data.frame(matrix(data = c(
   "Soil Moisture",
@@ -2458,12 +2461,12 @@ soil_moisture_aov_block_effect_p <-
 ```  
 <br>
   
-Mean soil moisture ([Figure 3.2]A) was significantly related to the induced soil moisture treatments and significantly greater in saturated vs. field-moist treatments (`r paste0("F", sub_digits(soil_moisture_aov2["moisture_tx", "Df"]), "\u02CC", sub_digits(soil_moisture_aov2["Residuals", "Df"]), " = ", format(round(soil_moisture_aov2["moisture_tx", "F value"], 3), nsmall = 3))`, `r paste0("p ", ifelse(soil_moisture_aov_soil_moisture_p < 0.001, "< 0.001", paste0("= ", round(soil_moisture_aov_soil_moisture_p, 3))))`) and was significantly greater in 20 &deg;C vs. 12 &deg;C treatments (`r paste0("F", sub_digits(soil_moisture_aov2["temp_tx", "Df"]), "\u02CC", sub_digits(soil_moisture_aov2["Residuals", "Df"]), " = ", format(round(soil_moisture_aov2["temp_tx", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(soil_moisture_aov2["temp_tx", "Pr(>F)"], 3), nsmall = 3))`). Soil moisture was not affected by destructive sampling time (`r paste0("F", sub_digits(soil_moisture_aov2["destructive_time", "Df"]), "\u02CC", sub_digits(soil_moisture_aov2["Residuals", "Df"]), " = ", format(round(soil_moisture_aov2["destructive_time", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(soil_moisture_aov2["destructive_time", "Pr(>F)"], 3), nsmall = 3))`) nor block effects (`r paste0("F", sub_digits(soil_moisture_aov2["block_effect", "Df"]), "\u02CC", sub_digits(soil_moisture_aov2["Residuals", "Df"]), " = ", format(round(soil_moisture_aov2["block_effect", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(soil_moisture_aov2["block_effect", "Pr(>F)"], 3), nsmall = 3))`). There were no significant interaction effects between soil moisture, temperature, and destructive sampling time ([Appendix E]). Mean soil moisture is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
+Mean soil moisture ([Figure 3.2]A) was significantly related to the induced soil moisture treatments and significantly greater in saturated vs. field-moist treatments (F~`r soil_moisture_aov_soil_moisture_df`,`r soil_moisture_aov_residuals_df`~ = `r soil_moisture_aov_soil_moisture_F`, p `r ifelse(soil_moisture_aov_soil_moisture_p < 0.001, "&lt; 0.001", paste0("= ", format(nsmall = 3)))`) and was significantly greater in 20 &deg;C vs. 12 &deg;C treatments (F~`r soil_moisture_aov_temp_df`,`r soil_moisture_aov_residuals_df`~ = `r soil_moisture_aov_temp_F`, p `r ifelse(soil_moisture_aov_temp_p < 0.001, "&lt; 0.001", paste0("= ", format(round(soil_moisture_aov_temp_p, 3), nsmall = 3)))`). Soil moisture was not affected by destructive sampling time (F~`r soil_moisture_aov_destructive_df`,`r soil_moisture_aov_residuals_df`~ = `r soil_moisture_aov_destructive_F`, p `r ifelse(soil_moisture_aov_destructive_p < 0.001, "&lt; 0.001", paste0("= ", format(round(soil_moisture_aov_destructive_p, 3), nsmall = 3)))`) nor block effects (F~`r soil_moisture_aov_block_effect_df`,`r soil_moisture_aov_residuals_df`~ = `r soil_moisture_aov_block_effect_F`, p `r ifelse(soil_moisture_aov_block_effect_p < 0.001, "&lt; 0.001", paste0("= ", format(round(soil_moisture_aov_block_effect_p, 3), nsmall = 3)))`). There were no significant interaction effects between soil moisture, temperature, and destructive sampling time ([Appendix E]). Mean soil moisture is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
 <br>
 <br>
   
 ### Supplemental Table 3.6
-ANOVA results for log-transformed soil moisture across experimental treatments temperature (12 &deg;C, 20 &deg;C), soil moisture (field-moist, saturated) and destructively sampling (T~1~: after three-weeks, T~2~: following three-week recovery period) treatments.
+*ANOVA results for log-transformed soil moisture across experimental treatments temperature (12 &deg;C, 20 &deg;C), soil moisture (field-moist, saturated) and destructively sampling (T~1~: after three-weeks, T~2~: following three-week recovery period) treatments.*
 ```{r Soil Results 4, warning = F}
 soil_moisture_aov_tbl <- as.data.frame(matrix(data = c(
   "Soil Moisture Treatment",
@@ -2518,116 +2521,209 @@ soil_moisture_aov_tbl %>%
 
 ```{r Soil Results 5}
 pH_aov2 <- Anova(pH_lm2, type = 'III')
+
+pH_aov_residuals_df <- pH_aov2["Residuals", "Df"]
+
+pH_aov_soil_moisture_F <-
+  format(round(pH_aov2["moisture_tx", "F value"], 3), 
+                       nsmall = 3)
+pH_aov_soil_moisture_df <- 
+  pH_aov2["moisture_tx", "Df"]
+pH_aov_soil_moisture_p <- 
+  as.numeric(format(round(pH_aov2["moisture_tx", "Pr(>F)"], 4), 
+                       nsmall = 4))
+
+pH_aov_temp_F <-
+  format(round(pH_aov2["temp_tx", "F value"], 3), 
+                       nsmall = 3)
+pH_aov_temp_df <- 
+  pH_aov2["temp_tx", "Df"]
+pH_aov_temp_p <- 
+  as.numeric(format(round(pH_aov2["temp_tx", "Pr(>F)"], 3), 
+                       nsmall = 3))
+
+pH_aov_destructive_F <-
+  as.numeric(format(round(
+    pH_aov2["destructive_time", "F value"], 3), 
+                       nsmall = 3))
+pH_aov_destructive_df <- 
+  resp_aov2["destructive_time", "Df"]
+pH_aov_destructive_p <- 
+  as.numeric(format(round(
+    pH_aov2["destructive_time", "Pr(>F)"], 3), 
+                       nsmall = 3))
+
+pH_aov_block_effect_F <-
+  format(round(pH_aov2["block_effect", "F value"], 3), 
+                       nsmall = 3)
+pH_aov_block_effect_df <- 
+  pH_aov2["block_effect", "Df"]
+pH_aov_block_effect_p <- 
+  as.numeric(format(round(pH_aov2["block_effect", "Pr(>F)"], 3), 
+                       nsmall = 3))
 ```
 <br>
 
-Mean soil pH ([Figure 3.2]B) was not significantly influenced by soil moisture (`r paste0("F", sub_digits(pH_aov2["moisture_tx", "Df"]), "\u02CC", sub_digits(pH_aov2["Residuals", "Df"]), " = ", format(round(pH_aov2["moisture_tx", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(pH_aov2["moisture_tx", "Pr(>F)"], 3), nsmall = 3))`) nor temperature (`r paste0("F", sub_digits(pH_aov2["temp_tx", "Df"]), "\u02CC", sub_digits(pH_aov2["Residuals", "Df"]), " = ", format(round(pH_aov2["temp_tx", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(pH_aov2["temp_tx", "Pr(>F)"], 3), nsmall = 3))`) treatments. Destructive sampling time exhibited a significant effect on pH (`r paste0("F", sub_digits(pH_aov2["destructive_time", "Df"]), "\u02CC", sub_digits(pH_aov2["Residuals", "Df"]), " = ", format(round(pH_aov2["destructive_time", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(pH_aov2["destructive_time", "Pr(>F)"], 3), nsmall = 3))`) and pH tended to be greater in mesocosms sampled at T~2~ vs. T~1~, but block effects did not explain differences in pH between treatments (`r paste0("F", sub_digits(pH_aov2["block_effect", "Df"]), "\u02CC", sub_digits(pH_aov2["Residuals", "Df"]), " = ", format(round(pH_aov2["block_effect", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(pH_aov2["block_effect", "Pr(>F)"], 3), nsmall = 3))`). There were no significant interaction effects between soil moisture, temperature, and destructive sampling time ([Appendix E]). Mean soil pH is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
+Mean soil pH ([Figure 3.2]B) was not significantly influenced by soil moisture (F~`r pH_aov_soil_moisture_df`,`r pH_aov_residuals_df`~ = `r pH_aov_soil_moisture_F`, p `r ifelse(pH_aov_soil_moisture_p < 0.001, "&lt; 0.001", paste0("= ", format(round(pH_aov_soil_moisture_p, 3), nsmall = 3)))`) nor temperature (F~`r pH_aov_temp_df`,`r pH_aov_residuals_df`~ = `r pH_aov_temp_F`, p `r ifelse(pH_aov_temp_p < 0.001, "&lt; 0.001", paste0("= ", format(round(pH_aov_temp_p, 3), nsmall = 3)))`) treatments. Destructive sampling time exhibited a significant effect on pH (F~`r pH_aov_destructive_df`,`r pH_aov_residuals_df`~ = `r pH_aov_destructive_F`, p `r ifelse(pH_aov_destructive_p < 0.001, "&lt; 0.001", paste0("= ", format(round(pH_aov_destructive_p, 3), nsmall = 3)))`) and pH tended to be greater in mesocosms sampled at T~2~ vs. T~1~, but block effects did not explain differences in pH between treatments (F~`r pH_aov_block_effect_df`,`r pH_aov_residuals_df`~ = `r pH_aov_block_effect_F`, p `r ifelse(pH_aov_block_effect_p < 0.001, "&lt; 0.001", paste0("= ", format(round(pH_aov_block_effect_p, 3), nsmall = 3)))`). There were no significant interaction effects between soil moisture, temperature, and destructive sampling time ([Appendix E]). Mean soil pH is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
+<br>
 <br>
   
 ### Supplemental Table 3.7
-Log-transformed soil pH ANOVA results.
-```{r Soil Results 6}
+*ANOVA results for log-transformed soil pH across experimental treatments temperature (12 &deg;C, 20 &deg;C), soil moisture (field-moist, saturated) and destructively sampling (T~1~: after three-weeks, T~2~: following three-week recovery period) treatments.*
+```{r Soil Results 6, warning = F}
 pH_aov_tbl <- as.data.frame(matrix(data = c(
-  "Intercept",
-  paste0("F", sub_digits(pH_aov2["(Intercept)", "Df"]), 
-         "\u02CC", sub_digits(pH_aov2["Residuals", "Df"]), 
-         " = ", format(round(pH_aov2["(Intercept)", "F value"], 3), 
-                       nsmall = 3)),
-  paste0("p = ", format(round(pH_aov2["(Intercept)", "Pr(>F)"], 3), 
-                       nsmall = 3)),
   "Soil Moisture Treatment",
-  paste0("F", sub_digits(pH_aov2["moisture_tx", "Df"]), 
-         "\u02CC", sub_digits(pH_aov2["Residuals", "Df"]), 
-         " = ", format(round(pH_aov2["moisture_tx", "F value"], 3), 
-                       nsmall = 3)),
-  paste0("p = ", format(round(pH_aov2["moisture_tx", "Pr(>F)"], 3), 
-                       nsmall = 3)),
+  paste0("F", sub_digits(pH_aov_soil_moisture_df),
+         "\u02CC", sub_digits(pH_aov_residuals_df),
+         " = ", pH_aov_soil_moisture_F),
+  paste0("p ", ifelse(pH_aov_soil_moisture_p < 0.001,
+                        "&lt; 0.001",
+                        paste0("= ", format(
+                          round(pH_aov_soil_moisture_p, 3), 
+                          nsmall = 3)))),
+
   "Temperature Treatment",
-  paste0("F", sub_digits(pH_aov2["temp_tx", "Df"]), 
-         "\u02CC", sub_digits(pH_aov2["Residuals", "Df"]), 
-         " = ", format(round(pH_aov2["temp_tx", "F value"], 3), 
-                       nsmall = 3)),
-  paste0("p = ", format(round(pH_aov2["temp_tx", "Pr(>F)"], 3), 
-                       nsmall = 3)),
+  paste0("F", sub_digits(pH_aov_temp_df),
+         "\u02CC", sub_digits(pH_aov_residuals_df),
+         " = ", pH_aov_temp_F),
+  paste0("p ", ifelse(pH_aov_temp_p < 0.001,
+                        "&lt; 0.001",
+                        paste0("= ", format(
+                          round(pH_aov_temp_p, 3), nsmall = 3)))),
+
   "Destructive Sampling Treatment",
-  paste0("F", sub_digits(pH_aov2["destructive_time", "Df"]), 
-         "\u02CC", sub_digits(pH_aov2["Residuals", "Df"]), 
-         " = ", format(round(pH_aov2["destructive_time", "F value"], 
-                             3), 
-                       nsmall = 3)),
-  paste0("p = ", format(round(pH_aov2["destructive_time", "Pr(>F)"], 
-                              3), 
-                       nsmall = 3)),
+  paste0("F", sub_digits(pH_aov_destructive_df),
+         "\u02CC", sub_digits(pH_aov_residuals_df),
+         " = ", pH_aov_destructive_F),
+  paste0("p ", ifelse(pH_aov_destructive_p < 0.001,
+                        "&lt; 0.001",
+                        paste0("= ", format(
+                          round(pH_aov_destructive_p, 3), 
+                          nsmall = 3)))),
+
   "Block Effect",
-  paste0("F", sub_digits(pH_aov2["block_effect", "Df"]), 
-         "\u02CC", sub_digits(pH_aov2["Residuals", "Df"]), 
-         " = ", format(round(pH_aov2["block_effect", "F value"], 3), 
-                       nsmall = 3)),
-  paste0("p = ", format(round(pH_aov2["block_effect", "Pr(>F)"], 3), 
-                       nsmall = 3))
+  paste0("F", sub_digits(pH_aov_block_effect_df),
+         "\u02CC", sub_digits(pH_aov_residuals_df),
+         " = ", pH_aov_block_effect_F),
+  paste0("p ", ifelse(pH_aov_block_effect_p < 0.001,
+                        "&lt; 0.001",
+                        paste0("= ", format(
+                          round(pH_aov_block_effect_p, 3), 
+                          nsmall = 3))))
 ), ncol = 3, byrow = T))
 
 colnames(pH_aov_tbl) <- c("Parameter", "Statistic", "P-Value")
 
-knitr::kable(pH_aov_tbl)
+pH_aov_tbl %>%
+  kable(escape = FALSE, align = "c", linesep = "") %>%
+  kable_styling(full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE) %>%
+  row_spec(1:nrow(pH_aov_tbl), extra_css = "line-height: 1;")
 ```
 <br>
   
 ``` {r Soil Results 7}
 CN_aov2 <- Anova(CN_lm2, type = 'III')
+
+CN_aov_residuals_df <- CN_aov2["Residuals", "Df"]
+
+CN_aov_soil_moisture_F <-
+  format(round(CN_aov2["moisture_tx", "F value"], 3), 
+                       nsmall = 3)
+CN_aov_soil_moisture_df <- 
+  CN_aov2["moisture_tx", "Df"]
+CN_aov_soil_moisture_p <- 
+  as.numeric(format(round(CN_aov2["moisture_tx", "Pr(>F)"], 4), 
+                       nsmall = 4))
+
+CN_aov_temp_F <-
+  format(round(CN_aov2["temp_tx", "F value"], 3), 
+                       nsmall = 3)
+CN_aov_temp_df <- 
+  CN_aov2["temp_tx", "Df"]
+CN_aov_temp_p <- 
+  as.numeric(format(round(CN_aov2["temp_tx", "Pr(>F)"], 3), 
+                       nsmall = 3))
+
+CN_aov_destructive_F <-
+  as.numeric(format(round(
+    CN_aov2["destructive_time", "F value"], 3), 
+                       nsmall = 3))
+CN_aov_destructive_df <- 
+  resp_aov2["destructive_time", "Df"]
+CN_aov_destructive_p <- 
+  as.numeric(format(round(
+    CN_aov2["destructive_time", "Pr(>F)"], 3), 
+                       nsmall = 3))
+
+CN_aov_block_effect_F <-
+  format(round(CN_aov2["block_effect", "F value"], 3), 
+                       nsmall = 3)
+CN_aov_block_effect_df <- 
+  CN_aov2["block_effect", "Df"]
+CN_aov_block_effect_p <- 
+  as.numeric(format(round(CN_aov2["block_effect", "Pr(>F)"], 3), 
+                       nsmall = 3))
 ```
 <br>
   
-Soil C:N ([Figure 3.2]C) did not show any clear trends across treatments. Neither soil moisture (`r paste0("F", sub_digits(CN_aov2["moisture_tx", "Df"]), "\u02CC", sub_digits(CN_aov2["Residuals", "Df"]), " = ", format(round(CN_aov2["moisture_tx", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(CN_aov2["moisture_tx", "Pr(>F)"], 3), nsmall = 3))`), temperature (`r paste0("F", sub_digits(CN_aov2["temp_tx", "Df"]), "\u02CC", sub_digits(CN_aov2["Residuals", "Df"]), " = ", format(round(CN_aov2["temp_tx", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(CN_aov2["temp_tx", "Pr(>F)"], 3), nsmall = 3))`), nor destructive sampling time (`r paste0("F", sub_digits(CN_aov2["destructive_time", "Df"]), "\u02CC", sub_digits(CN_aov2["Residuals", "Df"]), " = ", format(round(CN_aov2["destructive_time", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(CN_aov2["destructive_time", "Pr(>F)"], 3), nsmall = 3))`) had a significant effect on soil C:N ratio. There was no significant difference in C:N ratio between treatments corresponding to block effects (`r paste0("F", sub_digits(CN_aov2["block_effect", "Df"]), "\u02CC", sub_digits(CN_aov2["Residuals", "Df"]), " = ", format(round(CN_aov2["block_effect", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(CN_aov2["block_effect", "Pr(>F)"], 3), nsmall = 3))`) and there were no significant interaction effects between soil moisture, temperature, and destructive sampling time ([Appendix E]). Mean C:N (&plusmn; SE) under each treatment is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
+Soil C:N ([Figure 3.2]C) did not show any clear trends across treatments. Neither soil moisture (F~`r CN_aov_soil_moisture_df`,`r CN_aov_residuals_df`~ = `r CN_aov_soil_moisture_F`, p `r ifelse(CN_aov_soil_moisture_p < 0.001, "&lt; 0.001", paste0("= ", format(round(CN_aov_soil_moisture_p, 3), nsmall = 3)))`), temperature (F~`r CN_aov_temp_df`,`r CN_aov_residuals_df`~ = `r CN_aov_temp_F`, p `r ifelse(CN_aov_temp_p < 0.001, "&lt; 0.001", paste0("= ", format(round(CN_aov_temp_p, 3), nsmall = 3)))`), nor destructive sampling time (F~`r CN_aov_destructive_df`,`r CN_aov_residuals_df`~ = `r CN_aov_destructive_F`, p `r ifelse(CN_aov_destructive_p < 0.001, "&lt; 0.001", paste0("= ", format(round(CN_aov_destructive_p, 3), nsmall = 3)))`) had a significant effect on soil C:N ratio. There was no significant difference in C:N ratio between treatments corresponding to block effects (F~`r CN_aov_block_effect_df`,`r CN_aov_residuals_df`~ = `r CN_aov_block_effect_F`, p `r ifelse(CN_aov_block_effect_p < 0.001, "&lt; 0.001", paste0("= ", format(round(CN_aov_block_effect_p, 3), nsmall = 3)))`) and there were no significant interaction effects between soil moisture, temperature, and destructive sampling time ([Appendix E]). Mean C:N (&plusmn; SE) under each treatment is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
+<br>
 <br>
   
 ### Supplemental Table 3.8
-Soil C:N ratio ANOVA results.
-```{r Soil Results 8}
+*ANOVA results for soil C:N ratio across experimental treatments temperature (12 &deg;C, 20 &deg;C), soil moisture (field-moist, saturated) and destructively sampling (T~1~: after three-weeks, T~2~: following three-week recovery period) treatments.*
+```{r Soil Results 8, warning = F}
 CN_aov_tbl <- as.data.frame(matrix(data = c(
-  "Intercept",
-  paste0("F", sub_digits(CN_aov2["(Intercept)", "Df"]), 
-         "\u02CC", sub_digits(CN_aov2["Residuals", "Df"]), 
-         " = ", format(round(CN_aov2["(Intercept)", "F value"], 3), 
-                       nsmall = 3)),
-  paste0("p = ", format(round(CN_aov2["(Intercept)", "Pr(>F)"], 3), 
-                       nsmall = 3)),
   "Soil Moisture Treatment",
-  paste0("F", sub_digits(CN_aov2["moisture_tx", "Df"]), 
-         "\u02CC", sub_digits(CN_aov2["Residuals", "Df"]), 
-         " = ", format(round(CN_aov2["moisture_tx", "F value"], 3), 
-                       nsmall = 3)),
-  paste0("p = ", format(round(CN_aov2["moisture_tx", "Pr(>F)"], 3), 
-                       nsmall = 3)),
+  paste0("F", sub_digits(CN_aov_soil_moisture_df),
+         "\u02CC", sub_digits(CN_aov_residuals_df),
+         " = ", CN_aov_soil_moisture_F),
+  paste0("p ", ifelse(CN_aov_soil_moisture_p < 0.001,
+                        "&lt; 0.001",
+                        paste0("= ", format(
+                          round(CN_aov_soil_moisture_p, 3), 
+                          nsmall = 3)))),
+
   "Temperature Treatment",
-  paste0("F", sub_digits(CN_aov2["temp_tx", "Df"]), 
-         "\u02CC", sub_digits(CN_aov2["Residuals", "Df"]), 
-         " = ", format(round(CN_aov2["temp_tx", "F value"], 3), 
-                       nsmall = 3)),
-  paste0("p = ", format(round(CN_aov2["temp_tx", "Pr(>F)"], 3), 
-                       nsmall = 3)),
+  paste0("F", sub_digits(CN_aov_temp_df),
+         "\u02CC", sub_digits(CN_aov_residuals_df),
+         " = ", CN_aov_temp_F),
+  paste0("p ", ifelse(CN_aov_temp_p < 0.001,
+                        "&lt; 0.001",
+                        paste0("= ", format(
+                          round(CN_aov_temp_p, 3), nsmall = 3)))),
+
   "Destructive Sampling Treatment",
-  paste0("F", sub_digits(CN_aov2["destructive_time", "Df"]), 
-         "\u02CC", sub_digits(CN_aov2["Residuals", "Df"]), 
-         " = ", format(round(CN_aov2["destructive_time", "F value"], 
-                             3), 
-                       nsmall = 3)),
-  paste0("p = ", format(round(CN_aov2["destructive_time", "Pr(>F)"], 
-                              3), 
-                       nsmall = 3)),
+  paste0("F", sub_digits(CN_aov_destructive_df),
+         "\u02CC", sub_digits(CN_aov_residuals_df),
+         " = ", CN_aov_destructive_F),
+  paste0("p ", ifelse(CN_aov_destructive_p < 0.001,
+                        "&lt; 0.001",
+                        paste0("= ", format(
+                          round(CN_aov_destructive_p, 3), 
+                          nsmall = 3)))),
+
   "Block Effect",
-  paste0("F", sub_digits(CN_aov2["block_effect", "Df"]), 
-         "\u02CC", sub_digits(CN_aov2["Residuals", "Df"]), 
-         " = ", format(round(CN_aov2["block_effect", "F value"], 3), 
-                       nsmall = 3)),
-  paste0("p = ", format(round(CN_aov2["block_effect", "Pr(>F)"], 3), 
-                       nsmall = 3))
+  paste0("F", sub_digits(CN_aov_block_effect_df),
+         "\u02CC", sub_digits(CN_aov_residuals_df),
+         " = ", CN_aov_block_effect_F),
+  paste0("p ", ifelse(CN_aov_block_effect_p < 0.001,
+                        "&lt; 0.001",
+                        paste0("= ", format(
+                          round(CN_aov_block_effect_p, 3), 
+                          nsmall = 3))))
 ), ncol = 3, byrow = T))
 
 colnames(CN_aov_tbl) <- c("Parameter", "Statistic", "P-Value")
 
-knitr::kable(CN_aov_tbl)
+CN_aov_tbl %>%
+  kable(escape = FALSE, align = "c", linesep = "") %>%
+  kable_styling(full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE) %>%
+  row_spec(1:nrow(CN_aov_tbl), extra_css = "line-height: 1;")
 ```
+<br>
 <br>
   
 ## 3.4 Enzyme Activity
