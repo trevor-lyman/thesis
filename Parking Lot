@@ -1,20 +1,34 @@
-Parking Lot Items
+################ On Deck #####################################
+> Verify all warnings silenced
+> Fix all p = 0.000 to p < 0.001
 > Tukey Lettering for box plot figs
-> Verify ANOVA types are correct (Type III if interaction, Type II if no interaction?)
 > Make all fig caps below -- not split above and below
 > Make all fig + table caps italic to improve readability 
-> Verify all warnings silenced
 > Fix/standardize supplemental table titles
 > Make section 3 tables wider
 > Resolve experimental parameter vs. test parameter for supplemental tables and make consistent
 > Lines b/w different experimental parameters in tables? to improve visibility
-> Fix all p = 0.000 to p < 0.001
+
+>>>> Section 3.1 X
+>>>> Section 3.2
+>>>> Section 3.3
+>>>> Section 3.4
+>>>> Section 3.5
+>>>> Section 3.6
+>>>> Section 3.7
+
+################ Parking Lot Items ###########################
+> Verify ANOVA types are correct (Type III if interaction, Type II if no interaction?)
+> Verify ANOVA terms are correct (aov(lm) vs. aov(lm2))
 > Verify appendicies
 > Make Tables in methods looks nice
-> Fix TOC
 > Add list of tables, list of supplemental tables, list of figs
 > Add about this project
 > Discussion
 > References
 > CV
+> Fix TOC
+> Archive old/unused files
 > Publish
+
+################ Completed ###################################
