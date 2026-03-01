@@ -1,13 +1,11 @@
 ################ On Deck #####################################
 > Verify all warnings silenced
 > Fix all p = 0.000 to p < 0.001
-> Tukey Lettering for box plot figs
 > Make all fig caps below -- not split above and below
 > Make all fig + table caps italic to improve readability 
 > Fix/standardize supplemental table titles
 > Make section 3 tables wider
 > Resolve experimental parameter vs. test parameter for supplemental tables and make consistent
-> Lines b/w different experimental parameters in tables? to improve visibility
 
 >>>> Section 3.1 X
 >>>> Section 3.2 X
@@ -18,6 +16,7 @@
 >>>> Section 3.7
 
 ################ Parking Lot Items ###########################
+> Tukey Lettering for box plot figs
 > Verify ANOVA types are correct (Type III if interaction, Type II if no interaction?)
 > Verify ANOVA terms are correct (aov(lm) vs. aov(lm2))
 > Verify appendicies
@@ -29,6 +28,8 @@
 > CV
 > Fix TOC
 > Archive old/unused files
+> Make outlier point estimates dynamic
+> Lines b/w different experimental parameters in tables? to improve visibility
 > Publish
 
 ################ Completed ###################################
