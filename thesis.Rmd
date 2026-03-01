@@ -1896,8 +1896,7 @@ T0_df2 %>%
 
 ## 3.2 Soil Heterotrophic Respiration
 ### Figure 3.1 
-Boxplots of mean heterotrophic soil respiration (ln transformed).
-```{r Figure 3-1, fig.cap="Measurements were taken during the three-week experimental climate disturbance scenarios (T~1~) under each combination of temperature (12 &deg;C, 20 &deg;C) and soil moisture (field-moist, saturated) treatments, and during the following three-week recovery period (T~2~) when mesocosms were returned to in field conditions (12 &deg;C, field-moist).", out.width = '100%'}
+```{r Figure 3-1, fig.cap="<em>Boxplots of mean heterotrophic soil respiration (ln transformed). Measurements were taken during the three-week experimental climate disturbance scenarios (T~1~) under each combination of temperature (12 &deg;C, 20 &deg;C) and soil moisture (field-moist, saturated) treatments, and during the following three-week recovery period (T~2~) when mesocosms were returned to in field conditions (12 &deg;C, field-moist).</em>", out.width = '100%'}
 resp_T1uT2 <- resp.data %>% filter(!destructive_time=="T0")
 
 resp_T1uT2$destructive_time <- 
@@ -1913,10 +1912,10 @@ resp_T1uT2$tx <- interaction(resp_T1uT2$temp_tx, resp_T1uT2$moisture_tx)
 
 resp_T1uT2 <- resp_T1uT2 %>%
   mutate(tx = fct_recode(tx,
-    "12\u00B0 Field-Moist" = "12.Ambient",
-    "20\u00B0 Field-Moist" = "20.Ambient",
-    "12\u00B0 Saturated"   = "12.High",
-    "20\u00B0 Saturated"   = "20.High"
+    "12 \u00B0C Field-Moist" = "12.Ambient",
+    "20 \u00B0C Field-Moist" = "20.Ambient",
+    "12 \u00B0C Saturated"   = "12.High",
+    "20 \u00B0C Saturated"   = "20.High"
   ))
 
 resp_plot <- ggplot(resp_T1uT2, 
@@ -1937,16 +1936,8 @@ resp_plot <- ggplot(resp_T1uT2,
 resp_plot
 ```
 <br>
-
-### Supplemental Table 3.3
-Shapiro-Wilk and Levene's Tests constructed to test whether log-transformed heterotrophic soil respiration conforms to the assumptions of normality and homodescacity, respectively. 
-```{r Resp Results 1, warning=F}
-sub_digits <- function(x) {
-  subs <- c("₀","₁","₂","₃","₄","₅","₆","₇","₈","₉")
-  digits <- strsplit(as.character(x), "")[[1]]
-  paste0(subs[as.integer(digits) + 1], collapse = "")
-}
-
+  
+```{r Resp Results 1}
 resp_T1uT2 <- resp.data %>% filter(!destructive_time=="T0")
 
 resp_T1uT2$destructive_time <- 
@@ -1980,88 +1971,157 @@ resp_lm2 <- lm(cum_resp ~
                 block_effect,
             data = resp_T1uT2)
 
-resp_assumptions <- as.data.frame(matrix(data = c(
-  "Shapiro-Wilk Test", 
-  paste0("W = ", round(shapiro_test(residuals(resp_lm2))$statistic, 3)),
-  paste0("p = ", round(shapiro_test(residuals(resp_lm2))$p.value, 3)),
-  "Levene's Test",
-  paste0("F", sub_digits(
-    levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), 
-              data = resp_T1uT2)$df1), "\u02CC",
-  sub_digits(levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), 
-              data = resp_T1uT2)$df2), " = ",
+resp_shapiro_W <- round(shapiro_test(residuals(resp_lm2))$statistic, 3)
+resp_shapiro_p <- round(shapiro_test(residuals(resp_lm2))$p.value, 3)
+
+resp_levene_F <- 
   round(levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), 
-              data = resp_T1uT2)$statistic, 3)),
-  paste0("p = ", round(
-    levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), 
-              data = resp_T1uT2)$p, 3))
-), ncol = 3, byrow = T))
+              data = resp_T1uT2)$statistic, 3)
+resp_levene_df1 <- 
+  levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), 
+              data = resp_T1uT2)$df1
 
-colnames(resp_assumptions) <- c("Test", "Statistic", "P-Value")
+resp_levene_df2 <- 
+  levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), 
+              data = resp_T1uT2)$df2
+resp_levene_p <- 
+  round(levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), 
+              data = resp_T1uT2)$p, 3)
 
-knitr::kable(resp_assumptions)
-```
-<br> 
-
-```{r Resp Results 2}
 resp_aov <- 
   Anova(resp_lm, type = 'III')
 
 resp_aov2 <- 
   Anova(resp_lm2, type = 'III')
+
+resp_aov_residuals_df <- resp_aov2["Residuals", "Df"]
+
+resp_aov_soil_moisture_F <-
+  format(round(resp_aov2["moisture_tx", "F value"], 3), 
+                       nsmall = 3)
+resp_aov_soil_moisture_df <- 
+  resp_aov2["moisture_tx", "Df"]
+resp_aov_soil_moisture_p <- 
+  as.numeric(format(round(resp_aov2["moisture_tx", "Pr(>F)"], 3), 
+                       nsmall = 3))
+
+
+resp_aov_temp_F <-
+  format(round(resp_aov2["temp_tx", "F value"], 3), 
+                       nsmall = 3)
+resp_aov_temp_df <- 
+  resp_aov2["temp_tx", "Df"]
+resp_aov_temp_p <- 
+  as.numeric(format(round(resp_aov2["temp_tx", "Pr(>F)"], 3), 
+                       nsmall = 3))
+
+resp_aov_destructive_F <-
+  as.numeric(format(round(resp_aov2["destructive_time", "F value"], 3), 
+                       nsmall = 3))
+resp_aov_destructive_df <- 
+  resp_aov2["destructive_time", "Df"]
+resp_aov_destructive_p <- 
+  as.numeric(format(round(resp_aov2["destructive_time", "Pr(>F)"], 3), 
+                       nsmall = 3))
+
+resp_aov_block_effect_F <-
+  format(round(resp_aov2["block_effect", "F value"], 3), 
+                       nsmall = 3)
+resp_aov_block_effect_df <- 
+  resp_aov2["block_effect", "Df"]
+resp_aov_block_effect_p <- 
+  as.numeric(format(round(resp_aov2["block_effect", "Pr(>F)"], 3), 
+                       nsmall = 3))
 ```
 <br>
 
-Heterotrophic respiration was transformed on natural log, (ln) scale to conform to the assumption of normality. Log-transformed soil heterotrophic respiration satisfied the assumptions of normality and homodescacity, as per a Shapiro-Wilk (`r paste0("W = ", round(shapiro_test(residuals(resp_lm2))$statistic, 3))`, `r paste0("p = ", round(shapiro_test(residuals(resp_lm2))$p.value, 3))`) and Levene’s test (`r paste0("F", sub_digits(levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), data = resp_T1uT2)$df1), "\u02CC", sub_digits(levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), data = resp_T1uT2)$df2), " = ", round(levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), data = resp_T1uT2)$statistic, 3))`, `r paste0("p = ", round(levene_test(cum_resp ~ (moisture_tx * temp_tx * destructive_time), data = resp_T1uT2)$p, 3))`). Log-transformed heterotrophic respiration, estimated for each mesocosm ([Figure 3.1]), was not significantly affected by soil moisture (`r paste0("F", sub_digits(resp_aov2["moisture_tx", "Df"]), "\u02CC", sub_digits(resp_aov2["Residuals", "Df"]), " = ", format(round(resp_aov2["moisture_tx", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(resp_aov2["moisture_tx", "Pr(>F)"], 3), nsmall = 3))`), nor temperature (`r paste0("F", sub_digits(resp_aov2["temp_tx", "Df"]), "\u02CC", sub_digits(resp_aov2["Residuals", "Df"]), " = ", format(round(resp_aov2["temp_tx", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(resp_aov2["temp_tx", "Pr(>F)"], 3), nsmall = 3))`); heterotrophic respiration tended to be greater in mesocosms assigned to 20 &deg;C vs. 12 &deg;C. Neither destructive sampling time (`r paste0("F", sub_digits(resp_aov2["destructive_time", "Df"]), "\u02CC", sub_digits(resp_aov2["Residuals", "Df"]), " = ", format(round(resp_aov2["destructive_time", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(resp_aov2["destructive_time", "Pr(>F)"], 3), nsmall = 3))`) nor block effects (`r paste0("F", sub_digits(resp_aov2["block_effect", "Df"]), "\u02CC", sub_digits(resp_aov2["Residuals", "Df"]), " = ", format(round(resp_aov2["block_effect", "F value"], 3), nsmall = 3))`, `r paste0("p = ", format(round(resp_aov2["block_effect", "Pr(>F)"], 3), nsmall = 3))`) used to account for differences in field sampling location significantly affected log-transformed respiration. There were no significant interaction effects between soil moisture, temperature, and destructive sampling time ([Appendix E]). Mean soil heterotrophic respiration (&plusmn; SE) under each treatment is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
+Heterotrophic respiration was transformed on natural log, (ln) scale to conform to the assumption of normality. Log-transformed soil heterotrophic respiration satisfied the assumptions of normality and homodescacity, as per a Shapiro-Wilk (W = `r resp_shapiro_W`, p = `r ifelse(resp_shapiro_p < 0.001, "p < 0.001", round(resp_shapiro_p, 3))`) and Levene’s test (F~`r resp_levene_df1`,`r resp_levene_df2`~ = `r resp_levene_F`, p = `r ifelse(resp_levene_p < 0.001, "p < 0.001", round(resp_levene_p, 3))`). Log-transformed heterotrophic respiration, estimated for each mesocosm ([Figure 3.1]), was not significantly affected by soil moisture (F~`r resp_aov_soil_moisture_df`,`r resp_aov_residuals_df`~ = `r resp_aov_soil_moisture_F`, p = `r ifelse(resp_aov_soil_moisture_p < 0.001, "< 0.001", round(resp_aov_soil_moisture_p, 3))`), nor temperature (F~`r resp_aov_temp_df`,`r resp_aov_residuals_df`~ = `r resp_aov_temp_F`, p = `r ifelse(resp_aov_temp_p < 0.001, "< 0.001", round(resp_aov_temp_p, 3))`); heterotrophic respiration tended to be greater in mesocosms assigned to 20 &deg;C vs. 12 &deg;C. Neither destructive sampling time (F~`r resp_aov_destructive_df`,`r resp_aov_residuals_df`~ = `r resp_aov_destructive_F`, p = `r ifelse(resp_aov_destructive_p < 0.001, "< 0.001", round(resp_aov_destructive_p, 3))`) nor block effects (F~`r resp_aov_block_effect_df`,`r resp_aov_residuals_df`~ = `r resp_aov_block_effect_F`, p = `r ifelse(resp_aov_block_effect_p < 0.001, "< 0.001", round(resp_aov_block_effect_p, 3))`) used to account for differences in field sampling location significantly affected log-transformed respiration. There were no significant interaction effects between soil moisture, temperature, and destructive sampling time ([Appendix E]). Mean soil heterotrophic respiration (&plusmn; SE) under each treatment is presented in [Appendix D]. Estimates of effect size based on a linear model are given in [Appendix F].
+<br>
+<br>
+
+### Supplemental Table 3.3
+*Shapiro-Wilk and Levene's Tests constructed to test whether log-transformed heterotrophic soil respiration met the assumptions of normality and homodescacity, respectively.* 
+```{r Resp Results 2, warning=F}
+sub_digits <- function(x) {
+  subs <- c("₀","₁","₂","₃","₄","₅","₆","₇","₈","₉")
+  digits <- strsplit(as.character(x), "")[[1]]
+  paste0(subs[as.integer(digits) + 1], collapse = "")
+}
+
+resp_assumptions <- as.data.frame(matrix(data = c(
+  "Shapiro-Wilk Test", 
+  paste0("W = ", resp_shapiro_W),
+  paste0("p = ", ifelse(resp_shapiro_p < 0.001,
+       "p < 0.001",
+       round(resp_shapiro_p, 3))),
+  "Levene's Test",
+  paste0("F", sub_digits(resp_levene_df1), "\u02CC", 
+         sub_digits(resp_levene_df2), " = ", resp_levene_F),
+  paste0("p = ", ifelse(resp_levene_p < 0.001,
+       "p < 0.001",
+       round(resp_levene_p, 3)))
+), ncol = 3, byrow = T))
+
+colnames(resp_assumptions) <- c("Test", "Statistic", "P-Value")
+
+resp_assumptions %>%
+  kable(escape = FALSE, align = "c", linesep = "") %>%
+  kable_styling(full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE) %>%
+  row_spec(1:nrow(resp_assumptions), extra_css = "line-height: 1;")
+```
 <br>
   
 ### Supplemental Table 3.4
-Log-transformed heterotrophic respiration ANOVA results.
-```{r Resp Results 3}
+*ANOVA results for log-transformed heterotrophic soil respiration across experimental treatments temperature (12 &deg;C, 20 &deg;C), soil moisture (field-moist, saturated) and destructively sampling (T~1~: after three-weeks, T~2~: following three-week recovery period) treatments.*
+```{r Resp Results 3, warning=F}
 resp_aov_tbl <- as.data.frame(matrix(data = c(
-  "Intercept",
-  paste0("F", sub_digits(resp_aov2["(Intercept)", "Df"]), 
-         "\u02CC", sub_digits(resp_aov2["Residuals", "Df"]), 
-         " = ", format(round(resp_aov2["(Intercept)", "F value"], 3), 
-                       nsmall = 3)),
-  paste0("p = ", format(round(resp_aov2["(Intercept)", "Pr(>F)"], 3), 
-                       nsmall = 3)),
+
   "Soil Moisture Treatment",
-  paste0("F", sub_digits(resp_aov2["moisture_tx", "Df"]), 
-         "\u02CC", sub_digits(resp_aov2["Residuals", "Df"]), 
-         " = ", format(round(resp_aov2["moisture_tx", "F value"], 3), 
-                       nsmall = 3)),
-  paste0("p = ", format(round(resp_aov2["moisture_tx", "Pr(>F)"], 3), 
-                       nsmall = 3)),
+  paste0("F", sub_digits(resp_aov_soil_moisture_df),
+         "\u02CC", sub_digits(resp_aov_residuals_df),
+         " = ", resp_aov_soil_moisture_F),
+  paste0("p = ", ifelse(resp_aov_soil_moisture_p < 0.001,
+                        "< 0.001",
+                        round(resp_aov_soil_moisture_p, 3))),
+
   "Temperature Treatment",
-  paste0("F", sub_digits(resp_aov2["temp_tx", "Df"]), 
-         "\u02CC", sub_digits(resp_aov2["Residuals", "Df"]), 
-         " = ", format(round(resp_aov2["temp_tx", "F value"], 3), 
-                       nsmall = 3)),
-  paste0("p = ", format(round(resp_aov2["temp_tx", "Pr(>F)"], 3), 
-                       nsmall = 3)),
+  paste0("F", sub_digits(resp_aov_temp_df),
+         "\u02CC", sub_digits(resp_aov_residuals_df),
+         " = ", resp_aov_temp_F),
+  paste0("p = ", ifelse(resp_aov_temp_p < 0.001,
+                        "< 0.001",
+                        round(resp_aov_temp_p, 3))),
+
   "Destructive Sampling Treatment",
-  paste0("F", sub_digits(resp_aov2["destructive_time", "Df"]), 
-         "\u02CC", sub_digits(resp_aov2["Residuals", "Df"]), 
-         " = ", format(round(resp_aov2["destructive_time", "F value"], 3), 
-                       nsmall = 3)),
-  paste0("p = ", format(round(resp_aov2["destructive_time", "Pr(>F)"], 3), 
-                       nsmall = 3)),
+  paste0("F", sub_digits(resp_aov_destructive_df),
+         "\u02CC", sub_digits(resp_aov_residuals_df),
+         " = ", resp_aov_destructive_F),
+  paste0("p = ", ifelse(resp_aov_destructive_p < 0.001,
+                        "< 0.001",
+                        round(resp_aov_destructive_p, 3))),
+
   "Block Effect",
-  paste0("F", sub_digits(resp_aov2["block_effect", "Df"]), 
-         "\u02CC", sub_digits(resp_aov2["Residuals", "Df"]), 
-         " = ", format(round(resp_aov2["block_effect", "F value"], 3), 
-                       nsmall = 3)),
-  paste0("p = ", format(round(resp_aov2["block_effect", "Pr(>F)"], 3), 
-                       nsmall = 3))
-), ncol = 3, byrow = T))
+  paste0("F", sub_digits(resp_aov_block_effect_df),
+         "\u02CC", sub_digits(resp_aov_residuals_df),
+         " = ", resp_aov_block_effect_F),
+  paste0("p = ", ifelse(resp_aov_block_effect_p < 0.001,
+                        "< 0.001",
+                        round(resp_aov_block_effect_p, 3)))
+
+), ncol = 3, byrow = TRUE))
 
 colnames(resp_aov_tbl) <- c("Parameter", "Statistic", "P-Value")
 
-knitr::kable(resp_aov_tbl)
+resp_aov_tbl %>%
+  kable(escape = FALSE, align = "c", linesep = "") %>%
+  kable_styling(full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE) %>%
+  row_spec(1:nrow(resp_aov_tbl), extra_css = "line-height: 1;")
 ```
 <br>
-
+<br>
+  
 ## 3.3 Physical Soil Properties
 ### Figure 3.2 
 Soil moisture (A), pH (B), and C:N ratio (C).
